@@ -1,3 +1,6 @@
+#
+# Update mirror repository (Just for learning purpose)
+#
 name: Sync forked repository
 
 on:
@@ -25,7 +28,7 @@ jobs:
       # Optional: Sync other branches
       - name: Sync additional branches
         run: |
-          BRANCHES=("1.x" "main")  # Add your branch names here
+          BRANCHES=("main")  # Add your branch names here ("test-branch", "test-branch1")
           for branch in "${BRANCHES[@]}"; do
             gh repo sync MelTheDev/vito -b "$branch"
           done
