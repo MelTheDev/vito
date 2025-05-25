@@ -12,13 +12,12 @@ import {
 } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { LoaderCircleIcon, MoreVerticalIcon } from 'lucide-react';
 import FormSuccessful from '@/components/form-successful';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Backup } from '@/types/backup';
-import BackupFiles from '@/pages/backups/components/files';
 import EditBackup from '@/pages/backups/components/edit-backup';
 
 function Delete({ backup }: { backup: Backup }) {
@@ -127,9 +126,9 @@ export const columns: ColumnDef<Backup>[] = [
               <EditBackup backup={row.original}>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Edit</DropdownMenuItem>
               </EditBackup>
-              <BackupFiles backup={row.original}>
+              <Link href={route('backup-files', { server: row.original.server_id, backup: row.original.id })}>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Files</DropdownMenuItem>
-              </BackupFiles>
+              </Link>
               <DropdownMenuSeparator />
               <Delete backup={row.original} />
             </DropdownMenuContent>

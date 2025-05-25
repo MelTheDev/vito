@@ -2,8 +2,15 @@
 
 namespace App\SiteTypes;
 
+use App\Models\Site;
+
 class Laravel extends PHPSite
 {
+    public static function make(): self
+    {
+        return new self(new Site(['type' => \App\Enums\SiteType::LARAVEL]));
+    }
+
     public function baseCommands(): array
     {
         return array_merge(parent::baseCommands(), [

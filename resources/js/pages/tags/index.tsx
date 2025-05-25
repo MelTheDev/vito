@@ -6,13 +6,11 @@ import { DataTable } from '@/components/data-table';
 import { Tag } from '@/types/tag';
 import { columns } from '@/pages/tags/components/columns';
 import { Button } from '@/components/ui/button';
-import React from 'react';
 import CreateTag from '@/pages/tags/components/create-tag';
+import { PaginatedData } from '@/types';
 
 type Page = {
-  tags: {
-    data: Tag[];
-  };
+  tags: PaginatedData<Tag>;
 };
 
 export default function Tags() {
@@ -29,7 +27,7 @@ export default function Tags() {
             </CreateTag>
           </div>
         </div>
-        <DataTable columns={columns} data={page.props.tags.data} />
+        <DataTable columns={columns} paginatedData={page.props.tags} />
       </Container>
     </SettingsLayout>
   );

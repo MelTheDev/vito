@@ -1,50 +1,75 @@
 import { type NavItem } from '@/types';
-import { CloudUploadIcon, DatabaseIcon, HomeIcon, UsersIcon } from 'lucide-react';
+import { ArrowLeftIcon, CloudUploadIcon, DatabaseIcon, HomeIcon, MousePointerClickIcon, RocketIcon, UsersIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 import { Server } from '@/types/server';
 import ServerHeader from '@/pages/servers/components/header';
 import Layout from '@/layouts/app/layout';
+import { usePage, usePoll } from '@inertiajs/react';
+import { Site } from '@/types/site';
 
-export default function ServerLayout({ server, children }: { server: Server; children: ReactNode }) {
+export default function ServerLayout({ children }: { children: ReactNode }) {
+  usePoll(7000);
+
+  const page = usePage<{
+    server: Server;
+    site?: Site;
+  }>();
+
   // When server-side rendering, we only render the layout on the client...
   if (typeof window === 'undefined') {
     return null;
   }
+
   const sidebarNavItems: NavItem[] = [
     {
       title: 'Overview',
-      href: route('servers.show', { server: server.id }),
-      onlyActivePath: route('servers.show', { server: server.id }),
+      href: route('servers.show', { server: page.props.server.id }),
+      onlyActivePath: route('servers.show', { server: page.props.server.id }),
       icon: HomeIcon,
     },
     {
       title: 'Database',
-      href: route('databases', { server: server.id }),
+      href: route('databases', { server: page.props.server.id }),
       icon: DatabaseIcon,
       children: [
         {
           title: 'Databases',
-          href: route('databases', { server: server.id }),
-          onlyActivePath: route('databases', { server: server.id }),
+          href: route('databases', { server: page.props.server.id }),
+          onlyActivePath: route('databases', { server: page.props.server.id }),
           icon: DatabaseIcon,
         },
         {
           title: 'Users',
-          href: route('database-users', { server: server.id }),
+          href: route('database-users', { server: page.props.server.id }),
           icon: UsersIcon,
         },
         {
           title: 'Backups',
-          href: route('backups', { server: server.id }),
+          href: route('backups', { server: page.props.server.id }),
           icon: CloudUploadIcon,
         },
       ],
     },
-    // {
-    //   title: 'Sites',
-    //   href: '#',
-    //   icon: MousePointerClickIcon,
-    // },
+    {
+      title: 'Sites',
+      href: route('sites', { server: page.props.server.id }),
+      icon: MousePointerClickIcon,
+      children: page.props.site
+        ? [
+            {
+              title: 'All sites',
+              href: route('sites', { server: page.props.server.id }),
+              onlyActivePath: route('sites', { server: page.props.server.id }),
+              icon: ArrowLeftIcon,
+            },
+            {
+              title: 'Application',
+              href: route('sites.show', { server: page.props.server.id, site: page.props.site.id }),
+              icon: RocketIcon,
+            },
+          ]
+        : [],
+    },
     // {
     //   title: 'Firewall',
     //   href: '#',
@@ -93,8 +118,8 @@ export default function ServerLayout({ server, children }: { server: Server; chi
   ];
 
   return (
-    <Layout secondNavItems={sidebarNavItems} secondNavTitle={server.name}>
-      <ServerHeader server={server} />
+    <Layout secondNavItems={sidebarNavItems} secondNavTitle={page.props.server.name}>
+      <ServerHeader server={page.props.server} site={page.props.site} />
 
       <div>{children}</div>
     </Layout>

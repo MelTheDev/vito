@@ -6,25 +6,23 @@ import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import ServerLayout from '@/layouts/server/layout';
 import { DataTable } from '@/components/data-table';
-import React from 'react';
 import { BookOpenIcon, PlusIcon } from 'lucide-react';
 import CreateDatabaseUser from '@/pages/database-users/components/create-database-user';
 import SyncUsers from '@/pages/database-users/components/sync-users';
 import { DatabaseUser } from '@/types/database-user';
 import { columns } from '@/pages/database-users/components/columns';
+import { PaginatedData } from '@/types';
 
 type Page = {
   server: Server;
-  databaseUsers: {
-    data: DatabaseUser[];
-  };
+  databaseUsers: PaginatedData<DatabaseUser>;
 };
 
 export default function Databases() {
   const page = usePage<Page>();
 
   return (
-    <ServerLayout server={page.props.server}>
+    <ServerLayout>
       <Head title={`Users - ${page.props.server.name}`} />
 
       <Container className="max-w-5xl">
@@ -47,7 +45,7 @@ export default function Databases() {
           </div>
         </HeaderContainer>
 
-        <DataTable columns={columns} data={page.props.databaseUsers.data} />
+        <DataTable columns={columns} paginatedData={page.props.databaseUsers} />
       </Container>
     </ServerLayout>
   );

@@ -5,15 +5,13 @@ import { columns } from '@/pages/projects/components/columns';
 import { Project } from '@/types/project';
 import Container from '@/components/container';
 import Heading from '@/components/heading';
-import React from 'react';
 import ProjectForm from '@/pages/projects/components/project-form';
 import { Button } from '@/components/ui/button';
+import { PaginatedData } from '@/types';
 
 export default function Projects() {
   const page = usePage<{
-    projects: {
-      data: Project[];
-    };
+    projects: PaginatedData<Project>;
   }>();
 
   return (
@@ -29,7 +27,7 @@ export default function Projects() {
             </ProjectForm>
           </div>
         </div>
-        <DataTable columns={columns} data={page.props.projects.data} />
+        <DataTable columns={columns} paginatedData={page.props.projects} />
       </Container>
     </SettingsLayout>
   );

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ServerProviderFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class ServerProvider extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\ServerProviderFactory> */
+    /** @use HasFactory<ServerProviderFactory> */
     use HasFactory;
 
     protected $fillable = [

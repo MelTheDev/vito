@@ -2,15 +2,23 @@
 
 namespace App\SiteTypes;
 
+use App\DTOs\DynamicFieldDTO;
+use App\DTOs\DynamicFieldsCollectionDTO;
 use App\Enums\SiteFeature;
 use App\Exceptions\FailedToDeployGitKey;
 use App\Exceptions\SSHError;
+use App\Models\Site;
 use App\SSH\Composer\Composer;
 use App\SSH\Git\Git;
 use Illuminate\Validation\Rule;
 
 class PHPSite extends AbstractSiteType
 {
+    public static function make(): self
+    {
+        return new self(new Site(['type' => \App\Enums\SiteType::PHP]));
+    }
+
     public function language(): string
     {
         return 'php';
@@ -27,14 +35,33 @@ class PHPSite extends AbstractSiteType
         ];
     }
 
-    public function baseCommands(): array
+    public function fields(): DynamicFieldsCollectionDTO
     {
-        return [
-            [
-                'name' => 'Install Composer Dependencies',
-                'command' => 'composer install --no-dev --no-interaction --no-progress',
-            ],
-        ];
+        return new DynamicFieldsCollectionDTO([
+            DynamicFieldDTO::make('php_version')
+                ->component()
+                ->label('PHP Version'),
+            DynamicFieldDTO::make('source_control')
+                ->component()
+                ->label('Source Control'),
+            DynamicFieldDTO::make('web_directory')
+                ->text()
+                ->label('Web Directory')
+                ->placeholder('For / leave empty')
+                ->description('The relative path of your website from /home/vito/your-domain/'),
+            DynamicFieldDTO::make('repository')
+                ->text()
+                ->label('Repository')
+                ->placeholder('organization/repository'),
+            DynamicFieldDTO::make('branch')
+                ->text()
+                ->label('Branch')
+                ->default('main'),
+            DynamicFieldDTO::make('composer')
+                ->checkbox()
+                ->label('Run `composer install --no-dev`')
+                ->default(false),
+        ]);
     }
 
     public function createRules(array $input): array
@@ -101,13 +128,13 @@ class PHPSite extends AbstractSiteType
         }
     }
 
-    public function editRules(array $input): array
+    public function baseCommands(): array
     {
-        return [];
-    }
-
-    public function edit(): void
-    {
-        //
+        return [
+            [
+                'name' => 'Install Composer Dependencies',
+                'command' => 'composer install --no-dev --no-interaction --no-progress',
+            ],
+        ];
     }
 }

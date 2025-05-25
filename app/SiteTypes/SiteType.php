@@ -2,6 +2,8 @@
 
 namespace App\SiteTypes;
 
+use App\DTOs\DynamicFieldsCollectionDTO;
+
 interface SiteType
 {
     public function language(): string;
@@ -10,6 +12,8 @@ interface SiteType
      * @return array<string>
      */
     public function supportedFeatures(): array;
+
+    public function fields(): DynamicFieldsCollectionDTO;
 
     /**
      * @param  array<string, mixed>  $input
@@ -30,14 +34,6 @@ interface SiteType
     public function data(array $input): array;
 
     public function install(): void;
-
-    /**
-     * @param  array<string, mixed>  $input
-     * @return array<string, mixed>
-     */
-    public function editRules(array $input): array;
-
-    public function edit(): void;
 
     /**
      * @return array<array<string, string>>

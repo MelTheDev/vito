@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * @property int $id
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon $updated_at
  * @property User $user
  * @property Collection<int, Server> $servers
+ * @property Collection<int, Site> $sites
  * @property Collection<int, User> $users
  * @property Collection<int, NotificationChannel> $notificationChannels
  * @property Collection<int, SourceControl> $sourceControls
@@ -62,6 +64,14 @@ class Project extends Model
     public function servers(): HasMany
     {
         return $this->hasMany(Server::class);
+    }
+
+    /**
+     * @return HasManyThrough<Site, Server, covariant $this>
+     */
+    public function sites(): HasManyThrough
+    {
+        return $this->hasManyThrough(Site::class, Server::class);
     }
 
     /**

@@ -2,13 +2,21 @@
 
 namespace App\SiteTypes;
 
+use App\DTOs\DynamicFieldDTO;
+use App\DTOs\DynamicFieldsCollectionDTO;
 use App\Enums\LoadBalancerMethod;
 use App\Enums\SiteFeature;
 use App\Exceptions\SSHError;
+use App\Models\Site;
 use Illuminate\Validation\Rule;
 
 class LoadBalancer extends AbstractSiteType
 {
+    public static function make(): self
+    {
+        return new self(new Site(['type' => \App\Enums\SiteType::LOAD_BALANCER]));
+    }
+
     public function language(): string
     {
         return 'yaml';
@@ -21,12 +29,30 @@ class LoadBalancer extends AbstractSiteType
         ];
     }
 
+    public function fields(): DynamicFieldsCollectionDTO
+    {
+        return new DynamicFieldsCollectionDTO([
+            DynamicFieldDTO::make('method')
+                ->select()
+                ->label('Load Balancing Method')
+                ->options([
+                    LoadBalancerMethod::IP_HASH,
+                    LoadBalancerMethod::ROUND_ROBIN,
+                    LoadBalancerMethod::LEAST_CONNECTIONS,
+                ]),
+        ]);
+    }
+
     public function createRules(array $input): array
     {
         return [
             'method' => [
                 'required',
-                Rule::in(LoadBalancerMethod::all()),
+                Rule::in([
+                    LoadBalancerMethod::IP_HASH,
+                    LoadBalancerMethod::ROUND_ROBIN,
+                    LoadBalancerMethod::LEAST_CONNECTIONS,
+                ]),
             ],
         ];
     }
@@ -46,10 +72,5 @@ class LoadBalancer extends AbstractSiteType
         $this->isolate();
 
         $this->site->webserver()->createVHost($this->site);
-    }
-
-    public function edit(): void
-    {
-        //
     }
 }

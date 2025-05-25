@@ -14,18 +14,22 @@ use App\Notifications\SiteInstallationSucceed;
 use App\ValidationRules\DomainRule;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class CreateSite
 {
     /**
      * @param  array<string, mixed>  $input
      *
-     * @throws ValidationException
+     * @throws Throwable
      */
     public function create(Server $server, array $input): Site
     {
+        Validator::make($input, self::rules($server, $input))->validate();
+
         DB::beginTransaction();
         try {
             $user = $input['user'] ?? $server->getSshUser();
@@ -121,6 +125,7 @@ class CreateSite
                 new DomainRule,
             ],
             'user' => [
+                'nullable',
                 'regex:/^[a-z_][a-z0-9_-]*[a-z0-9]$/',
                 'min:3',
                 'max:32',

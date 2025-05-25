@@ -448,6 +448,14 @@ return [
         \App\Enums\SiteType::PHPMYADMIN => \App\SiteTypes\PHPMyAdmin::class,
         \App\Enums\SiteType::LOAD_BALANCER => \App\SiteTypes\LoadBalancer::class,
     ],
+    'site_types_custom_fields' => [
+        \App\Enums\SiteType::PHP => \App\SiteTypes\PHPSite::make()->fields()->toArray(),
+        \App\Enums\SiteType::PHP_BLANK => \App\SiteTypes\PHPBlank::make()->fields()->toArray(),
+        \App\Enums\SiteType::LARAVEL => \App\SiteTypes\Laravel::make()->fields()->toArray(),
+        \App\Enums\SiteType::WORDPRESS => \App\SiteTypes\Wordpress::make()->fields()->toArray(),
+        \App\Enums\SiteType::PHPMYADMIN => \App\SiteTypes\PHPMyAdmin::make()->fields()->toArray(),
+        \App\Enums\SiteType::LOAD_BALANCER => \App\SiteTypes\LoadBalancer::make()->fields()->toArray(),
+    ],
 
     /*
      * Source Control

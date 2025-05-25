@@ -5,19 +5,18 @@ import { columns } from '@/pages/server-logs/components/columns';
 import { usePage } from '@inertiajs/react';
 import Container from '@/components/container';
 import Heading from '@/components/heading';
+import { PaginatedData } from '@/types';
 
 export default function ServerOverview() {
   const page = usePage<{
     server: Server;
-    logs: {
-      data: ServerLog[];
-    };
+    logs: PaginatedData<ServerLog>;
   }>();
 
   return (
     <Container className="max-w-5xl">
       <Heading title="Overview" description="Here you can see an overview of your server" />
-      <DataTable columns={columns} data={page.props.logs.data} />
+      <DataTable columns={columns} paginatedData={page.props.logs} />
     </Container>
   );
 }

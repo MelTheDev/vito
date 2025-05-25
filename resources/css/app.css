@@ -11,3 +11,18 @@
 [data-slot='scroll-area-viewport'] div:first-child {
   @apply h-full;
 }
+
+@layer utilities {
+  @keyframes indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  .animate-loading-bar {
+    animation: indeterminate 1s linear infinite;
+  }
+}

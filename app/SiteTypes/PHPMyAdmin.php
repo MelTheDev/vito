@@ -2,17 +2,34 @@
 
 namespace App\SiteTypes;
 
+use App\DTOs\DynamicFieldDTO;
+use App\DTOs\DynamicFieldsCollectionDTO;
 use App\Enums\SiteFeature;
 use App\Exceptions\SSHError;
+use App\Models\Site;
 use Illuminate\Validation\Rule;
 
 class PHPMyAdmin extends PHPSite
 {
+    public static function make(): self
+    {
+        return new self(new Site(['type' => \App\Enums\SiteType::PHPMYADMIN]));
+    }
+
     public function supportedFeatures(): array
     {
         return [
             SiteFeature::SSL,
         ];
+    }
+
+    public function fields(): DynamicFieldsCollectionDTO
+    {
+        return new DynamicFieldsCollectionDTO([
+            DynamicFieldDTO::make('php_version')
+                ->component()
+                ->label('PHP Version'),
+        ]);
     }
 
     public function createRules(array $input): array
@@ -22,7 +39,6 @@ class PHPMyAdmin extends PHPSite
                 'required',
                 Rule::in($this->site->server->installedPHPVersions()),
             ],
-            'version' => 'required',
         ];
     }
 
@@ -37,7 +53,7 @@ class PHPMyAdmin extends PHPSite
     public function data(array $input): array
     {
         return [
-            'version' => $input['version'],
+            'version' => '5.2.2',
         ];
     }
 

@@ -3,6 +3,8 @@ import type { Config } from 'ziggy-js';
 import type { Server } from '@/types/server';
 import { Project } from '@/types/project';
 import { User } from '@/types/user';
+import { Site } from '@/types/site';
+import { DynamicFieldConfig } from './dynamic-field-config';
 
 export interface Auth {
   user: User;
@@ -54,6 +56,10 @@ export interface Configs {
   webservers: string[];
   databases: string[];
   php_versions: string[];
+  site_types: string[];
+  site_types_custom_fields: {
+    [type: string]: DynamicFieldConfig[];
+  };
   cronjob_intervals: {
     [key: string]: string;
   };
@@ -69,7 +75,9 @@ export interface SharedData {
   sidebarOpen: boolean;
   configs: Configs;
   projectServers: Server[];
+  serverSites?: Site[];
   server?: Server;
+  site?: Site;
   publicKeyText: string;
   flash?: {
     success: string;
@@ -80,4 +88,28 @@ export interface SharedData {
   };
 
   [key: string]: unknown;
+}
+
+export interface PaginatedData<TData> {
+  data: TData[];
+  links: PaginationLinks;
+  meta: PaginationMeta;
+}
+
+export interface PaginationLinks {
+  first: string | null;
+  last: string | null;
+  prev: string | null;
+  next: string | null;
+}
+
+export interface PaginationMeta {
+  current_page: number;
+  current_page_url: string;
+  from: number | null;
+  path: string;
+  per_page: number;
+  to: number | null;
+  total?: number;
+  last_page?: number;
 }

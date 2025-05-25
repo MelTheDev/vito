@@ -8,11 +8,10 @@ import ConnectServerProvider from '@/pages/server-providers/components/connect-s
 import { DataTable } from '@/components/data-table';
 import { columns } from '@/pages/server-providers/components/columns';
 import { ServerProvider } from '@/types/server-provider';
+import { PaginatedData } from '@/types';
 
 type Page = {
-  serverProviders: {
-    data: ServerProvider[];
-  };
+  serverProviders: PaginatedData<ServerProvider>;
   configs: {
     server_providers: string[];
   };
@@ -34,7 +33,7 @@ export default function ServerProviders() {
           </div>
         </div>
 
-        <DataTable columns={columns} data={page.props.serverProviders.data} />
+        <DataTable columns={columns} paginatedData={page.props.serverProviders} />
       </Container>
     </SettingsLayout>
   );

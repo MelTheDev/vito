@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\ServerResource;
+use App\Http\Resources\SiteResource;
 use App\Models\Server;
+use App\Models\Site;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
@@ -54,6 +56,20 @@ class HandleInertiaRequests extends Middleware
         $data = [];
         if ($request->route('server')) {
             $data['server'] = ServerResource::make($request->route('server'));
+
+            // sites
+            $sites = [];
+            /** @var Server $server */
+            $server = $request->route('server');
+            if ($user && $user->can('viewAny', [Site::class, $server])) {
+                $sites = SiteResource::collection($server->sites);
+            }
+
+            $data['serverSites'] = $sites;
+
+            if ($request->route('site')) {
+                $data['site'] = SiteResource::make($request->route('site'));
+            }
         }
 
         return [

@@ -5,25 +5,23 @@ import HeaderContainer from '@/components/header-container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import ServerLayout from '@/layouts/server/layout';
-import React from 'react';
 import { BookOpenIcon, PlusIcon } from 'lucide-react';
 import { Backup } from '@/types/backup';
 import { DataTable } from '@/components/data-table';
 import { columns } from '@/pages/backups/components/columns';
 import CreateBackup from '@/pages/backups/components/create-backup';
+import { PaginatedData } from '@/types';
 
 type Page = {
   server: Server;
-  backups: {
-    data: Backup[];
-  };
+  backups: PaginatedData<Backup>;
 };
 
 export default function Backups() {
   const page = usePage<Page>();
 
   return (
-    <ServerLayout server={page.props.server}>
+    <ServerLayout>
       <Head title={`Backups - ${page.props.server.name}`} />
 
       <Container className="max-w-5xl">
@@ -45,7 +43,7 @@ export default function Backups() {
           </div>
         </HeaderContainer>
 
-        <DataTable columns={columns} data={page.props.backups.data} />
+        <DataTable columns={columns} paginatedData={page.props.backups} />
       </Container>
     </ServerLayout>
   );

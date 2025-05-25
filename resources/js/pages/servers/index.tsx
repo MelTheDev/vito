@@ -1,6 +1,6 @@
 import { Head, usePage } from '@inertiajs/react';
 
-import { type Configs } from '@/types';
+import { PaginatedData, type Configs } from '@/types';
 
 import { DataTable } from '@/components/data-table';
 import { columns } from '@/pages/servers/components/columns';
@@ -13,16 +13,14 @@ import React from 'react';
 import Layout from '@/layouts/app/layout';
 import { PlusIcon } from 'lucide-react';
 
-type Response = {
-  servers: {
-    data: Server[];
-  };
+type Page = {
+  servers: PaginatedData<Server>;
   public_key: string;
   configs: Configs;
 };
 
 export default function Servers() {
-  const page = usePage<Response>();
+  const page = usePage<Page>();
   return (
     <Layout>
       <Head title="Servers" />
@@ -39,7 +37,7 @@ export default function Servers() {
             </CreateServer>
           </div>
         </div>
-        <DataTable columns={columns} data={page.props.servers.data} />
+        <DataTable columns={columns} paginatedData={page.props.servers} />
       </Container>
     </Layout>
   );

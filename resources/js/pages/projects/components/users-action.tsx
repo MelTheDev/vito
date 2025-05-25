@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormField, FormFields } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/ui/input-error';
-import UserSelect from '@/components/user-select';
+import UserSelect from '@/pages/users/components/user-select';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircleIcon, TrashIcon } from 'lucide-react';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -52,7 +52,7 @@ function AddUser({ project }: { project: Project }) {
           <FormFields>
             <FormField>
               <Label htmlFor="user">User</Label>
-              <UserSelect onChange={(user: User) => form.setData('user', user.id)} />
+              <UserSelect value={form.data.user.toString()} onValueChange={(user: User) => form.setData('user', user.id)} />
               <InputError message={form.errors.user} />
             </FormField>
           </FormFields>

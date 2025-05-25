@@ -13,6 +13,8 @@ abstract class AbstractSiteType implements SiteType
 {
     public function __construct(protected Site $site) {}
 
+    abstract public static function make(): self;
+
     public function createRules(array $input): array
     {
         return [];
@@ -26,11 +28,6 @@ abstract class AbstractSiteType implements SiteType
     public function data(array $input): array
     {
         return [];
-    }
-
-    public function editRules(array $input): array
-    {
-        return $this->createRules($input);
     }
 
     public function baseCommands(): array

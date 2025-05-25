@@ -17,6 +17,7 @@ class SiteResource extends JsonResource
         return [
             'id' => $this->id,
             'server_id' => $this->server_id,
+            'server' => new ServerResource($this->whenLoaded('server')),
             'source_control_id' => $this->source_control_id,
             'type' => $this->type,
             'type_data' => $this->type_data,
@@ -28,8 +29,10 @@ class SiteResource extends JsonResource
             'repository' => $this->repository,
             'branch' => $this->branch,
             'status' => $this->status,
+            'status_color' => Site::$statusColors[$this->status] ?? 'default',
             'port' => $this->port,
             'user' => $this->user,
+            'url' => $this->getUrl(),
             'progress' => $this->progress,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

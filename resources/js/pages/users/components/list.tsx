@@ -4,6 +4,7 @@ import { DataTable } from '@/components/data-table';
 import { usePage } from '@inertiajs/react';
 import UserActions from '@/pages/users/components/actions';
 import DateTime from '@/components/date-time';
+import { PaginatedData } from '@/types';
 
 const columns: ColumnDef<User>[] = [
   {
@@ -35,13 +36,11 @@ const columns: ColumnDef<User>[] = [
 ];
 
 type Page = {
-  users: {
-    data: User[];
-  };
+  users: PaginatedData<User>;
 };
 
 export default function UsersList() {
   const page = usePage<Page>();
 
-  return <DataTable columns={columns} data={page.props.users.data} />;
+  return <DataTable columns={columns} paginatedData={page.props.users} />;
 }

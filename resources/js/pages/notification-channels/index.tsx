@@ -3,17 +3,14 @@ import { Head, usePage } from '@inertiajs/react';
 import Container from '@/components/container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import React from 'react';
 import ConnectNotificationChannel from '@/pages/notification-channels/components/connect-notification-channel';
 import { DataTable } from '@/components/data-table';
 import { columns } from '@/pages/notification-channels/components/columns';
 import { NotificationChannel } from '@/types/notification-channel';
-import { Configs } from '@/types';
+import { Configs, PaginatedData } from '@/types';
 
 type Page = {
-  notificationChannels: {
-    data: NotificationChannel[];
-  };
+  notificationChannels: PaginatedData<NotificationChannel>;
   configs: Configs;
 };
 
@@ -33,7 +30,7 @@ export default function NotificationChannels() {
           </div>
         </div>
 
-        <DataTable columns={columns} data={page.props.notificationChannels.data} />
+        <DataTable columns={columns} paginatedData={page.props.notificationChannels} />
       </Container>
     </SettingsLayout>
   );

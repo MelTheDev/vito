@@ -1,6 +1,9 @@
+import { Backup } from '@/types/backup';
+
 export interface BackupFile {
   id: number;
   backup_id: number;
+  backup: Backup;
   server_id: number;
   name: string;
   size: number;

@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
-export function TableSkeleton({ modal }: { modal?: boolean }) {
+export function TableSkeleton({ cells, rows, modal }: { cells: number; rows: number; modal?: boolean }) {
   const extraClasses = modal && 'border-none shadow-none';
 
   return (
@@ -10,35 +10,21 @@ export function TableSkeleton({ modal }: { modal?: boolean }) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>
-              <Skeleton className="h-3 w-[100px]" />
-            </TableHead>
-            <TableHead>
-              <Skeleton className="h-3 w-[100px]" />
-            </TableHead>
-            <TableHead>
-              <Skeleton className="h-3 w-[100px]" />
-            </TableHead>
-            <TableHead>
-              <Skeleton className="h-3 w-[100px]" />
-            </TableHead>
+            {[...Array(cells)].map((_, i) => (
+              <TableHead key={i}>
+                <Skeleton className="h-3" />
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {[...Array(3)].map((_, i) => (
-            <TableRow key={i}>
-              <TableCell>
-                <Skeleton className="h-5 w-[100px]" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-5 w-[100px]" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-5 w-[100px]" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-5 w-[100px]" />
-              </TableCell>
+          {[...Array(rows)].map((_, i) => (
+            <TableRow key={i} className="h-[60px]!">
+              {[...Array(cells)].map((_, j) => (
+                <TableCell key={j}>
+                  <Skeleton className="h-3 w-full" />
+                </TableCell>
+              ))}
             </TableRow>
           ))}
         </TableBody>

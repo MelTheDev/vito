@@ -8,12 +8,11 @@ import React from 'react';
 import { ApiKey } from '@/types/api-key';
 import { columns } from '@/pages/api-keys/components/columns';
 import CreateApiKey from '@/pages/api-keys/components/create-api-key';
+import { PaginatedData } from '@/types';
 
 export default function ApiKeys() {
   const page = usePage<{
-    apiKeys: {
-      data: ApiKey[];
-    };
+    apiKeys: PaginatedData<ApiKey>;
   }>();
   return (
     <SettingsLayout>
@@ -30,7 +29,7 @@ export default function ApiKeys() {
             </CreateApiKey>
           </div>
         </div>
-        <DataTable columns={columns} data={page.props.apiKeys.data} />
+        <DataTable columns={columns} paginatedData={page.props.apiKeys} />
       </Container>
     </SettingsLayout>
   );

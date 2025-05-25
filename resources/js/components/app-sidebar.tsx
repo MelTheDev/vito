@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, ChevronRightIcon, CogIcon, Folder, ServerIcon } from 'lucide-react';
+import { BookOpen, ChevronRightIcon, CogIcon, Folder, MousePointerClickIcon, ServerIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import { Icon } from '@/components/icon';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -24,6 +24,11 @@ const mainNavItems: NavItem[] = [
     title: 'Servers',
     href: route('servers'),
     icon: ServerIcon,
+  },
+  {
+    title: 'Sites',
+    href: route('sites.all'),
+    icon: MousePointerClickIcon,
   },
   {
     title: 'Settings',
@@ -143,6 +148,7 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
                                       }
                                     >
                                       <Link href={childItem.href} prefetch>
+                                        {childItem.icon && <childItem.icon />}
                                         <span>{childItem.title}</span>
                                       </Link>
                                     </SidebarMenuButton>

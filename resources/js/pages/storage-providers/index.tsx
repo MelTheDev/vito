@@ -3,16 +3,14 @@ import { Head, usePage } from '@inertiajs/react';
 import Container from '@/components/container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import React from 'react';
 import ConnectStorageProvider from '@/pages/storage-providers/components/connect-storage-provider';
 import { DataTable } from '@/components/data-table';
 import { columns } from '@/pages/storage-providers/components/columns';
 import { StorageProvider } from '@/types/storage-provider';
+import { PaginatedData } from '@/types';
 
 type Page = {
-  storageProviders: {
-    data: StorageProvider[];
-  };
+  storageProviders: PaginatedData<StorageProvider>;
   configs: {
     storage_providers: string[];
   };
@@ -34,7 +32,7 @@ export default function StorageProviders() {
           </div>
         </div>
 
-        <DataTable columns={columns} data={page.props.storageProviders.data} />
+        <DataTable columns={columns} paginatedData={page.props.storageProviders} />
       </Container>
     </SettingsLayout>
   );

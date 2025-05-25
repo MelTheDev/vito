@@ -10,6 +10,7 @@ use App\Models\Server;
 use App\Models\ServerProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -40,6 +41,27 @@ class ServerController extends Controller
         ]);
     }
 
+    #[Get('/json', name: 'servers.json')]
+    public function json(Request $request): ResourceCollection
+    {
+        $project = user()->currentProject;
+
+        $this->authorize('viewAny', [Server::class, $project]);
+
+        $this->validate($request, [
+            'query' => [
+                'nullable',
+                'string',
+            ],
+        ]);
+
+        $servers = $project->servers()->where('name', 'like', "%{$request->input('query')}%")
+            ->take(10)
+            ->get();
+
+        return ServerResource::collection($servers);
+    }
+
     #[Post('/', name: 'servers.store')]
     public function store(Request $request): RedirectResponse
     {
@@ -58,7 +80,7 @@ class ServerController extends Controller
         $this->authorize('view', $server);
 
         return Inertia::render('servers/show', [
-            'logs' => ServerLogResource::collection($server->logs()->latest()->simplePaginate(config('web.pagination_size'))),
+            'logs' => ServerLogResource::collection($server->logs()->latest()->simplePaginate(config('web.pagination_size'), pageName: 'logsPage')),
         ]);
     }
 

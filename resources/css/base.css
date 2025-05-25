@@ -33,7 +33,7 @@
   --sidebar-ring: oklch(0.87 0 0);
 
   --brand: oklch(58.5% 0.233 277.117);
-  --success: var(--color-emerald-500);
+  --success: var(--color-lime-500);
   --warning: var(--color-yellow-500);
   --info: var(--color-blue-500);
   --danger: var(--color-red-500);

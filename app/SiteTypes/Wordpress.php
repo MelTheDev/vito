@@ -5,15 +5,23 @@ namespace App\SiteTypes;
 use App\Actions\Database\CreateDatabase;
 use App\Actions\Database\CreateDatabaseUser;
 use App\Actions\Database\LinkUser;
+use App\DTOs\DynamicFieldDTO;
+use App\DTOs\DynamicFieldsCollectionDTO;
 use App\Enums\SiteFeature;
 use App\Exceptions\SSHError;
 use App\Models\Database;
 use App\Models\DatabaseUser;
+use App\Models\Site;
 use Closure;
 use Illuminate\Validation\Rule;
 
 class Wordpress extends AbstractSiteType
 {
+    public static function make(): self
+    {
+        return new self(new Site(['type' => \App\Enums\SiteType::WORDPRESS]));
+    }
+
     public function language(): string
     {
         return 'php';
@@ -25,6 +33,40 @@ class Wordpress extends AbstractSiteType
             SiteFeature::SSL,
             SiteFeature::COMMANDS,
         ];
+    }
+
+    public function fields(): DynamicFieldsCollectionDTO
+    {
+        return new DynamicFieldsCollectionDTO([
+            DynamicFieldDTO::make('php_version')
+                ->component()
+                ->label('PHP Version'),
+            DynamicFieldDTO::make('title')
+                ->text()
+                ->label('Site Title')
+                ->placeholder('My WordPress Site'),
+            DynamicFieldDTO::make('username')
+                ->text()
+                ->label('Admin Username')
+                ->placeholder('admin'),
+            DynamicFieldDTO::make('password')
+                ->text()
+                ->label('Admin Password'),
+            DynamicFieldDTO::make('email')
+                ->text()
+                ->label('Admin Email'),
+            DynamicFieldDTO::make('database')
+                ->text()
+                ->label('Database Name')
+                ->placeholder('wordpress'),
+            DynamicFieldDTO::make('database_user')
+                ->text()
+                ->label('Database User')
+                ->placeholder('wp_user'),
+            DynamicFieldDTO::make('database_password')
+                ->text()
+                ->label('Database Password'),
+        ]);
     }
 
     public function createRules(array $input): array
@@ -116,18 +158,5 @@ class Wordpress extends AbstractSiteType
         $this->site->php()?->restart();
         $this->progress(60);
         app(\App\SSH\Wordpress\Wordpress::class)->install($this->site);
-    }
-
-    public function editRules(array $input): array
-    {
-        return [
-            'title' => 'required',
-            'url' => 'required',
-        ];
-    }
-
-    public function edit(): void
-    {
-        //
     }
 }

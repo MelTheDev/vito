@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BackupStatus;
+use Database\Factories\BackupFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Backup extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\BackupFactory> */
+    /** @use HasFactory<BackupFactory> */
     use HasFactory;
 
     protected $fillable = [
