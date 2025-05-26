@@ -8,6 +8,7 @@ use App\Models\Server;
 use App\Models\Service;
 use App\SSH\Services\Firewall\Firewall;
 use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class ManageRule
 {
@@ -17,6 +18,8 @@ class ManageRule
      */
     public function create(Server $server, array $input): FirewallRule
     {
+        Validator::make($input, self::rules($input))->validate();
+
         $sourceAny = $input['source_any'] ?? empty($input['source'] ?? null);
         $rule = new FirewallRule([
             'name' => $input['name'],
@@ -42,6 +45,8 @@ class ManageRule
      */
     public function update(FirewallRule $rule, array $input): FirewallRule
     {
+        Validator::make($input, self::rules($input))->validate();
+
         $sourceAny = $input['source_any'] ?? empty($input['source'] ?? null);
         $rule->update([
             'name' => $input['name'],
@@ -93,11 +98,12 @@ class ManageRule
     }
 
     /**
+     * @param  array<string, mixed>  $input
      * @return array<string, array<string>>
      */
-    public static function rules(): array
+    public static function rules(array $input): array
     {
-        return [
+        $rules = [
             'name' => [
                 'required',
                 'string',
@@ -117,16 +123,13 @@ class ManageRule
                 'min:1',
                 'max:65535',
             ],
-            'source' => [
-                'nullable',
-                'ip',
-            ],
-            'mask' => [
-                'nullable',
-                'numeric',
-                'min:1',
-                'max:32',
-            ],
         ];
+
+        if (! ($input['source_any'] ?? false)) {
+            $rules['source'] = ['required', 'ip'];
+            $rules['mask'] = ['required', 'numeric', 'min:1', 'max:32'];
+        }
+
+        return $rules;
     }
 }

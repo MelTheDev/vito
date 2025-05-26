@@ -6,16 +6,37 @@ import { cn } from '@/lib/utils';
 import { Site } from '@/types/site';
 import { StatusRipple } from '@/components/status-ripple';
 import { Badge } from '@/components/ui/badge';
+import { useForm } from '@inertiajs/react';
 
 export default function ServerHeader({ server, site }: { server: Server; site?: Site }) {
+  const statusForm = useForm();
+
+  const checkStatus = () => {
+    if (['installing', 'installation_failed'].includes(server.status)) {
+      return;
+    }
+
+    statusForm.patch(route('servers.status', { server: server.id }));
+  };
+
   return (
     <div className="flex items-center justify-between border-b px-4 py-2">
       <div className="space-y-2">
         <div className="flex items-center space-x-2 text-xs">
           <Tooltip>
             <TooltipTrigger asChild>
+              <div>
+                {statusForm.processing && <LoaderCircleIcon className="size-3 animate-spin" />}
+                {!statusForm.processing && <StatusRipple className="cursor-pointer" onClick={checkStatus} variant={server.status_color} />}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <span>{server.status}</span>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
               <div className="flex items-center space-x-2">
-                <StatusRipple variant={server.status_color} />
                 <div className="hidden lg:inline-flex">{server.name}</div>
               </div>
             </TooltipTrigger>

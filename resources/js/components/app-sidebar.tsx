@@ -13,7 +13,7 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { BookOpen, ChevronRightIcon, CogIcon, Folder, MousePointerClickIcon, ServerIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import { Icon } from '@/components/icon';
@@ -129,7 +129,7 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
                         <Collapsible key={`${item.title}-${item.href}`} defaultOpen={isActive} className="group/collapsible">
                           <SidebarMenuItem>
                             <CollapsibleTrigger asChild>
-                              <SidebarMenuButton>
+                              <SidebarMenuButton disabled={item.isDisabled || false}>
                                 {item.icon && <item.icon />}
                                 <span>{item.title}</span>
                                 <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
@@ -163,11 +163,9 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
 
                     return (
                       <SidebarMenuItem key={`${item.title}-${item.href}`}>
-                        <SidebarMenuButton asChild isActive={isActive}>
-                          <Link href={item.href} prefetch>
-                            {item.icon && <item.icon />}
-                            <span>{item.title}</span>
-                          </Link>
+                        <SidebarMenuButton onClick={() => router.visit(item.href)} isActive={isActive} disabled={item.isDisabled || false}>
+                          {item.icon && <item.icon />}
+                          <span>{item.title}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );

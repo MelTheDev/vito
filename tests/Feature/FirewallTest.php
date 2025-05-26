@@ -5,10 +5,8 @@ namespace Tests\Feature;
 use App\Enums\FirewallRuleStatus;
 use App\Facades\SSH;
 use App\Models\FirewallRule;
-use App\Web\Pages\Servers\Firewall\Index;
-use App\Web\Pages\Servers\Firewall\Widgets\RulesList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class FirewallTest extends TestCase
@@ -21,18 +19,15 @@ class FirewallTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
+        $this->post(route('firewall.store', ['server' => $this->server]), [
+            'name' => 'Test',
+            'type' => 'allow',
+            'protocol' => 'tcp',
+            'port' => '1234',
+            'source' => '0.0.0.0',
+            'mask' => '1',
         ])
-            ->callAction('create', [
-                'name' => 'Test',
-                'type' => 'allow',
-                'protocol' => 'tcp',
-                'port' => '1234',
-                'source' => '0.0.0.0',
-                'mask' => '0',
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('firewall_rules', [
             'port' => '1234',
@@ -44,14 +39,13 @@ class FirewallTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $rule = FirewallRule::factory()->create([
+        FirewallRule::factory()->create([
             'server_id' => $this->server->id,
         ]);
 
-        $this->get(Index::getUrl(['server' => $this->server]))
+        $this->get(route('firewall', $this->server))
             ->assertSuccessful()
-            ->assertSee($rule->source)
-            ->assertSee($rule->port);
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('firewall/index'));
     }
 
     public function test_delete_firewall_rule(): void
@@ -64,11 +58,10 @@ class FirewallTest extends TestCase
             'server_id' => $this->server->id,
         ]);
 
-        Livewire::test(RulesList::class, [
+        $this->delete(route('firewall.destroy', [
             'server' => $this->server,
-        ])
-            ->callTableAction('delete', $rule->id)
-            ->assertSuccessful();
+            'firewallRule' => $rule,
+        ]))->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseMissing('firewall_rules', [
             'id' => $rule->id,

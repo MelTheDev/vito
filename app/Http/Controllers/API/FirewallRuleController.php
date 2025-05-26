@@ -54,8 +54,6 @@ class FirewallRuleController extends Controller
 
         $this->validateRoute($project, $server);
 
-        $this->validate($request, ManageRule::rules());
-
         $firewallRule = app(ManageRule::class)->create($server, $request->all());
 
         return new FirewallRuleResource($firewallRule);
@@ -75,8 +73,6 @@ class FirewallRuleController extends Controller
         $this->authorize('update', [FirewallRule::class, $firewallRule]);
 
         $this->validateRoute($project, $server);
-
-        $this->validate($request, ManageRule::rules());
 
         $firewallRule = app(ManageRule::class)->update($firewallRule, $request->all());
 

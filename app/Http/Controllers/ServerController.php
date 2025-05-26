@@ -18,6 +18,7 @@ use Inertia\Response;
 use Spatie\RouteAttributes\Attributes\Delete;
 use Spatie\RouteAttributes\Attributes\Get;
 use Spatie\RouteAttributes\Attributes\Middleware;
+use Spatie\RouteAttributes\Attributes\Patch;
 use Spatie\RouteAttributes\Attributes\Post;
 use Spatie\RouteAttributes\Attributes\Prefix;
 
@@ -102,6 +103,21 @@ class ServerController extends Controller
         }
 
         return redirect()->route('servers.show', ['server' => $server->id]);
+    }
+
+    #[Patch('/{server}/status', name: 'servers.status')]
+    public function status(Server $server): RedirectResponse
+    {
+        $this->authorize('view', $server);
+
+        $server->checkConnection();
+
+        $server->refresh();
+
+        return back()
+            ->with($server->getStatusColor(), __('Server status is :status', [
+                'status' => $server->status,
+            ]));
     }
 
     #[Delete('/{server}', name: 'servers.destroy')]

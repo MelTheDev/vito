@@ -1,5 +1,5 @@
 import { type NavItem } from '@/types';
-import { ArrowLeftIcon, CloudUploadIcon, DatabaseIcon, HomeIcon, MousePointerClickIcon, RocketIcon, UsersIcon } from 'lucide-react';
+import { ArrowLeftIcon, CloudUploadIcon, DatabaseIcon, FlameIcon, HomeIcon, MousePointerClickIcon, RocketIcon, UsersIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 import { Server } from '@/types/server';
 import ServerHeader from '@/pages/servers/components/header';
@@ -20,6 +20,8 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
     return null;
   }
 
+  const isMenuDisabled = page.props.server.status !== 'ready';
+
   const sidebarNavItems: NavItem[] = [
     {
       title: 'Overview',
@@ -31,6 +33,7 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
       title: 'Database',
       href: route('databases', { server: page.props.server.id }),
       icon: DatabaseIcon,
+      isDisabled: isMenuDisabled,
       children: [
         {
           title: 'Databases',
@@ -54,6 +57,7 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
       title: 'Sites',
       href: route('sites', { server: page.props.server.id }),
       icon: MousePointerClickIcon,
+      isDisabled: isMenuDisabled,
       children: page.props.site
         ? [
             {
@@ -70,11 +74,12 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
           ]
         : [],
     },
-    // {
-    //   title: 'Firewall',
-    //   href: '#',
-    //   icon: FlameIcon,
-    // },
+    {
+      title: 'Firewall',
+      href: route('firewall', { server: page.props.server.id }),
+      icon: FlameIcon,
+      isDisabled: isMenuDisabled,
+    },
     // {
     //   title: 'CronJobs',
     //   href: '#',

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\FirewallRuleStatus;
+use Database\Factories\FirewallRuleFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class FirewallRule extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\FirewallRuleFactory> */
+    /** @use HasFactory<FirewallRuleFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -40,17 +41,16 @@ class FirewallRule extends AbstractModel
         'port' => 'integer',
     ];
 
-    public function getStatusColor(): string
-    {
-        return match ($this->status) {
-            FirewallRuleStatus::CREATING,
-            FirewallRuleStatus::UPDATING,
-            FirewallRuleStatus::DELETING => 'warning',
-            FirewallRuleStatus::READY => 'success',
-            FirewallRuleStatus::FAILED => 'danger',
-            default => 'secondary',
-        };
-    }
+    /**
+     * @var array<string, string>
+     */
+    public static array $statusColors = [
+        FirewallRuleStatus::CREATING => 'info',
+        FirewallRuleStatus::UPDATING => 'warning',
+        FirewallRuleStatus::DELETING => 'danger',
+        FirewallRuleStatus::READY => 'success',
+        FirewallRuleStatus::FAILED => 'danger',
+    ];
 
     /**
      * @return BelongsTo<Server, covariant $this>

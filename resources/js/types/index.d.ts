@@ -28,6 +28,7 @@ export interface NavItem {
   onlyActivePath?: string;
   icon?: LucideIcon | null;
   isActive?: boolean;
+  isDisabled?: boolean;
   children?: NavItem[];
 }
 
