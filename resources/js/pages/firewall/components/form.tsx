@@ -65,7 +65,7 @@ export default function RuleForm({ serverId, firewallRule, children }: { serverI
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{firewallRule ? 'Edit' : 'Create'} firewall rule</DialogTitle>
-          <DialogDescription className="sr-only">{firewallRule ? 'Edit' : 'Create'} new firewall rule</DialogDescription>
+          <DialogDescription className="sr-only">{firewallRule ? 'Edit' : 'Create new'} firewall rule</DialogDescription>
         </DialogHeader>
         <Form id="firewall-rule-form" onSubmit={submit} className="p-4">
           <FormFields>

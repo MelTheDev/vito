@@ -21,6 +21,7 @@ class CronJobResource extends JsonResource
             'user' => $this->user,
             'frequency' => $this->frequency,
             'status' => $this->status,
+            'status_color' => CronJob::$statusColors[$this->status] ?? 'gray',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

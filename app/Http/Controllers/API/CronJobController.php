@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Actions\CronJob\CreateCronJob;
 use App\Actions\CronJob\DeleteCronJob;
+use App\Exceptions\SSHError;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CronJobResource;
 use App\Models\CronJob;
@@ -39,6 +40,9 @@ class CronJobController extends Controller
         return CronJobResource::collection($server->cronJobs()->simplePaginate(25));
     }
 
+    /**
+     * @throws SSHError
+     */
     #[Post('/', name: 'api.projects.servers.cron-jobs.create', middleware: 'ability:write')]
     #[Endpoint(title: 'create', description: 'Create a new cron job.')]
     #[BodyParam(name: 'command', required: true)]
@@ -50,8 +54,6 @@ class CronJobController extends Controller
         $this->authorize('create', [CronJob::class, $server]);
 
         $this->validateRoute($project, $server);
-
-        $this->validate($request, CreateCronJob::rules($request->all(), $server));
 
         $cronJob = app(CreateCronJob::class)->create($server, $request->all());
 
@@ -70,6 +72,9 @@ class CronJobController extends Controller
         return new CronJobResource($cronJob);
     }
 
+    /**
+     * @throws SSHError
+     */
     #[Delete('{cronJob}', name: 'api.projects.servers.cron-jobs.delete', middleware: 'ability:write')]
     #[Endpoint(title: 'delete', description: 'Delete cron job.')]
     #[Response(status: 204)]

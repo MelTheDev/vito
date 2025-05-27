@@ -10,22 +10,22 @@ use App\ValidationRules\CronRule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class CreateCronJob
+class EditCronJob
 {
     /**
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $input
+     *
      * @throws SSHError
      */
-    public function create(Server $server, array $input): CronJob
+    public function edit(Server $server, CronJob $cronJob, array $input): CronJob
     {
         Validator::make($input, self::rules($input, $server))->validate();
 
-        $cronJob = new CronJob([
-            'server_id' => $server->id,
+        $cronJob->update([
             'user' => $input['user'],
             'command' => $input['command'],
             'frequency' => $input['frequency'] == 'custom' ? $input['custom'] : $input['frequency'],
-            'status' => CronjobStatus::CREATING,
+            'status' => CronjobStatus::UPDATING,
         ]);
         $cronJob->save();
 

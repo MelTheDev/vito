@@ -7,31 +7,29 @@ use App\Facades\SSH;
 use App\Models\CronJob;
 use App\Models\Server;
 use App\Models\Site;
-use App\Web\Pages\Servers\CronJobs\Index;
-use App\Web\Pages\Servers\CronJobs\Widgets\CronJobsList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class CronjobTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_see_cronjobs_list()
+    public function test_see_cronjobs_list(): void
     {
         $this->actingAs($this->user);
 
-        /** @var CronJob $cronjob */
-        $cronjob = CronJob::factory()->create([
+        CronJob::factory()->create([
             'server_id' => $this->server->id,
         ]);
 
-        $this->get(Index::getUrl(['server' => $this->server]))
+        $this->get(route('cronjobs', $this->server))
             ->assertSuccessful()
-            ->assertSeeText($cronjob->frequencyLabel());
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('cronjobs/index'));
+
     }
 
-    public function test_delete_cronjob()
+    public function test_delete_cronjob(): void
     {
         SSH::fake();
 
@@ -43,11 +41,10 @@ class CronjobTest extends TestCase
             'user' => 'vito',
         ]);
 
-        Livewire::test(CronJobsList::class, [
+        $this->delete(route('cronjobs.destroy', [
             'server' => $this->server,
-        ])
-            ->callTableAction('delete', $cronjob->id)
-            ->assertSuccessful();
+            'cronJob' => $cronjob,
+        ]));
 
         $this->assertDatabaseMissing('cron_jobs', [
             'id' => $cronjob->id,
@@ -57,21 +54,18 @@ class CronjobTest extends TestCase
         SSH::assertExecutedContains('sudo -u vito crontab -l');
     }
 
-    public function test_create_cronjob()
+    public function test_create_cronjob(): void
     {
         SSH::fake();
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
+        $this->post(route('cronjobs.store', ['server' => $this->server]), [
+            'command' => 'ls -la',
+            'user' => 'vito',
+            'frequency' => '* * * * *',
         ])
-            ->callAction('create', [
-                'command' => 'ls -la',
-                'user' => 'vito',
-                'frequency' => '* * * * *',
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('cron_jobs', [
             'server_id' => $this->server->id,
@@ -93,15 +87,12 @@ class CronjobTest extends TestCase
         $this->site->user = 'example';
         $this->site->save();
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
+        $this->post(route('cronjobs.store', ['server' => $this->server]), [
+            'command' => 'ls -la',
+            'user' => 'example',
+            'frequency' => '* * * * *',
         ])
-            ->callAction('create', [
-                'command' => 'ls -la',
-                'user' => 'example',
-                'frequency' => '* * * * *',
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('cron_jobs', [
             'server_id' => $this->server->id,
@@ -117,15 +108,12 @@ class CronjobTest extends TestCase
         SSH::fake();
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
+        $this->post(route('cronjobs.store', ['server' => $this->server]), [
+            'command' => 'ls -la',
+            'user' => 'example',
+            'frequency' => '* * * * *',
         ])
-            ->callAction('create', [
-                'command' => 'ls -la',
-                'user' => 'example',
-                'frequency' => '* * * * *',
-            ])
-            ->assertHasActionErrors();
+            ->assertSessionHasErrors();
 
         $this->assertDatabaseMissing('cron_jobs', [
             'server_id' => $this->server->id,
@@ -143,15 +131,12 @@ class CronjobTest extends TestCase
             'user' => 'example',
         ]);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
+        $this->post(route('cronjobs.store', ['server' => $this->server]), [
+            'command' => 'ls -la',
+            'user' => 'example',
+            'frequency' => '* * * * *',
         ])
-            ->callAction('create', [
-                'command' => 'ls -la',
-                'user' => 'example',
-                'frequency' => '* * * * *',
-            ])
-            ->assertHasActionErrors();
+            ->assertSessionHasErrors();
 
         $this->assertDatabaseMissing('cron_jobs', [
             'user' => 'example',
@@ -164,16 +149,13 @@ class CronjobTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
+        $this->post(route('cronjobs.store', ['server' => $this->server]), [
+            'command' => 'ls -la',
+            'user' => 'vito',
+            'frequency' => 'custom',
+            'custom' => '* * * 1 1',
         ])
-            ->callAction('create', [
-                'command' => 'ls -la',
-                'user' => 'vito',
-                'frequency' => 'custom',
-                'custom' => '* * * 1 1',
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('cron_jobs', [
             'server_id' => $this->server->id,
@@ -202,12 +184,11 @@ class CronjobTest extends TestCase
             'status' => CronjobStatus::DISABLED,
         ]);
 
-        Livewire::test(CronJobsList::class, [
+        $this->post(route('cronjobs.enable', [
             'server' => $this->server,
-        ])
-            ->assertTableActionHidden('disable', $cronjob->id)
-            ->callTableAction('enable', $cronjob->id)
-            ->assertSuccessful();
+            'cronJob' => $cronjob,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $cronjob->refresh();
 
@@ -217,7 +198,7 @@ class CronjobTest extends TestCase
         SSH::assertExecutedContains('sudo -u vito crontab -l');
     }
 
-    public function test_disable_cronjob()
+    public function test_disable_cronjob(): void
     {
         SSH::fake();
 
@@ -232,12 +213,11 @@ class CronjobTest extends TestCase
             'status' => CronjobStatus::READY,
         ]);
 
-        Livewire::test(CronJobsList::class, [
+        $this->post(route('cronjobs.disable', [
             'server' => $this->server,
-        ])
-            ->assertTableActionHidden('enable', $cronjob->id)
-            ->callTableAction('disable', $cronjob->id)
-            ->assertSuccessful();
+            'cronJob' => $cronjob,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $cronjob->refresh();
 

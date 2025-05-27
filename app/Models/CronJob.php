@@ -63,6 +63,7 @@ class CronJob extends AbstractModel
             ->whereIn('status', [
                 CronjobStatus::READY,
                 CronjobStatus::CREATING,
+                CronjobStatus::UPDATING,
                 CronjobStatus::ENABLING,
             ])
             ->get();

@@ -1,5 +1,15 @@
 import { type NavItem } from '@/types';
-import { ArrowLeftIcon, CloudUploadIcon, DatabaseIcon, FlameIcon, HomeIcon, MousePointerClickIcon, RocketIcon, UsersIcon } from 'lucide-react';
+import {
+  ArrowLeftIcon,
+  ClockIcon,
+  CloudUploadIcon,
+  DatabaseIcon,
+  FlameIcon,
+  HomeIcon,
+  MousePointerClickIcon,
+  RocketIcon,
+  UsersIcon,
+} from 'lucide-react';
 import { ReactNode } from 'react';
 import { Server } from '@/types/server';
 import ServerHeader from '@/pages/servers/components/header';
@@ -80,11 +90,12 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
       icon: FlameIcon,
       isDisabled: isMenuDisabled,
     },
-    // {
-    //   title: 'CronJobs',
-    //   href: '#',
-    //   icon: ClockIcon,
-    // },
+    {
+      title: 'CronJobs',
+      href: route('cronjobs', { server: page.props.server.id }),
+      icon: ClockIcon,
+      isDisabled: isMenuDisabled,
+    },
     // {
     //   title: 'Workers',
     //   href: '#',

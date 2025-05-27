@@ -4,6 +4,7 @@ export interface Server {
   user_id: number;
   name: string;
   ssh_user: string;
+  ssh_users: string[];
   ip: string;
   local_ip?: string;
   port: number;

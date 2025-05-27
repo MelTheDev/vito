@@ -14,5 +14,7 @@ final class CronjobStatus
 
     const DISABLING = 'disabling';
 
+    const UPDATING = 'updating';
+
     const DISABLED = 'disabled';
 }
