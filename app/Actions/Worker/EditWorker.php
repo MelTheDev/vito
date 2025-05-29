@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\Site;
 use App\Models\Worker;
 use App\SSH\Services\ProcessManager\ProcessManager;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -20,6 +21,8 @@ class EditWorker
      */
     public function edit(Worker $worker, array $input): void
     {
+        Validator::make($input, self::rules($worker->server, $worker->site))->validate();
+
         $worker->fill([
             'command' => $input['command'],
             'user' => $input['user'],

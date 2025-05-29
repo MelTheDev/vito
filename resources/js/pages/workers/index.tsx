@@ -8,34 +8,34 @@ import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import Container from '@/components/container';
 import { DataTable } from '@/components/data-table';
-import { CronJob } from '@/types/cronjob';
-import { columns } from '@/pages/cronjobs/components/columns';
-import CronJobForm from '@/pages/cronjobs/components/form';
+import { Worker } from '@/types/worker';
+import { columns } from '@/pages/workers/components/columns';
+import WorkerForm from '@/pages/workers/components/form';
 
-export default function CronJobIndex() {
+export default function WorkerIndex() {
   const page = usePage<{
     server: Server;
-    cronjobs: PaginatedData<CronJob>;
+    workers: PaginatedData<Worker>;
   }>();
 
   return (
     <ServerLayout>
-      <Head title={`Cron jobs - ${page.props.server.name}`} />
+      <Head title={`Workers - ${page.props.server.name}`} />
 
       <Container className="max-w-5xl">
         <HeaderContainer>
-          <Heading title="Cron jobs" description="Here you can manage server's cron jobs" />
+          <Heading title="Workers" description="Here you can manage server's workers" />
           <div className="flex items-center gap-2">
-            <CronJobForm serverId={page.props.server.id}>
+            <WorkerForm serverId={page.props.server.id}>
               <Button>
                 <PlusIcon />
                 <span className="hidden lg:block">Create</span>
               </Button>
-            </CronJobForm>
+            </WorkerForm>
           </div>
         </HeaderContainer>
 
-        <DataTable columns={columns} paginatedData={page.props.cronjobs} />
+        <DataTable columns={columns} paginatedData={page.props.workers} />
       </Container>
     </ServerLayout>
   );

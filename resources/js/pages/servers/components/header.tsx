@@ -1,5 +1,5 @@
 import { Server } from '@/types/server';
-import { CloudIcon, LoaderCircleIcon, MapPinIcon, MousePointerClickIcon, SlashIcon } from 'lucide-react';
+import { ClipboardCheckIcon, CloudIcon, LoaderCircleIcon, MapPinIcon, MousePointerClickIcon, SlashIcon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import ServerActions from '@/pages/servers/components/actions';
 import { cn } from '@/lib/utils';
@@ -7,6 +7,7 @@ import { Site } from '@/types/site';
 import { StatusRipple } from '@/components/status-ripple';
 import { Badge } from '@/components/ui/badge';
 import { useForm } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function ServerHeader({ server, site }: { server: Server; site?: Site }) {
   const statusForm = useForm();
@@ -17,6 +18,16 @@ export default function ServerHeader({ server, site }: { server: Server; site?: 
     }
 
     statusForm.patch(route('servers.status', { server: server.id }));
+  };
+
+  const [ipCopied, setIpCopied] = useState(false);
+  const copyIp = (ip: string) => {
+    navigator.clipboard.writeText(ip).then(() => {
+      setIpCopied(true);
+      setTimeout(() => {
+        setIpCopied(false);
+      }, 2000);
+    });
   };
 
   return (
@@ -64,8 +75,10 @@ export default function ServerHeader({ server, site }: { server: Server; site?: 
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex items-center space-x-1">
-                <MapPinIcon className="size-4" />
-                <div className="hidden lg:inline-flex">{server.ip}</div>
+                {ipCopied ? <ClipboardCheckIcon className="text-success size-4" /> : <MapPinIcon className="size-4" />}
+                <div className="hidden cursor-pointer lg:inline-flex" onClick={() => copyIp(server.ip)}>
+                  {server.ip}
+                </div>
               </div>
             </TooltipTrigger>
             <TooltipContent side="bottom">

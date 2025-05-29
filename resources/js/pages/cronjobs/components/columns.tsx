@@ -19,7 +19,7 @@ import { CronJob } from '@/types/cronjob';
 import { Badge } from '@/components/ui/badge';
 import DateTime from '@/components/date-time';
 import CronJobForm from '@/pages/cronjobs/components/form';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import CommandCell from '@/components/command-cell';
 
 function Delete({ cronJob }: { cronJob: CronJob }) {
   const [open, setOpen] = useState(false);
@@ -60,33 +60,6 @@ function Delete({ cronJob }: { cronJob: CronJob }) {
   );
 }
 
-function CommandCell({ row }: { row: { original: CronJob } }) {
-  const [copySuccess, setCopySuccess] = useState(false);
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(row.original.command).then(() => {
-      setCopySuccess(true);
-      setTimeout(() => {
-        setCopySuccess(false);
-      }, 2000);
-    });
-  };
-
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div className="inline-flex cursor-pointer justify-start space-x-2 truncate" onClick={copyToClipboard}>
-          <Badge variant={copySuccess ? 'success' : 'outline'} className="block max-w-[150px] overflow-ellipsis">
-            {row.original.command}
-          </Badge>
-        </div>
-      </TooltipTrigger>
-      <TooltipContent side="top">
-        <span className="flex items-center space-x-2">Copy</span>
-      </TooltipContent>
-    </Tooltip>
-  );
-}
-
 export const columns: ColumnDef<CronJob>[] = [
   {
     accessorKey: 'command',
@@ -94,7 +67,7 @@ export const columns: ColumnDef<CronJob>[] = [
     enableColumnFilter: true,
     enableSorting: true,
     cell: ({ row }) => {
-      return <CommandCell row={row} />;
+      return <CommandCell command={row.original.command} />;
     },
   },
   {

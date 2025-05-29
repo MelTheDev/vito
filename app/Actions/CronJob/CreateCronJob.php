@@ -13,7 +13,8 @@ use Illuminate\Validation\Rule;
 class CreateCronJob
 {
     /**
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $input
+     *
      * @throws SSHError
      */
     public function create(Server $server, array $input): CronJob

@@ -29,7 +29,7 @@ export default function Firewall() {
             <RuleForm serverId={page.props.server.id}>
               <Button>
                 <PlusIcon />
-                <span className="hidden lg:block">Create rule</span>
+                <span className="hidden lg:block">Create</span>
               </Button>
             </RuleForm>
           </div>

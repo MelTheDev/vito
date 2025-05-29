@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\Site;
 use App\Models\Worker;
 use App\SSH\Services\ProcessManager\ProcessManager;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -20,6 +21,8 @@ class CreateWorker
      */
     public function create(Server $server, array $input, ?Site $site = null): void
     {
+        Validator::make($input, self::rules($server, $site))->validate();
+
         $worker = new Worker([
             'server_id' => $server->id,
             'site_id' => $site?->id,

@@ -1,7 +1,7 @@
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppHeader } from '@/components/app-header';
 import { type BreadcrumbItem, NavItem, SharedData } from '@/types';
-import { type PropsWithChildren, useState } from 'react';
+import { type PropsWithChildren } from 'react';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { usePage } from '@inertiajs/react';
 import { Toaster } from '@/components/ui/sonner';
@@ -18,13 +18,13 @@ export default function Layout({
   secondNavTitle?: string;
 }>) {
   const page = usePage<SharedData>();
-  const [sidebarOpen, setSidebarOpen] = useState(
-    (localStorage.getItem('sidebar') === 'true' || false) && !!(secondNavItems && secondNavItems.length > 0),
-  );
-  const sidebarOpenChange = (open: boolean) => {
-    setSidebarOpen(open);
-    localStorage.setItem('sidebar', String(open));
-  };
+  // const [sidebarOpen, setSidebarOpen] = useState(
+  //   (localStorage.getItem('sidebar') === 'true' || false) && !!(secondNavItems && secondNavItems.length > 0),
+  // );
+  // const sidebarOpenChange = (open: boolean) => {
+  //   setSidebarOpen(open);
+  //   localStorage.setItem('sidebar', String(open));
+  // };
 
   if (page.props.flash && page.props.flash.success) toast.success(page.props.flash.success);
   if (page.props.flash && page.props.flash.error) toast.error(page.props.flash.error);
@@ -35,7 +35,7 @@ export default function Layout({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider open={sidebarOpen} onOpenChange={sidebarOpenChange}>
+      <SidebarProvider defaultOpen={!!(secondNavItems && secondNavItems.length > 0)}>
         <AppSidebar secondNavItems={secondNavItems} secondNavTitle={secondNavTitle} />
         <SidebarInset>
           <AppHeader />

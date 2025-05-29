@@ -6,10 +6,8 @@ use App\Enums\WorkerStatus;
 use App\Facades\SSH;
 use App\Models\Site;
 use App\Models\Worker;
-use App\Web\Pages\Servers\Sites\Pages\Workers\Index;
-use App\Web\Pages\Servers\Sites\Pages\Workers\Widgets\WorkersList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class WorkersTest extends TestCase
@@ -20,19 +18,17 @@ class WorkersTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $worker = Worker::factory()->create([
+        Worker::factory()->create([
             'server_id' => $this->server->id,
             'site_id' => $this->site->id,
         ]);
 
-        $this->get(
-            Index::getUrl([
-                'server' => $this->server,
-                'site' => $this->site,
-            ])
-        )
+        $this->get(route('workers', [
+            'server' => $this->server,
+        ]))
             ->assertSuccessful()
-            ->assertSee($worker->command);
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('workers/index'));
+
     }
 
     public function test_delete_worker(): void
@@ -46,12 +42,11 @@ class WorkersTest extends TestCase
             'site_id' => $this->site->id,
         ]);
 
-        Livewire::test(WorkersList::class, [
+        $this->delete(route('workers.destroy', [
             'server' => $this->server,
-            'site' => $this->site,
-        ])
-            ->callTableAction('delete', $worker->id)
-            ->assertSuccessful();
+            'worker' => $worker,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseMissing('workers', [
             'id' => $worker->id,
@@ -64,22 +59,19 @@ class WorkersTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
+        $this->post(route('workers.store', [
             'server' => $this->server,
-            'site' => $this->site,
+        ]), [
+            'command' => 'php artisan worker:work',
+            'user' => 'vito',
+            'auto_start' => 1,
+            'auto_restart' => 1,
+            'numprocs' => 1,
         ])
-            ->callAction('create', [
-                'command' => 'php artisan worker:work',
-                'user' => 'vito',
-                'auto_start' => 1,
-                'auto_restart' => 1,
-                'numprocs' => 1,
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('workers', [
             'server_id' => $this->server->id,
-            'site_id' => $this->site->id,
             'command' => 'php artisan worker:work',
             'user' => 'vito',
             'auto_start' => 1,
@@ -98,23 +90,22 @@ class WorkersTest extends TestCase
         $this->site->user = 'example';
         $this->site->save();
 
-        Livewire::test(Index::class, [
+        $this->post(route('workers.store', [
             'server' => $this->server,
             'site' => $this->site,
+        ]), [
+            'command' => 'php artisan worker:work',
+            'user' => 'example',
+            'auto_start' => 1,
+            'auto_restart' => 1,
+            'numprocs' => 1,
         ])
-            ->callAction('create', [
-                'command' => 'php artisan queue:work',
-                'user' => 'example',
-                'auto_start' => 1,
-                'auto_restart' => 1,
-                'numprocs' => 1,
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('workers', [
             'server_id' => $this->server->id,
             'site_id' => $this->site->id,
-            'command' => 'php artisan queue:work',
+            'command' => 'php artisan worker:work',
             'user' => 'example',
             'auto_start' => 1,
             'auto_restart' => 1,
@@ -129,18 +120,17 @@ class WorkersTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
+        $this->post(route('workers.store', [
             'server' => $this->server,
             'site' => $this->site,
+        ]), [
+            'command' => 'php artisan worker:work',
+            'user' => 'example',
+            'auto_start' => 1,
+            'auto_restart' => 1,
+            'numprocs' => 1,
         ])
-            ->callAction('create', [
-                'command' => 'php artisan queue:work',
-                'user' => 'example',
-                'auto_start' => 1,
-                'auto_restart' => 1,
-                'numprocs' => 1,
-            ])
-            ->assertHasActionErrors();
+            ->assertSessionHasErrors();
 
         $this->assertDatabaseMissing('workers', [
             'server_id' => $this->server->id,
@@ -160,18 +150,17 @@ class WorkersTest extends TestCase
             'user' => 'example',
         ]);
 
-        Livewire::test(Index::class, [
+        $this->post(route('workers.store', [
             'server' => $this->server,
             'site' => $this->site,
+        ]), [
+            'command' => 'php artisan worker:work',
+            'user' => 'example',
+            'auto_start' => 1,
+            'auto_restart' => 1,
+            'numprocs' => 1,
         ])
-            ->callAction('create', [
-                'command' => 'php artisan queue:work',
-                'user' => 'example',
-                'auto_start' => 1,
-                'auto_restart' => 1,
-                'numprocs' => 1,
-            ])
-            ->assertHasActionErrors();
+            ->assertSessionHasErrors();
 
         $this->assertDatabaseMissing('workers', [
             'server_id' => $this->server->id,
@@ -192,12 +181,11 @@ class WorkersTest extends TestCase
             'status' => WorkerStatus::STOPPED,
         ]);
 
-        Livewire::test(WorkersList::class, [
+        $this->post(route('workers.start', [
             'server' => $this->server,
-            'site' => $this->site,
-        ])
-            ->callTableAction('start', $worker->id)
-            ->assertSuccessful();
+            'worker' => $worker,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('workers', [
             'id' => $worker->id,
@@ -217,12 +205,11 @@ class WorkersTest extends TestCase
             'status' => WorkerStatus::RUNNING,
         ]);
 
-        Livewire::test(WorkersList::class, [
+        $this->post(route('workers.stop', [
             'server' => $this->server,
-            'site' => $this->site,
-        ])
-            ->callTableAction('stop', $worker->id)
-            ->assertSuccessful();
+            'worker' => $worker,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('workers', [
             'id' => $worker->id,
@@ -242,12 +229,11 @@ class WorkersTest extends TestCase
             'status' => WorkerStatus::RUNNING,
         ]);
 
-        Livewire::test(WorkersList::class, [
+        $this->post(route('workers.restart', [
             'server' => $this->server,
-            'site' => $this->site,
-        ])
-            ->callTableAction('restart', $worker->id)
-            ->assertSuccessful();
+            'worker' => $worker,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('workers', [
             'id' => $worker->id,
@@ -267,11 +253,10 @@ class WorkersTest extends TestCase
             'status' => WorkerStatus::RUNNING,
         ]);
 
-        Livewire::test(WorkersList::class, [
+        $this->get(route('workers.logs', [
             'server' => $this->server,
-            'site' => $this->site,
-        ])
-            ->callTableAction('logs', $worker->id)
+            'worker' => $worker,
+        ]))
             ->assertSuccessful();
     }
 }
