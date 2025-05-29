@@ -10,6 +10,7 @@ use App\Models\Server;
 use App\Models\SshKey;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\RouteAttributes\Attributes\Delete;
@@ -40,8 +41,14 @@ class ServerSshKeyController extends Controller
     {
         $this->authorize('createServer', [SshKey::class, $server]);
 
-        /** @var SshKey $sshKey */
-        $sshKey = user()->sshKeys()->findOrFail($request->input('key'));
+        /** @var ?SshKey $sshKey */
+        $sshKey = user()->sshKeys()->find($request->input('key'));
+
+        if (! $sshKey) {
+            throw ValidationException::withMessages([
+                'key' => ['The selected SSH key does not exist.'],
+            ]);
+        }
 
         app(DeployKeyToServer::class)->deploy($server, $sshKey);
 

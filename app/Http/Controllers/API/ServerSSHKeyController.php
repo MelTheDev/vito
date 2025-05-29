@@ -14,6 +14,7 @@ use App\Models\SshKey;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Validation\ValidationException;
 use Knuckles\Scribe\Attributes\BodyParam;
 use Knuckles\Scribe\Attributes\Endpoint;
 use Knuckles\Scribe\Attributes\Group;
@@ -62,8 +63,14 @@ class ServerSSHKeyController extends Controller
 
         $sshKey = null;
         if ($request->has('key_id')) {
-            /** @var SshKey $sshKey */
-            $sshKey = $user->sshKeys()->findOrFail($request->key_id);
+            /** @var ?SshKey $sshKey */
+            $sshKey = $user->sshKeys()->find($request->key_id);
+
+            if (! $sshKey) {
+                throw ValidationException::withMessages([
+                    'key' => ['The selected SSH key does not exist.'],
+                ]);
+            }
         }
 
         if (! $sshKey) {
@@ -76,6 +83,9 @@ class ServerSSHKeyController extends Controller
         return new SshKeyResource($sshKey);
     }
 
+    /**
+     * @throws SSHError
+     */
     #[Delete('{sshKey}', name: 'api.projects.servers.ssh-keys.delete', middleware: 'ability:write')]
     #[Endpoint(title: 'delete', description: 'Delete ssh key from server.')]
     #[Response(status: 204)]
