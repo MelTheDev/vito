@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Actions\SshKey\CreateSshKey;
 use App\Actions\SshKey\DeleteKeyFromServer;
 use App\Actions\SshKey\DeployKeyToServer;
+use App\Exceptions\SSHError;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SshKeyResource;
 use App\Models\Project;
@@ -41,6 +42,9 @@ class ServerSSHKeyController extends Controller
         return SshKeyResource::collection($server->sshKeys()->simplePaginate(25));
     }
 
+    /**
+     * @throws SSHError
+     */
     #[Post('/', name: 'api.projects.servers.ssh-keys.create', middleware: 'ability:write')]
     #[Endpoint(title: 'create', description: 'Deploy ssh key to server.')]
     #[BodyParam(name: 'key_id', description: 'The ID of the key.')]
@@ -58,9 +62,7 @@ class ServerSSHKeyController extends Controller
 
         $sshKey = null;
         if ($request->has('key_id')) {
-            $this->validate($request, DeployKeyToServer::rules($user, $server));
-
-            /** @var ?SshKey $sshKey */
+            /** @var SshKey $sshKey */
             $sshKey = $user->sshKeys()->findOrFail($request->key_id);
         }
 
@@ -69,7 +71,7 @@ class ServerSSHKeyController extends Controller
             $sshKey = app(CreateSshKey::class)->create($user, $request->all());
         }
 
-        app(DeployKeyToServer::class)->deploy($server, ['key_id' => $sshKey->id]);
+        app(DeployKeyToServer::class)->deploy($server, $sshKey);
 
         return new SshKeyResource($sshKey);
     }

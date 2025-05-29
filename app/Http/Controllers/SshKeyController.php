@@ -7,6 +7,7 @@ use App\Http\Resources\SshKeyResource;
 use App\Models\SshKey;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\RouteAttributes\Attributes\Delete;
@@ -17,7 +18,7 @@ use Spatie\RouteAttributes\Attributes\Prefix;
 
 #[Prefix('settings/ssh-keys')]
 #[Middleware(['auth'])]
-class SSHKeyController extends Controller
+class SshKeyController extends Controller
 {
     #[Get('/', name: 'ssh-keys')]
     public function index(): Response
@@ -27,6 +28,14 @@ class SSHKeyController extends Controller
         return Inertia::render('ssh-keys/index', [
             'sshKeys' => SshKeyResource::collection(user()->sshKeys()->simplePaginate(config('web.pagination_size'))),
         ]);
+    }
+
+    #[Get('/json', name: 'ssh-keys.json')]
+    public function json(): ResourceCollection
+    {
+        $this->authorize('viewAny', SshKey::class);
+
+        return SshKeyResource::collection(user()->sshKeys()->get());
     }
 
     #[Post('/', name: 'ssh-keys.store')]

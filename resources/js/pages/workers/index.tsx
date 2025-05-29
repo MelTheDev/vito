@@ -5,7 +5,7 @@ import ServerLayout from '@/layouts/server/layout';
 import HeaderContainer from '@/components/header-container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { PlusIcon } from 'lucide-react';
+import { BookOpenIcon, PlusIcon } from 'lucide-react';
 import Container from '@/components/container';
 import { DataTable } from '@/components/data-table';
 import { Worker } from '@/types/worker';
@@ -26,6 +26,12 @@ export default function WorkerIndex() {
         <HeaderContainer>
           <Heading title="Workers" description="Here you can manage server's workers" />
           <div className="flex items-center gap-2">
+            <a href="https://vitodeploy.com/docs/servers/workers" target="_blank">
+              <Button variant="outline">
+                <BookOpenIcon />
+                <span className="hidden lg:block">Docs</span>
+              </Button>
+            </a>
             <WorkerForm serverId={page.props.server.id}>
               <Button>
                 <PlusIcon />

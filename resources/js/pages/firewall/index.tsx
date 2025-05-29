@@ -6,7 +6,7 @@ import ServerLayout from '@/layouts/server/layout';
 import HeaderContainer from '@/components/header-container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { PlusIcon } from 'lucide-react';
+import { BookOpenIcon, PlusIcon } from 'lucide-react';
 import Container from '@/components/container';
 import { DataTable } from '@/components/data-table';
 import { columns } from '@/pages/firewall/components/columns';
@@ -26,6 +26,12 @@ export default function Firewall() {
         <HeaderContainer>
           <Heading title="Firewall" description="Here you can manage server's firewall rules" />
           <div className="flex items-center gap-2">
+            <a href="https://vitodeploy.com/docs/servers/firewall" target="_blank">
+              <Button variant="outline">
+                <BookOpenIcon />
+                <span className="hidden lg:block">Docs</span>
+              </Button>
+            </a>
             <RuleForm serverId={page.props.server.id}>
               <Button>
                 <PlusIcon />

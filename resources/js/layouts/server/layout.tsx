@@ -6,6 +6,7 @@ import {
   DatabaseIcon,
   FlameIcon,
   HomeIcon,
+  KeyIcon,
   ListEndIcon,
   MousePointerClickIcon,
   RocketIcon,
@@ -103,11 +104,12 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
       icon: ListEndIcon,
       isDisabled: isMenuDisabled,
     },
-    // {
-    //   title: 'SSH Keys',
-    //   href: '#',
-    //   icon: KeyIcon,
-    // },
+    {
+      title: 'SSH Keys',
+      href: route('server-ssh-keys', { server: page.props.server.id }),
+      icon: KeyIcon,
+      isDisabled: isMenuDisabled,
+    },
     // {
     //   title: 'Services',
     //   href: '#',

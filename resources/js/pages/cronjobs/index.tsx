@@ -5,7 +5,7 @@ import ServerLayout from '@/layouts/server/layout';
 import HeaderContainer from '@/components/header-container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { PlusIcon } from 'lucide-react';
+import { BookOpenIcon, PlusIcon } from 'lucide-react';
 import Container from '@/components/container';
 import { DataTable } from '@/components/data-table';
 import { CronJob } from '@/types/cronjob';
@@ -26,6 +26,12 @@ export default function CronJobIndex() {
         <HeaderContainer>
           <Heading title="Cron jobs" description="Here you can manage server's cron jobs" />
           <div className="flex items-center gap-2">
+            <a href="https://vitodeploy.com/docs/servers/cronjobs" target="_blank">
+              <Button variant="outline">
+                <BookOpenIcon />
+                <span className="hidden lg:block">Docs</span>
+              </Button>
+            </a>
             <CronJobForm serverId={page.props.server.id}>
               <Button>
                 <PlusIcon />

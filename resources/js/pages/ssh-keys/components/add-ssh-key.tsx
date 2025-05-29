@@ -23,7 +23,7 @@ type SshKeyForm = {
   public_key: string;
 };
 
-export default function AddSshKey({ children }: { children: ReactNode }) {
+export default function AddSshKey({ children, onKeyAdded }: { children: ReactNode; onKeyAdded?: () => void }) {
   const [open, setOpen] = useState(false);
 
   const form = useForm<Required<SshKeyForm>>({
@@ -36,6 +36,9 @@ export default function AddSshKey({ children }: { children: ReactNode }) {
     form.post(route('ssh-keys.store'), {
       onSuccess: () => {
         setOpen(false);
+        if (onKeyAdded) {
+          onKeyAdded();
+        }
       },
     });
   };

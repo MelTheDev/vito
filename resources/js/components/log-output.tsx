@@ -20,9 +20,12 @@ export default function LogOutput({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="relative">
-      <ScrollArea ref={scrollRef} className="bg-accent/50 text-accent-foreground relative h-[500px] w-full p-4 font-mono text-sm whitespace-pre-line">
-        {children}
+    <div className="relative w-full">
+      <ScrollArea
+        ref={scrollRef}
+        className="bg-accent/50 text-accent-foreground relative h-[500px] w-full overflow-auto p-4 font-mono text-sm break-all whitespace-pre-wrap"
+      >
+        <div>{children}</div>
         <div ref={endRef} />
         <ScrollBar orientation="vertical" />
       </ScrollArea>
@@ -37,7 +40,7 @@ export default function LogOutput({ children }: { children: ReactNode }) {
           <TooltipTrigger asChild>
             <div>{autoScroll ? <ClockArrowDownIcon className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}</div>
           </TooltipTrigger>
-          <TooltipContent>{autoScroll ? 'Turn off auto scroll' : 'Auto scroll down'}</TooltipContent>
+          <TooltipContent side="left">{autoScroll ? 'Turn off auto scroll' : 'Auto scroll down'}</TooltipContent>
         </Tooltip>
       </Button>
     </div>

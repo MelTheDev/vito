@@ -4,13 +4,13 @@ import Container from '@/components/container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/data-table';
-import { SSHKey } from '@/types/ssh-key';
+import { SshKey } from '@/types/ssh-key';
 import { columns } from '@/pages/ssh-keys/components/columns';
 import AddSshKey from '@/pages/ssh-keys/components/add-ssh-key';
 import { PaginatedData } from '@/types';
 
 type Page = {
-  sshKeys: PaginatedData<SSHKey>;
+  sshKeys: PaginatedData<SshKey>;
 };
 
 export default function SshKeys() {

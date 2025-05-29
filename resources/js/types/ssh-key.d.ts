@@ -1,6 +1,6 @@
 import { User } from '@/types/user';
 
-export interface SSHKey {
+export interface SshKey {
   id: number;
   user?: User;
   name: string;

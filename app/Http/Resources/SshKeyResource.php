@@ -16,7 +16,7 @@ class SshKeyResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => $this->user_id ? new UserResource($this->user) : null,
+            'user' => new UserResource($this->whenLoaded('user')),
             'name' => $this->name,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

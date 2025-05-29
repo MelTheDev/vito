@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\SshKeyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class SshKey extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\SshKeyFactory> */
+    /** @use HasFactory<SshKeyFactory> */
     use HasFactory;
 
     use SoftDeletes;
