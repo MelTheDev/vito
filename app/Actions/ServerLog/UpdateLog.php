@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Actions\Server;
+namespace App\Actions\ServerLog;
 
-use App\Models\Server;
+use App\Models\ServerLog;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class CreateServerLog
+class UpdateLog
 {
     /**
      * @param  array<string, mixed>  $input
      *
      * @throws ValidationException
      */
-    public function create(Server $server, array $input): void
+    public function update(ServerLog $serverLog, array $input): void
     {
-        $server->logs()->create([
-            'is_remote' => true,
+        Validator::make($input, self::rules())->validate();
+
+        $serverLog->update([
             'name' => $input['path'],
-            'type' => 'remote',
-            'disk' => 'ssh',
         ]);
     }
 

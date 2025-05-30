@@ -2,6 +2,7 @@ import { type NavItem } from '@/types';
 import {
   ArrowLeftIcon,
   ClockIcon,
+  CloudIcon,
   CloudUploadIcon,
   CogIcon,
   DatabaseIcon,
@@ -9,6 +10,7 @@ import {
   HomeIcon,
   KeyIcon,
   ListEndIcon,
+  LogsIcon,
   MousePointerClickIcon,
   RocketIcon,
   UsersIcon,
@@ -127,11 +129,25 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
     //   href: '#',
     //   icon: TerminalSquareIcon,
     // },
-    // {
-    //   title: 'Logs',
-    //   href: '#',
-    //   icon: LogsIcon,
-    // },
+    {
+      title: 'Logs',
+      href: route('logs', { server: page.props.server.id }),
+      icon: LogsIcon,
+      children: [
+        {
+          title: 'Server logs',
+          href: route('logs', { server: page.props.server.id }),
+          onlyActivePath: route('logs', { server: page.props.server.id }),
+          icon: LogsIcon,
+        },
+        {
+          title: 'Remote logs',
+          href: route('logs.remote', { server: page.props.server.id }),
+          onlyActivePath: route('logs.remote', { server: page.props.server.id }),
+          icon: CloudIcon,
+        },
+      ],
+    },
     // {
     //   title: 'Settings',
     //   href: '#',

@@ -54,6 +54,14 @@ class Handler extends ExceptionHandler
             abort(404, class_basename($e->getModel()).' not found.');
         }
 
+        if ($e instanceof SSHError) {
+            if ($request->header('X-Inertia')) {
+                return back()->with('error', $e->getLog()?->getContent(30) ?? $e->getMessage());
+            }
+
+            return response()->json(['error' => $e->getLog()?->getContent(30) ?? $e->getMessage()], 500);
+        }
+
         return parent::render($request, $e);
     }
 }

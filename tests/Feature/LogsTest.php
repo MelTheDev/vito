@@ -3,31 +3,28 @@
 namespace Tests\Feature;
 
 use App\Models\ServerLog;
-use App\Web\Pages\Servers\Logs\Index;
-use App\Web\Pages\Servers\Logs\RemoteLogs;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class LogsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_see_logs()
+    public function test_see_logs(): void
     {
         $this->actingAs($this->user);
 
-        /** @var ServerLog $log */
-        $log = ServerLog::factory()->create([
+        ServerLog::factory()->create([
             'server_id' => $this->server->id,
         ]);
 
-        $this->get(Index::getUrl(['server' => $this->server]))
+        $this->get(route('logs', $this->server))
             ->assertSuccessful()
-            ->assertSee($log->name);
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('server-logs/index'));
     }
 
-    public function test_see_logs_remote()
+    public function test_see_logs_remote(): void
     {
         $this->actingAs($this->user);
 
@@ -38,20 +35,19 @@ class LogsTest extends TestCase
             'name' => 'see-remote-log',
         ]);
 
-        $this->get(RemoteLogs::getUrl(['server' => $this->server]))
+        $this->get(route('logs.remote', $this->server))
             ->assertSuccessful()
-            ->assertSee('see-remote-log');
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('server-logs/index'));
     }
 
-    public function test_create_remote_log()
+    public function test_create_remote_log(): void
     {
         $this->actingAs($this->user);
 
-        Livewire::test(RemoteLogs::class, ['server' => $this->server])
-            ->callAction('create', [
-                'path' => 'test-path',
-            ])
-            ->assertSuccessful();
+        $this->post(route('logs.store', $this->server), [
+            'path' => 'test-path',
+        ])
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('server_logs', [
             'is_remote' => true,

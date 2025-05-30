@@ -26,7 +26,7 @@ export default function LogOutput({ children }: { children: ReactNode }) {
         className="bg-accent/50 text-accent-foreground relative h-[500px] w-full overflow-auto p-4 font-mono text-sm break-all whitespace-pre-wrap"
       >
         <div>{children}</div>
-        <div ref={endRef} />
+        <div ref={endRef} className="h-20" />
         <ScrollBar orientation="vertical" />
       </ScrollArea>
       <Button
