@@ -7,6 +7,7 @@ import { usePage } from '@inertiajs/react';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { CheckCircle2Icon, CircleXIcon, InfoIcon, TriangleAlertIcon } from 'lucide-react';
 
 export default function Layout({
   children,
@@ -26,10 +27,38 @@ export default function Layout({
   //   localStorage.setItem('sidebar', String(open));
   // };
 
-  if (page.props.flash && page.props.flash.success) toast.success(page.props.flash.success);
-  if (page.props.flash && page.props.flash.error) toast.error(page.props.flash.error);
-  if (page.props.flash && page.props.flash.info) toast.info(page.props.flash.info);
-  if (page.props.flash && page.props.flash.warning) toast.error(page.props.flash.warning);
+  if (page.props.flash && page.props.flash.success) {
+    toast(
+      <div className="flex items-center gap-2">
+        <CheckCircle2Icon className="text-success size-5" />
+        {page.props.flash.success}
+      </div>,
+    );
+  }
+  if (page.props.flash && page.props.flash.error) {
+    toast(
+      <div className="flex items-center gap-2">
+        <CircleXIcon className="text-destructive size-5" />
+        {page.props.flash.error}
+      </div>,
+    );
+  }
+  if (page.props.flash && page.props.flash.warning) {
+    toast(
+      <div className="flex items-center gap-2">
+        <TriangleAlertIcon className="text-warning size-5" />
+        {page.props.flash.warning}
+      </div>,
+    );
+  }
+  if (page.props.flash && page.props.flash.info) {
+    toast(
+      <div className="flex items-center gap-2">
+        <InfoIcon className="text-info size-5" />
+        {page.props.flash.info}
+      </div>,
+    );
+  }
 
   const queryClient = new QueryClient();
 

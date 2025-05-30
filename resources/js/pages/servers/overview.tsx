@@ -6,6 +6,7 @@ import { usePage } from '@inertiajs/react';
 import Container from '@/components/container';
 import Heading from '@/components/heading';
 import { PaginatedData } from '@/types';
+import MetricsCards from '@/pages/monitoring/components/metrics-cards';
 
 export default function ServerOverview() {
   const page = usePage<{
@@ -16,6 +17,7 @@ export default function ServerOverview() {
   return (
     <Container className="max-w-5xl">
       <Heading title="Overview" description="Here you can see an overview of your server" />
+      <MetricsCards server={page.props.server} />
       <DataTable columns={columns} paginatedData={page.props.logs} />
     </Container>
   );

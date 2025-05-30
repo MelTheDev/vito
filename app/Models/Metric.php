@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Database\Factories\MetricFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Metric extends Model
 {
-    /** @use HasFactory<\Database\Factories\MetricFactory> */
+    /** @use HasFactory<MetricFactory> */
     use HasFactory;
 
     protected $fillable = [

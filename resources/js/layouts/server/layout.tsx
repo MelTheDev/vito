@@ -1,6 +1,7 @@
 import { type NavItem } from '@/types';
 import {
   ArrowLeftIcon,
+  ChartPieIcon,
   ClockIcon,
   CloudIcon,
   CloudUploadIcon,
@@ -119,11 +120,12 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
       icon: CogIcon,
       isDisabled: isMenuDisabled,
     },
-    // {
-    //   title: 'Metrics',
-    //   href: '#',
-    //   icon: ChartPieIcon,
-    // },
+    {
+      title: 'Monitoring',
+      href: route('monitoring', { server: page.props.server.id }),
+      icon: ChartPieIcon,
+      isDisabled: isMenuDisabled,
+    },
     // {
     //   title: 'Console',
     //   href: '#',

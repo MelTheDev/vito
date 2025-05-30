@@ -5,6 +5,7 @@ namespace App\Actions\Monitoring;
 use App\Models\Server;
 use App\Models\Service;
 use App\SSH\Services\ServiceInterface;
+use Illuminate\Support\Facades\Validator;
 
 class UpdateMetricSettings
 {
@@ -13,6 +14,8 @@ class UpdateMetricSettings
      */
     public function update(Server $server, array $input): void
     {
+        Validator::make($input, self::rules())->validate();
+
         /** @var Service $service */
         $service = $server->monitoring();
         /** @var ServiceInterface $handler */

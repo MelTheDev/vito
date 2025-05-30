@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ServerLogFactory;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,7 +26,7 @@ use Throwable;
  */
 class ServerLog extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\ServerLogFactory> */
+    /** @use HasFactory<ServerLogFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -103,6 +104,10 @@ class ServerLog extends AbstractModel
             return Storage::disk('local')->download($tmpName, str($this->name)->afterLast('/'));
         }
 
+        if (! Storage::disk($this->disk)->exists($this->name)) {
+            abort(404, "Log file doesn't exist or is empty!");
+        }
+
         return Storage::disk($this->disk)->download($this->name);
     }
 
@@ -114,7 +119,7 @@ class ServerLog extends AbstractModel
     {
         $query->where('is_remote', $active);
 
-        if ($site instanceof \App\Models\Site) {
+        if ($site instanceof Site) {
             $query->where('name', 'like', $site->path.'%');
         }
 

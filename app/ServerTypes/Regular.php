@@ -39,5 +39,6 @@ class Regular extends AbstractType
         $this->addSupervisor();
         $this->addRedis();
         $this->addUfw();
+        $this->addMonitoring();
     }
 }

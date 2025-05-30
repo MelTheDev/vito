@@ -641,4 +641,14 @@ return [
         'pink',
         'rose',
     ],
+
+    'metrics_periods' => [
+        '10m',
+        '30m',
+        '1h',
+        '12h',
+        '1d',
+        '7d',
+        'custom',
+    ],
 ];

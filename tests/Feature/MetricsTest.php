@@ -4,9 +4,8 @@ namespace Tests\Feature;
 
 use App\Enums\ServiceStatus;
 use App\Models\Service;
-use App\Web\Pages\Servers\Metrics\Index;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class MetricsTest extends TestCase
@@ -25,19 +24,9 @@ class MetricsTest extends TestCase
             'status' => ServiceStatus::READY,
         ]);
 
-        $this->get(Index::getUrl(['server' => $this->server]))
+        $this->get(route('monitoring', $this->server))
             ->assertSuccessful()
-            ->assertSee('CPU Load')
-            ->assertSee('Memory Usage')
-            ->assertSee('Disk Usage');
-    }
-
-    public function test_cannot_visit_metrics(): void
-    {
-        $this->actingAs($this->user);
-
-        $this->get(Index::getUrl(['server' => $this->server]))
-            ->assertForbidden();
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('monitoring/index'));
     }
 
     public function test_update_data_retention(): void
@@ -52,13 +41,10 @@ class MetricsTest extends TestCase
             'status' => ServiceStatus::READY,
         ]);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
+        $this->patch(route('monitoring.update', $this->server), [
+            'data_retention' => 365,
         ])
-            ->callAction('data-retention', [
-                'data_retention' => 365,
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('services', [
             'server_id' => $this->server->id,

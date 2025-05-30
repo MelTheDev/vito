@@ -67,6 +67,7 @@ export interface Configs {
   cronjob_intervals: {
     [key: string]: string;
   };
+  metrics_periods: string[];
 
   [key: string]: unknown;
 }

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class GetMetrics
@@ -17,8 +18,13 @@ class GetMetrics
      */
     public function filter(Server $server, array $input): Collection
     {
-        if (isset($input['from']) && isset($input['to']) && $input['from'] === $input['to']) {
+        Validator::make($input, self::rules($input))->validate();
+
+        if (isset($input['from'])) {
             $input['from'] = Carbon::parse($input['from'])->format('Y-m-d').' 00:00:00';
+        }
+
+        if (isset($input['to'])) {
             $input['to'] = Carbon::parse($input['to'])->format('Y-m-d').' 23:59:59';
         }
 
@@ -145,8 +151,8 @@ class GetMetrics
         ];
 
         if (isset($input['period']) && $input['period'] === 'custom') {
-            $rules['from'] = ['required', 'date', 'before:to'];
-            $rules['to'] = ['required', 'date', 'after:from'];
+            $rules['from'] = ['required', 'date', 'before_or_equal:to'];
+            $rules['to'] = ['required', 'date', 'after_or_equal:from'];
         }
 
         return $rules;

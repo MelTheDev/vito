@@ -10,6 +10,7 @@ use App\SSH\Services\PHP\PHP;
 use App\SSH\Services\ProcessManager\ProcessManager;
 use App\SSH\Services\ServiceInterface;
 use App\SSH\Services\Webserver\Webserver;
+use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -28,7 +29,7 @@ use Illuminate\Support\Str;
  */
 class Service extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\ServiceFactory> */
+    /** @use HasFactory<ServiceFactory> */
     use HasFactory;
 
     protected $fillable = [

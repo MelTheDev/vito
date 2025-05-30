@@ -1,5 +1,5 @@
 import { Server } from '@/types/server';
-import { ClipboardCheckIcon, CloudIcon, LoaderCircleIcon, MapPinIcon, MousePointerClickIcon, SlashIcon } from 'lucide-react';
+import { CheckIcon, CloudIcon, LoaderCircleIcon, MousePointerClickIcon, SlashIcon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import ServerActions from '@/pages/servers/components/actions';
 import { cn } from '@/lib/utils';
@@ -36,29 +36,6 @@ export default function ServerHeader({ server, site }: { server: Server; site?: 
         <div className="flex items-center space-x-2 text-xs">
           <Tooltip>
             <TooltipTrigger asChild>
-              <div>
-                {statusForm.processing && <LoaderCircleIcon className="size-3 animate-spin" />}
-                {!statusForm.processing && <StatusRipple className="cursor-pointer" onClick={checkStatus} variant={server.status_color} />}
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <span>{server.status}</span>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center space-x-2">
-                <div className="hidden lg:inline-flex">{server.name}</div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <span className="lg:hidden">{server.name}</span>
-              <span className="hidden lg:inline-flex">Server Name</span>
-            </TooltipContent>
-          </Tooltip>
-          <SlashIcon className="size-3" />
-          <Tooltip>
-            <TooltipTrigger asChild>
               <div className="flex items-center space-x-1">
                 <CloudIcon className="size-4" />
                 <div className="hidden lg:inline-flex">{server.provider}</div>
@@ -74,16 +51,27 @@ export default function ServerHeader({ server, site }: { server: Server; site?: 
           <SlashIcon className="size-3" />
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center space-x-1">
-                {ipCopied ? <ClipboardCheckIcon className="text-success size-4" /> : <MapPinIcon className="size-4" />}
-                <div className="hidden cursor-pointer lg:inline-flex" onClick={() => copyIp(server.ip)}>
-                  {server.ip}
+              {ipCopied ? (
+                <CheckIcon className="text-success size-3" />
+              ) : (
+                <div>
+                  {statusForm.processing && <LoaderCircleIcon className="size-3 animate-spin" />}
+                  {!statusForm.processing && <StatusRipple className="cursor-pointer" onClick={checkStatus} variant={server.status_color} />}
                 </div>
+              )}
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <span>{server.status}</span>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="cursor-pointer lg:inline-flex" onClick={() => copyIp(server.ip)}>
+                {server.ip}
               </div>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <span className="lg:hidden">{server.ip}</span>
-              <span className="hidden lg:inline-flex">Server IP</span>
+              <span>Server IP</span>
             </TooltipContent>
           </Tooltip>
           {['installing', 'installation_failed'].includes(server.status) && (

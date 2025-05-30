@@ -122,4 +122,13 @@ abstract class AbstractType implements ServerType
             'version' => 'latest',
         ]);
     }
+
+    protected function addMonitoring(): void
+    {
+        $this->server->services()->create([
+            'type' => 'monitoring',
+            'name' => 'remote-monitor',
+            'version' => 'latest',
+        ]);
+    }
 }
