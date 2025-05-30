@@ -10,7 +10,7 @@ abstract class AbstractWebserver extends AbstractService implements Webserver
     public function creationRules(array $input): array
     {
         return [
-            'type' => [
+            'name' => [
                 'required',
                 function (string $attribute, mixed $value, Closure $fail): void {
                     $webserverExists = $this->service->server->webserver();

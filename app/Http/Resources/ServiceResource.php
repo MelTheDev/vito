@@ -23,6 +23,8 @@ class ServiceResource extends JsonResource
             'version' => $this->version,
             'unit' => $this->unit,
             'status' => $this->status,
+            'status_color' => Service::$statusColors[$this->status] ?? 'gray',
+            'icon' => config('core.service_icons')[$this->name] ?? '',
             'is_default' => $this->is_default,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -77,11 +77,15 @@ function Action({ type, worker }: { type: 'start' | 'stop' | 'restart'; worker: 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>{type}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="capitalize">
+          {type}
+        </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{type} worker</DialogTitle>
+          <DialogTitle>
+            <span className="capitalize">{type}</span> worker
+          </DialogTitle>
           <DialogDescription className="sr-only">{type} worker</DialogDescription>
         </DialogHeader>
         <p className="p-4">Are you sure you want to {type} the worker?</p>
@@ -89,7 +93,7 @@ function Action({ type, worker }: { type: 'start' | 'stop' | 'restart'; worker: 
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button disabled={form.processing} onClick={submit}>
+          <Button variant={['stop'].includes(type) ? 'destructive' : 'default'} disabled={form.processing} onClick={submit} className="capitalize">
             {form.processing && <LoaderCircleIcon className="animate-spin" />}
             <FormSuccessful successful={form.recentlySuccessful} />
             {type}

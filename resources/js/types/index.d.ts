@@ -53,6 +53,9 @@ export interface Configs {
   service_versions: {
     [service: string]: string[];
   };
+  service_types: {
+    [service: string]: string;
+  };
   colors: string[];
   webservers: string[];
   databases: string[];

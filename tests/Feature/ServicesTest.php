@@ -5,12 +5,10 @@ namespace Tests\Feature;
 use App\Enums\ServiceStatus;
 use App\Facades\SSH;
 use App\Models\Server;
-use App\Web\Pages\Servers\Services\Index;
-use App\Web\Pages\Servers\Services\Widgets\ServicesList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class ServicesTest extends TestCase
@@ -21,14 +19,11 @@ class ServicesTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $this->get(Index::getUrl(['server' => $this->server]))
+        $this->get(route('services', [
+            'server' => $this->server,
+        ]))
             ->assertSuccessful()
-            ->assertSee('mysql')
-            ->assertSee('nginx')
-            ->assertSee('php')
-            ->assertSee('supervisor')
-            ->assertSee('redis')
-            ->assertSee('ufw');
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('services/index'));
     }
 
     /**
@@ -44,11 +39,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: active');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.restart', [
             'server' => $this->server,
-        ])
-            ->callTableAction('restart', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -66,11 +61,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: inactive');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.restart', [
             'server' => $this->server,
-        ])
-            ->callTableAction('restart', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -88,11 +83,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: inactive');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.stop', [
             'server' => $this->server,
-        ])
-            ->callTableAction('stop', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -110,11 +105,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: active');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.stop', [
             'server' => $this->server,
-        ])
-            ->callTableAction('stop', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -134,11 +129,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: active');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.start', [
             'server' => $this->server,
-        ])
-            ->callTableAction('start', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -156,11 +151,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: inactive');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.start', [
             'server' => $this->server,
-        ])
-            ->callTableAction('start', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -180,11 +175,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: active');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.enable', [
             'server' => $this->server,
-        ])
-            ->callTableAction('enable', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -202,11 +197,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: inactive');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.enable', [
             'server' => $this->server,
-        ])
-            ->callTableAction('enable', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -224,11 +219,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: inactive');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.disable', [
             'server' => $this->server,
-        ])
-            ->callTableAction('disable', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -246,11 +241,11 @@ class ServicesTest extends TestCase
 
         SSH::fake('Active: active');
 
-        Livewire::test(ServicesList::class, [
+        $this->post(route('services.disable', [
             'server' => $this->server,
-        ])
-            ->callTableAction('disable', $service->id)
-            ->assertSuccessful();
+            'service' => $service->id,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $service->refresh();
 
@@ -281,14 +276,13 @@ class ServicesTest extends TestCase
             $server->provider()->generateKeyPair();
         }
 
-        Livewire::test(Index::class, [
+        $this->post(route('services.store', [
             'server' => $server,
+        ]), [
+            'name' => $name,
+            'version' => $version,
         ])
-            ->callAction('install', [
-                'name' => $name,
-                'version' => $version,
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('services', [
             'server_id' => $server->id,
@@ -298,18 +292,33 @@ class ServicesTest extends TestCase
         ]);
     }
 
+    /**
+     * @return array<array<string>>
+     */
     public static function data(): array
     {
         return [
             ['nginx'],
+            ['php'],
+            ['supervisor'],
+            ['redis'],
+            ['mysql'],
         ];
     }
 
+    /**
+     * @return array<array<string>>
+     */
     public static function installData(): array
     {
         return [
             [
                 'nginx',
+                'webserver',
+                'latest',
+            ],
+            [
+                'caddy',
                 'webserver',
                 'latest',
             ],

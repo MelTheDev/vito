@@ -3,6 +3,7 @@ import {
   ArrowLeftIcon,
   ClockIcon,
   CloudUploadIcon,
+  CogIcon,
   DatabaseIcon,
   FlameIcon,
   HomeIcon,
@@ -110,11 +111,12 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
       icon: KeyIcon,
       isDisabled: isMenuDisabled,
     },
-    // {
-    //   title: 'Services',
-    //   href: '#',
-    //   icon: CogIcon,
-    // },
+    {
+      title: 'Services',
+      href: route('services', { server: page.props.server.id }),
+      icon: CogIcon,
+      isDisabled: isMenuDisabled,
+    },
     // {
     //   title: 'Metrics',
     //   href: '#',

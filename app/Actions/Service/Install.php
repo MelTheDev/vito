@@ -15,6 +15,8 @@ class Install
      */
     public function install(Server $server, array $input): Service
     {
+        Validator::make($input, self::rules($input))->validate();
+
         $input['type'] = config('core.service_types')[$input['name']];
 
         $service = new Service([

@@ -107,25 +107,27 @@ export default function WorkerForm({ serverId, worker, children }: { serverId: n
               />
               <InputError message={form.errors.numprocs} />
             </FormField>
+
+            <div className="grid grid-cols-2 gap-6">
+              {/*auto start*/}
+              <FormField>
+                <div className="flex items-center space-x-2">
+                  <Switch id="auto_start" checked={form.data.auto_start} onCheckedChange={(value) => form.setData('auto_start', value)} />
+                  <Label htmlFor="auto_start">Auto start</Label>
+                  <InputError message={form.errors.auto_start} />
+                </div>
+              </FormField>
+
+              {/*auto restart*/}
+              <FormField>
+                <div className="flex items-center space-x-2">
+                  <Switch id="auto_restart" checked={form.data.auto_restart} onCheckedChange={(value) => form.setData('auto_restart', value)} />
+                  <Label htmlFor="auto_restart">Auto restart</Label>
+                  <InputError message={form.errors.auto_restart} />
+                </div>
+              </FormField>
+            </div>
           </FormFields>
-
-          {/*auto start*/}
-          <FormField>
-            <div className="flex items-center space-x-2">
-              <Switch id="auto_start" checked={form.data.auto_start} onCheckedChange={(value) => form.setData('auto_start', value)} />
-              <Label htmlFor="auto_start">Auto start</Label>
-              <InputError message={form.errors.auto_start} />
-            </div>
-          </FormField>
-
-          {/*auto restart*/}
-          <FormField>
-            <div className="flex items-center space-x-2">
-              <Switch id="auto_restart" checked={form.data.auto_restart} onCheckedChange={(value) => form.setData('auto_restart', value)} />
-              <Label htmlFor="auto_restart">Auto restart</Label>
-              <InputError message={form.errors.auto_restart} />
-            </div>
-          </FormField>
         </Form>
         <DialogFooter>
           <DialogClose asChild>
