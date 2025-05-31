@@ -1,7 +1,7 @@
 import { type NavItem } from '@/types';
 import {
   ArrowLeftIcon,
-  ChartPieIcon,
+  ChartLineIcon,
   ClockIcon,
   CloudIcon,
   CloudUploadIcon,
@@ -14,6 +14,7 @@ import {
   LogsIcon,
   MousePointerClickIcon,
   RocketIcon,
+  TerminalSquareIcon,
   UsersIcon,
 } from 'lucide-react';
 import { ReactNode } from 'react';
@@ -123,14 +124,15 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
     {
       title: 'Monitoring',
       href: route('monitoring', { server: page.props.server.id }),
-      icon: ChartPieIcon,
+      icon: ChartLineIcon,
       isDisabled: isMenuDisabled,
     },
-    // {
-    //   title: 'Console',
-    //   href: '#',
-    //   icon: TerminalSquareIcon,
-    // },
+    {
+      title: 'Console',
+      href: route('console', { server: page.props.server.id }),
+      icon: TerminalSquareIcon,
+      isDisabled: isMenuDisabled,
+    },
     {
       title: 'Logs',
       href: route('logs', { server: page.props.server.id }),

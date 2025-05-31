@@ -7,15 +7,27 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\RouteAttributes\Attributes\Get;
 use Spatie\RouteAttributes\Attributes\Middleware;
 use Spatie\RouteAttributes\Attributes\Post;
+use Spatie\RouteAttributes\Attributes\Prefix;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-#[Middleware('auth')]
+#[Prefix('servers/{server}/console')]
+#[Middleware(['auth', 'has-project'])]
 class ConsoleController extends Controller
 {
-    #[Post('servers/{server}/console/run', name: 'servers.console.run')]
+    #[Get('/', name: 'console')]
+    public function index(Server $server): Response
+    {
+        $this->authorize('update', $server);
+
+        return Inertia::render('console/index');
+    }
+
+    #[Post('/run', name: 'console.run')]
     public function run(Server $server, Request $request): StreamedResponse
     {
         $this->authorize('update', $server);
@@ -61,7 +73,7 @@ class ConsoleController extends Controller
         );
     }
 
-    #[Get('servers/{server}/console/working-dir', name: 'servers.console.working-dir')]
+    #[Get('/working-dir', name: 'console.working-dir')]
     public function workingDir(Server $server): JsonResponse
     {
         return response()->json([

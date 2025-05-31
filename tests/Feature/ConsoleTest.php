@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Facades\SSH;
-use App\Web\Pages\Servers\Console\Index;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class ConsoleTest extends TestCase
@@ -15,9 +15,9 @@ class ConsoleTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $this->get(Index::getUrl(['server' => $this->server]))
+        $this->get(route('console', $this->server))
             ->assertSuccessful()
-            ->assertSeeText('Headless Console');
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('console/index'));
     }
 
     public function test_run(): void
@@ -26,7 +26,7 @@ class ConsoleTest extends TestCase
 
         $this->actingAs($this->user);
 
-        $this->post(route('servers.console.run', $this->server), [
+        $this->post(route('console.run', $this->server), [
             'user' => 'vito',
             'command' => 'ls -la',
         ])->assertStreamedContent('fake output');
@@ -36,11 +36,11 @@ class ConsoleTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $this->post(route('servers.console.run', $this->server), [
+        $this->post(route('console.run', $this->server), [
             'user' => 'vito',
         ])->assertSessionHasErrors('command');
 
-        $this->post(route('servers.console.run', $this->server), [
+        $this->post(route('console.run', $this->server), [
             'command' => 'ls -la',
         ])->assertSessionHasErrors('user');
     }

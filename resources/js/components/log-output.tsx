@@ -3,8 +3,9 @@ import { ReactNode, useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, ClockArrowDownIcon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
-export default function LogOutput({ children }: { children: ReactNode }) {
+export default function LogOutput({ className, children }: { className?: string; children: ReactNode }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(false);
@@ -23,16 +24,19 @@ export default function LogOutput({ children }: { children: ReactNode }) {
     <div className="relative w-full">
       <ScrollArea
         ref={scrollRef}
-        className="bg-accent/50 text-accent-foreground relative h-[500px] w-full overflow-auto p-4 font-mono text-sm break-all whitespace-pre-wrap"
+        className={cn(
+          'bg-accent/50 text-accent-foreground relative h-[500px] w-full overflow-auto p-4 font-mono text-sm break-all whitespace-pre-wrap',
+          className,
+        )}
       >
         <div>{children}</div>
-        <div ref={endRef} className="h-20" />
+        <div ref={endRef} />
         <ScrollBar orientation="vertical" />
       </ScrollArea>
       <Button
         variant="outline"
         size="icon"
-        className="bg-accent! absolute right-4 bottom-4"
+        className="bg-accent! absolute right-4 bottom-4 z-10"
         onClick={toggleAutoScroll}
         title={autoScroll ? 'Disable auto-scroll' : 'Enable auto-scroll'}
       >
