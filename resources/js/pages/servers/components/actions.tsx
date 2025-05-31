@@ -1,8 +1,53 @@
 import { Server } from '@/types/server';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { MoreVerticalIcon } from 'lucide-react';
+import { LoaderCircleIcon, MoreVerticalIcon } from 'lucide-react';
 import DeleteServer from '@/pages/servers/components/delete-server';
+import RebootServer from '@/pages/servers/components/reboot-server';
+import { useForm } from '@inertiajs/react';
+import UpdateServer from '@/pages/servers/components/update-server';
+
+function CheckForUpdates({ server }: { server: Server }) {
+  const form = useForm();
+
+  const submit = () => {
+    form.post(route('servers.check-for-updates', server.id));
+  };
+
+  return (
+    <DropdownMenuItem
+      className="w-40"
+      onSelect={(e) => {
+        e.preventDefault();
+        submit();
+      }}
+    >
+      {form.processing && <LoaderCircleIcon className="size-4 animate-spin" />}
+      Check for updates
+    </DropdownMenuItem>
+  );
+}
+
+function CheckConnection({ server }: { server: Server }) {
+  const form = useForm();
+
+  const submit = () => {
+    form.patch(route('servers.status', server.id));
+  };
+
+  return (
+    <DropdownMenuItem
+      className="w-40"
+      onSelect={(e) => {
+        e.preventDefault();
+        submit();
+      }}
+    >
+      {form.processing && <LoaderCircleIcon className="size-4 animate-spin" />}
+      Check connection
+    </DropdownMenuItem>
+  );
+}
 
 export default function ServerActions({ server }: { server: Server }) {
   return (
@@ -14,7 +59,16 @@ export default function ServerActions({ server }: { server: Server }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>Copy payment ID</DropdownMenuItem>
+        <CheckConnection server={server} />
+        <RebootServer server={server}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Reboot</DropdownMenuItem>
+        </RebootServer>
+        <CheckForUpdates server={server} />
+        <UpdateServer server={server}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={server.available_updates == 0}>
+            Update
+          </DropdownMenuItem>
+        </UpdateServer>
         <DropdownMenuSeparator />
         <DeleteServer server={server}>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()} variant="destructive">

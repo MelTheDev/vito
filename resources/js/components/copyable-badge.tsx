@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 
-export default function CommandCell({ command }: { command: string }) {
+export default function CopyableBadge({ text }: { text: string }) {
   const [copySuccess, setCopySuccess] = useState(false);
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(command).then(() => {
+    navigator.clipboard.writeText(text).then(() => {
       setCopySuccess(true);
       setTimeout(() => {
         setCopySuccess(false);
@@ -18,7 +18,7 @@ export default function CommandCell({ command }: { command: string }) {
       <TooltipTrigger asChild>
         <div className="inline-flex cursor-pointer justify-start space-x-2 truncate" onClick={copyToClipboard}>
           <Badge variant={copySuccess ? 'success' : 'outline'} className="block max-w-[150px] overflow-ellipsis">
-            {command}
+            {text}
           </Badge>
         </div>
       </TooltipTrigger>

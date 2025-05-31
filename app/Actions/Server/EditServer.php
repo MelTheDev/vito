@@ -4,6 +4,7 @@ namespace App\Actions\Server;
 
 use App\Models\Server;
 use App\ValidationRules\RestrictedIPAddressesRule;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -17,6 +18,8 @@ class EditServer
      */
     public function edit(Server $server, array $input): Server
     {
+        Validator::make($input, self::rules($server))->validate();
+
         $checkConnection = false;
         if (isset($input['name'])) {
             $server->name = $input['name'];
@@ -62,6 +65,7 @@ class EditServer
                 Rule::unique('servers')->where('project_id', $server->project_id)->ignore($server->id),
             ],
             'local_ip' => [
+                'nullable',
                 'string',
                 Rule::unique('servers')->where('project_id', $server->project_id)->ignore($server->id),
             ],

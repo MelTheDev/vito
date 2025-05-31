@@ -69,7 +69,7 @@ export default function Layout({
         <SidebarInset>
           <AppHeader />
           <div className="flex flex-1 flex-col">{children}</div>
-          <Toaster richColors />
+          <Toaster richColors position="bottom-center" />
         </SidebarInset>
       </SidebarProvider>
     </QueryClientProvider>

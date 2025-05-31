@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Server\CreateServer;
+use App\Actions\Server\RebootServer;
+use App\Actions\Server\Update;
+use App\Exceptions\SSHError;
 use App\Http\Resources\ServerLogResource;
 use App\Http\Resources\ServerProviderResource;
 use App\Http\Resources\ServerResource;
@@ -118,6 +121,39 @@ class ServerController extends Controller
             ->with($server->getStatusColor(), __('Server status is :status', [
                 'status' => $server->status,
             ]));
+    }
+
+    #[Post('/{server}/reboot', name: 'servers.reboot')]
+    public function reboot(Server $server): RedirectResponse
+    {
+        $this->authorize('update', $server);
+
+        app(RebootServer::class)->reboot($server);
+
+        return back()->with('success', 'Server is being rebooted.');
+    }
+
+    /**
+     * @throws SSHError
+     */
+    #[Post('/{server}/check-for-updates', name: 'servers.check-for-updates')]
+    public function checkForUpdates(Server $server): RedirectResponse
+    {
+        $this->authorize('update', $server);
+
+        $server->checkForUpdates();
+
+        return back()->with('info', 'Available updates: '.$server->refresh()->available_updates);
+    }
+
+    #[Post('/{server}/update', name: 'servers.update')]
+    public function update(Server $server): RedirectResponse
+    {
+        $this->authorize('update', $server);
+
+        app(Update::class)->update($server);
+
+        return back()->with('info', 'Server is being updated. This may take a while.');
     }
 
     #[Delete('/{server}', name: 'servers.destroy')]

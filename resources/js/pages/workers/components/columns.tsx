@@ -19,7 +19,7 @@ import { Worker } from '@/types/worker';
 import { Badge } from '@/components/ui/badge';
 import DateTime from '@/components/date-time';
 import WorkerForm from '@/pages/workers/components/form';
-import CommandCell from '@/components/command-cell';
+import CopyableBadge from '@/components/copyable-badge';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import LogOutput from '@/components/log-output';
@@ -145,7 +145,7 @@ export const columns: ColumnDef<Worker>[] = [
     enableColumnFilter: true,
     enableSorting: true,
     cell: ({ row }) => {
-      return <CommandCell command={row.original.command} />;
+      return <CopyableBadge text={row.original.command} />;
     },
   },
   {

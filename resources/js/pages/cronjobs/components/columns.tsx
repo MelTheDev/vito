@@ -19,7 +19,7 @@ import { CronJob } from '@/types/cronjob';
 import { Badge } from '@/components/ui/badge';
 import DateTime from '@/components/date-time';
 import CronJobForm from '@/pages/cronjobs/components/form';
-import CommandCell from '@/components/command-cell';
+import CopyableBadge from '@/components/copyable-badge';
 
 function Delete({ cronJob }: { cronJob: CronJob }) {
   const [open, setOpen] = useState(false);
@@ -67,7 +67,7 @@ export const columns: ColumnDef<CronJob>[] = [
     enableColumnFilter: true,
     enableSorting: true,
     cell: ({ row }) => {
-      return <CommandCell command={row.original.command} />;
+      return <CopyableBadge text={row.original.command} />;
     },
   },
   {

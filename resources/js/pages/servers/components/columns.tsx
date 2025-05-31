@@ -19,6 +19,13 @@ export const columns: ColumnDef<Server>[] = [
     header: 'Name',
     enableColumnFilter: true,
     enableSorting: true,
+    cell: ({ row }) => {
+      return (
+        <Link className="hover:underline" href={route('servers.show', { server: row.original.id })} prefetch>
+          {row.original.name}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: 'ip',

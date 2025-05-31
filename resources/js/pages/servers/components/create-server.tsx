@@ -212,7 +212,7 @@ export default function CreateServer({ children }: { children: React.ReactNode }
                   </AlertDescription>
                 </Alert>
                 <FormField>
-                  <Label htmlFor="public_key">Public Key</Label>
+                  <Label htmlFor="public_key">Public Key command</Label>
                   <Button
                     onClick={copyToClipboard}
                     variant="outline"

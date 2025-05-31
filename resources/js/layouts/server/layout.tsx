@@ -14,6 +14,7 @@ import {
   LogsIcon,
   MousePointerClickIcon,
   RocketIcon,
+  Settings2Icon,
   TerminalSquareIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -152,11 +153,11 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
         },
       ],
     },
-    // {
-    //   title: 'Settings',
-    //   href: '#',
-    //   icon: Settings2Icon,
-    // },
+    {
+      title: 'Settings',
+      href: route('server-settings', { server: page.props.server.id }),
+      icon: Settings2Icon,
+    },
   ];
 
   return (
