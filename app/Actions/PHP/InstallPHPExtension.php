@@ -5,6 +5,7 @@ namespace App\Actions\PHP;
 use App\Models\Server;
 use App\Models\Service;
 use App\SSH\Services\PHP\PHP;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -12,11 +13,11 @@ class InstallPHPExtension
 {
     /**
      * @param  array<string, mixed>  $input
-     *
-     * @throws ValidationException
      */
     public function install(Server $server, array $input): Service
     {
+        Validator::make($input, self::rules($server))->validate();
+
         /** @var Service $service */
         $service = $server->php($input['version']);
 

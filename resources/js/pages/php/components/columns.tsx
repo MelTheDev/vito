@@ -8,14 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import DateTime from '@/components/date-time';
 import Uninstall from '@/pages/services/components/uninstall';
 import { Action } from '@/pages/services/components/action';
-
+import PHPIni from '@/pages/php/components/ini';
+import Extensions from '@/pages/php/components/extensions';
+import DefaultCli from '@/pages/php/components/default-cli';
 export const columns: ColumnDef<Service>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Name',
-    enableColumnFilter: true,
-    enableSorting: true,
-  },
   {
     accessorKey: 'version',
     header: 'Version',
@@ -29,6 +25,15 @@ export const columns: ColumnDef<Service>[] = [
     enableSorting: true,
     cell: ({ row }) => {
       return <DateTime date={row.original.created_at} />;
+    },
+  },
+  {
+    accessorKey: 'is_default',
+    header: 'Default cli',
+    enableColumnFilter: true,
+    enableSorting: true,
+    cell: ({ row }) => {
+      return <Badge variant={row.original.is_default ? 'default' : 'outline'}>{row.original.is_default ? 'Yes' : 'No'}</Badge>;
     },
   },
   {
@@ -55,6 +60,11 @@ export const columns: ColumnDef<Service>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <Extensions service={row.original} />
+              <PHPIni service={row.original} type="fpm" />
+              <PHPIni service={row.original} type="cli" />
+              <DefaultCli service={row.original} />
+              <DropdownMenuSeparator />
               <Action type="start" service={row.original} />
               <Action type="stop" service={row.original} />
               <Action type="restart" service={row.original} />

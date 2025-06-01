@@ -7,6 +7,7 @@ use App\Models\Server;
 use App\Models\Service;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -21,6 +22,8 @@ class UpdatePHPIni
      */
     public function update(Server $server, array $input): void
     {
+        Validator::make($input, self::rules($server))->validate();
+
         /** @var Service $service */
         $service = $server->php($input['version']);
 

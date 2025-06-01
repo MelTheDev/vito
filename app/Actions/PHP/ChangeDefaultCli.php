@@ -21,6 +21,13 @@ class ChangeDefaultCli
         $this->validate($server, $input);
         /** @var Service $service */
         $service = $server->php($input['version']);
+
+        if ($service->is_default) {
+            throw ValidationException::withMessages(
+                ['version' => __('This version is already the default CLI')]
+            );
+        }
+
         /** @var PHP $handler */
         $handler = $service->handler();
         $handler->setDefaultCli();

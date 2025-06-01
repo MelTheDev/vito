@@ -2,7 +2,10 @@ export interface Service {
   id: number;
   server_id: number;
   type: string;
-  type_data: unknown;
+  type_data: {
+    extensions?: string[];
+    [key: string]: unknown;
+  };
   name: string;
   version: string;
   unit: number;

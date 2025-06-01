@@ -26,6 +26,7 @@ class Install
             'version' => $input['version'],
             'status' => ServiceStatus::INSTALLING,
         ]);
+        $service->is_default = ! $server->defaultService($input['type']);
 
         Validator::make($input, $service->handler()->creationRules($input))->validate();
 

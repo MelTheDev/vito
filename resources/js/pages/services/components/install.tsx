@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { LoaderCircleIcon } from 'lucide-react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function InstallService({ children }: { children: ReactNode }) {
+export default function InstallService({ name, children }: { name?: string; children: ReactNode }) {
   const page = usePage<
     {
       server: Server;
@@ -33,7 +33,7 @@ export default function InstallService({ children }: { children: ReactNode }) {
     version: string;
   }>({
     type: '',
-    name: '',
+    name: name ?? '',
     version: '',
   });
 
@@ -52,36 +52,38 @@ export default function InstallService({ children }: { children: ReactNode }) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Install service</DialogTitle>
-          <DialogDescription className="sr-only">Install new service</DialogDescription>
+          <DialogTitle>Install {name ?? 'service'}</DialogTitle>
+          <DialogDescription className="sr-only">Install new {name ?? 'service'}</DialogDescription>
         </DialogHeader>
         <Form id="install-service-form" onSubmit={submit} className="p-4">
           <FormFields>
             {/*service*/}
-            <FormField>
-              <Label htmlFor="name">Name</Label>
-              <Select
-                value={form.data.name}
-                onValueChange={(value) => {
-                  form.setData('name', value);
-                  form.setData('version', '');
-                }}
-              >
-                <SelectTrigger id="name">
-                  <SelectValue placeholder="Select a service" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {Object.entries(page.props.configs.service_types).map(([key]) => (
-                      <SelectItem key={`service-${key}`} value={key}>
-                        {key}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <InputError message={form.errors.type || form.errors.name} />
-            </FormField>
+            {!name && (
+              <FormField>
+                <Label htmlFor="name">Name</Label>
+                <Select
+                  value={form.data.name}
+                  onValueChange={(value) => {
+                    form.setData('name', value);
+                    form.setData('version', '');
+                  }}
+                >
+                  <SelectTrigger id="name">
+                    <SelectValue placeholder="Select a service" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {Object.entries(page.props.configs.service_types).map(([key]) => (
+                        <SelectItem key={`service-${key}`} value={key}>
+                          {key}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <InputError message={form.errors.type || form.errors.name} />
+              </FormField>
+            )}
 
             {/*version*/}
             <FormField>

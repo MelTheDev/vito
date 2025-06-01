@@ -26,7 +26,7 @@ export interface NavItem {
   title: string;
   href: string;
   onlyActivePath?: string;
-  icon?: LucideIcon | null;
+  icon?: LucideIcon | string | null;
   isActive?: boolean;
   isDisabled?: boolean;
   children?: NavItem[];
@@ -68,6 +68,7 @@ export interface Configs {
     [key: string]: string;
   };
   metrics_periods: string[];
+  php_extensions: string[];
 
   [key: string]: unknown;
 }

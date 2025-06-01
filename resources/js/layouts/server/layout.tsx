@@ -24,6 +24,8 @@ import ServerHeader from '@/pages/servers/components/header';
 import Layout from '@/layouts/app/layout';
 import { usePage, usePoll } from '@inertiajs/react';
 import { Site } from '@/types/site';
+import PHPIcon from '@/icons/php';
+import NodeIcon from '@/icons/node';
 
 export default function ServerLayout({ children }: { children: ReactNode }) {
   usePoll(7000);
@@ -91,6 +93,18 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
             },
           ]
         : [],
+    },
+    {
+      title: 'PHP',
+      href: route('php', { server: page.props.server.id }),
+      icon: PHPIcon,
+      isDisabled: isMenuDisabled,
+    },
+    {
+      title: 'NodeJS',
+      href: '#',
+      icon: NodeIcon,
+      isDisabled: isMenuDisabled,
     },
     {
       title: 'Firewall',
