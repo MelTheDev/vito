@@ -241,7 +241,7 @@ export default function Console() {
                   type="text"
                   value={command}
                   onChange={(e) => setCommand(e.target.value)}
-                  className="ml-2 h-auto flex-grow border-0 bg-transparent! p-0 shadow-none ring-0 outline-none focus:ring-0 focus:outline-none focus-visible:ring-0"
+                  className="ml-2 h-auto flex-grow border-0 bg-transparent! px-0 shadow-none ring-0 outline-none focus:ring-0 focus:outline-none focus-visible:ring-0"
                   autoComplete="off"
                   autoFocus
                 />

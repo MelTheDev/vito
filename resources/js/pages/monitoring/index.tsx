@@ -68,16 +68,16 @@ export default function Monitoring() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between border-b p-4">
-                <span>{page.props.lastMetric ? kbToGb(page.props.lastMetric.memory_used) + ' GB' : 'N/A'}</span>
                 <span>Used</span>
+                <span>{page.props.lastMetric ? kbToGb(page.props.lastMetric.memory_used) + ' GB' : 'N/A'}</span>
               </div>
               <div className="flex items-center justify-between border-b p-4">
-                <span>{page.props.lastMetric ? kbToGb(page.props.lastMetric.memory_free) + ' GB' : 'N/A'}</span>
                 <span>Free</span>
+                <span>{page.props.lastMetric ? kbToGb(page.props.lastMetric.memory_free) + ' GB' : 'N/A'}</span>
               </div>
               <div className="flex items-center justify-between p-4">
-                <span>{page.props.lastMetric ? kbToGb(page.props.lastMetric.memory_total) + ' GB' : 'N/A'}</span>
                 <span>Total</span>
+                <span>{page.props.lastMetric ? kbToGb(page.props.lastMetric.memory_total) + ' GB' : 'N/A'}</span>
               </div>
             </CardContent>
           </Card>
@@ -88,16 +88,16 @@ export default function Monitoring() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between border-b p-4">
-                <span>{page.props.lastMetric ? mbToGb(page.props.lastMetric.disk_used) + ' GB' : 'N/A'}</span>
                 <span>Used</span>
+                <span>{page.props.lastMetric ? mbToGb(page.props.lastMetric.disk_used) + ' GB' : 'N/A'}</span>
               </div>
               <div className="flex items-center justify-between border-b p-4">
-                <span>{page.props.lastMetric ? mbToGb(page.props.lastMetric.disk_free) + ' GB' : 'N/A'}</span>
                 <span>Free</span>
+                <span>{page.props.lastMetric ? mbToGb(page.props.lastMetric.disk_free) + ' GB' : 'N/A'}</span>
               </div>
               <div className="flex items-center justify-between p-4">
-                <span>{page.props.lastMetric ? mbToGb(page.props.lastMetric.disk_total) + ' GB' : 'N/A'}</span>
                 <span>Total</span>
+                <span>{page.props.lastMetric ? mbToGb(page.props.lastMetric.disk_total) + ' GB' : 'N/A'}</span>
               </div>
             </CardContent>
           </Card>

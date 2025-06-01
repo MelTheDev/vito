@@ -1,5 +1,5 @@
 import { Service } from '@/types/service';
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import {
   Dialog,
@@ -14,44 +14,48 @@ import {
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { LoaderCircleIcon } from 'lucide-react';
-import FormSuccessful from '@/components/form-successful';
 import InputError from '@/components/ui/input-error';
 
-export default function Uninstall({ service }: { service: Service }) {
+export default function DefaultCli({ service }: { service: Service }) {
   const [open, setOpen] = useState(false);
-  const form = useForm();
+  const form = useForm<{
+    version: string;
+  }>({
+    version: service.version,
+  });
 
-  const submit = () => {
-    form.delete(route('services.destroy', { server: service.server_id, service: service }), {
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    form.post(route('node.default-cli', { server: service.server_id, service: service.id }), {
       onSuccess: () => {
         setOpen(false);
       },
     });
   };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <DropdownMenuItem variant="destructive" onSelect={(e) => e.preventDefault()}>
-          Uninstall
+        <DropdownMenuItem disabled={service.is_default} onSelect={(e) => e.preventDefault()}>
+          Make default cli
         </DropdownMenuItem>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Uninstall service</DialogTitle>
-          <DialogDescription className="sr-only">Uninstall service</DialogDescription>
+          <DialogTitle>Make default cli</DialogTitle>
+          <DialogDescription className="sr-only">Make default cli</DialogDescription>
         </DialogHeader>
         <div className="space-y-2 p-4">
-          <p>Are you sure you want to uninstall this service? This action cannot be undone.</p>
-          <InputError message={form.errors.service} />
+          <p>Are you sure you want to make Nodejs {form.data.version} the default cli?</p>
+          <InputError message={form.errors.version} />
         </div>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button variant="destructive" disabled={form.processing} onClick={submit}>
+          <Button form="install-extension-form" disabled={form.processing} onClick={submit} className="ml-2">
             {form.processing && <LoaderCircleIcon className="animate-spin" />}
-            <FormSuccessful successful={form.recentlySuccessful} />
-            Uninstall
+            Save
           </Button>
         </DialogFooter>
       </DialogContent>

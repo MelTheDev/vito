@@ -102,7 +102,7 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
     },
     {
       title: 'NodeJS',
-      href: '#',
+      href: route('node', { server: page.props.server.id }),
       icon: NodeIcon,
       isDisabled: isMenuDisabled,
     },
