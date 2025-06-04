@@ -48,10 +48,10 @@ export default function EditBackup({ backup, children }: { backup: Backup; child
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Create backup</DialogTitle>
-          <DialogDescription className="sr-only">Create a new backup</DialogDescription>
+          <DialogTitle>Edit backup</DialogTitle>
+          <DialogDescription className="sr-only">Edit backup</DialogDescription>
         </DialogHeader>
-        <Form id="create-backup-form" onSubmit={submit} className="p-4">
+        <Form id="edit-backup-form" onSubmit={submit} className="p-4">
           <FormFields>
             {/*interval*/}
             <FormField>
@@ -101,7 +101,7 @@ export default function EditBackup({ backup, children }: { backup: Backup; child
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button form="create-backup-form" type="button" onClick={submit} disabled={form.processing}>
+            <Button form="edit-backup-form" type="button" onClick={submit} disabled={form.processing}>
               {form.processing && <LoaderCircle className="animate-spin" />}
               Save
             </Button>

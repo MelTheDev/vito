@@ -39,7 +39,7 @@ class WorkerController extends Controller
         ]);
     }
 
-    #[Get('/sites/{site}/workers', name: 'sites.workers')]
+    #[Get('/sites/{site}/workers', name: 'workers.site')]
     public function site(Server $server, Site $site): Response
     {
         $this->authorize('viewAny', [Worker::class, $server, $site]);

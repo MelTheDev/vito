@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\LoadBalancerServerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class LoadBalancerServer extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\LoadBalancerServerFactory> */
+    /** @use HasFactory<LoadBalancerServerFactory> */
     use HasFactory;
 
     protected $fillable = [

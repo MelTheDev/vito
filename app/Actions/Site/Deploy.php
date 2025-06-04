@@ -4,7 +4,6 @@ namespace App\Actions\Site;
 
 use App\Enums\DeploymentStatus;
 use App\Exceptions\DeploymentScriptIsEmptyException;
-use App\Exceptions\SSHError;
 use App\Facades\Notifier;
 use App\Models\Deployment;
 use App\Models\ServerLog;
@@ -15,7 +14,6 @@ class Deploy
 {
     /**
      * @throws DeploymentScriptIsEmptyException
-     * @throws SSHError
      */
     public function run(Site $site): Deployment
     {
@@ -32,6 +30,11 @@ class Deploy
             'deployment_script_id' => $site->deploymentScript->id,
             'status' => DeploymentStatus::DEPLOYING,
         ]);
+        $log = ServerLog::newLog($site->server, 'deploy-'.strtotime('now'))
+            ->forSite($site);
+        $log->save();
+        $deployment->log_id = $log->id;
+        $deployment->save();
         $lastCommit = $site->sourceControl?->provider()?->getLastCommit($site->repository, $site->branch);
         if ($lastCommit) {
             $deployment->commit_id = $lastCommit['commit_id'];
@@ -39,12 +42,7 @@ class Deploy
         }
         $deployment->save();
 
-        dispatch(function () use ($site, $deployment): void {
-            $log = ServerLog::newLog($site->server, 'deploy-'.strtotime('now'))
-                ->forSite($site);
-            $log->save();
-            $deployment->log_id = $log->id;
-            $deployment->save();
+        dispatch(function () use ($site, $deployment, $log): void {
             $site->server->os()->runScript(
                 path: $site->path,
                 script: $site->deploymentScript->content,

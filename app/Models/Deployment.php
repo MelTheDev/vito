@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\DeploymentStatus;
+use Database\Factories\DeploymentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -20,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Deployment extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\DeploymentFactory> */
+    /** @use HasFactory<DeploymentFactory> */
     use HasFactory;
 
     protected $fillable = [

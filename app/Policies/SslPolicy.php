@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\SiteFeature;
 use App\Models\Server;
 use App\Models\Site;
 use App\Models\Ssl;
@@ -17,7 +16,6 @@ class SslPolicy
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            $site->hasFeature(SiteFeature::SSL) &&
             $site->isReady();
     }
 
@@ -27,7 +25,6 @@ class SslPolicy
             $site->server_id === $server->id &&
             $server->isReady() &&
             $site->isReady() &&
-            $site->hasFeature(SiteFeature::SSL) &&
             $ssl->site_id === $site->id;
     }
 
@@ -35,18 +32,16 @@ class SslPolicy
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            $site->hasFeature(SiteFeature::SSL) &&
             $site->isReady();
     }
 
     public function update(User $user, Ssl $ssl, Site $site, Server $server): bool
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
-           $site->server_id === $server->id &&
-           $server->isReady() &&
-           $site->isReady() &&
-           $site->hasFeature(SiteFeature::SSL) &&
-           $ssl->site_id === $site->id;
+            $site->server_id === $server->id &&
+            $server->isReady() &&
+            $site->isReady() &&
+            $ssl->site_id === $site->id;
     }
 
     public function delete(User $user, Ssl $ssl, Site $site, Server $server): bool
@@ -55,7 +50,6 @@ class SslPolicy
             $site->server_id === $server->id &&
             $server->isReady() &&
             $site->isReady() &&
-            $site->hasFeature(SiteFeature::SSL) &&
             $ssl->site_id === $site->id;
     }
 }

@@ -62,6 +62,14 @@ export function useAppearance() {
     applyTheme(mode);
   }, []);
 
+  // create a method to return the actual appearance light or dark
+  const getActualAppearance = useCallback(() => {
+    if (appearance === 'system') {
+      return prefersDark() ? 'dark' : 'light';
+    }
+    return appearance;
+  }, [appearance]);
+
   useEffect(() => {
     const savedAppearance = localStorage.getItem('appearance') as Appearance | null;
     updateAppearance(savedAppearance || 'system');
@@ -69,5 +77,5 @@ export function useAppearance() {
     return () => mediaQuery()?.removeEventListener('change', handleSystemThemeChange);
   }, [updateAppearance]);
 
-  return { appearance, updateAppearance } as const;
+  return { appearance, updateAppearance, getActualAppearance } as const;
 }

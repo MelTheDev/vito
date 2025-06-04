@@ -103,7 +103,7 @@ export function AppSidebar() {
                 },
                 {
                   title: 'Application',
-                  href: route('sites.show', { server: page.props.server?.id || 0, site: page.props.site?.id || 0 }),
+                  href: route('application', { server: page.props.server?.id || 0, site: page.props.site?.id || 0 }),
                   icon: RocketIcon,
                 },
               ]

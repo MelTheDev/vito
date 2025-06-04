@@ -1,8 +1,7 @@
 import { Server } from '@/types/server';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { LoaderCircleIcon, MoreVerticalIcon } from 'lucide-react';
-import DeleteServer from '@/pages/servers/components/delete-server';
 import RebootServer from '@/pages/servers/components/reboot-server';
 import { useForm } from '@inertiajs/react';
 import UpdateServer from '@/pages/servers/components/update-server';
@@ -69,12 +68,6 @@ export default function ServerActions({ server }: { server: Server }) {
             Update
           </DropdownMenuItem>
         </UpdateServer>
-        <DropdownMenuSeparator />
-        <DeleteServer server={server}>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()} variant="destructive">
-            Delete Server
-          </DropdownMenuItem>
-        </DeleteServer>
       </DropdownMenuContent>
     </DropdownMenu>
   );

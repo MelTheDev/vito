@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SslStatus;
 use Carbon\Carbon;
+use Database\Factories\SslFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -28,7 +29,7 @@ use Illuminate\Support\Str;
  */
 class Ssl extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\SslFactory> */
+    /** @use HasFactory<SslFactory> */
     use HasFactory;
 
     protected $fillable = [

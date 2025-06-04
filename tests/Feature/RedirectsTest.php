@@ -5,10 +5,8 @@ namespace Tests\Feature;
 use App\Enums\RedirectStatus;
 use App\Facades\SSH;
 use App\Models\Redirect;
-use App\Web\Pages\Servers\Sites\Pages\Redirects\Index;
-use App\Web\Pages\Servers\Sites\Pages\Redirects\Widgets\RedirectsList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class RedirectsTest extends TestCase
@@ -19,18 +17,17 @@ class RedirectsTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $redirect = Redirect::factory()->create([
+        Redirect::factory()->create([
             'site_id' => $this->site->id,
         ]);
 
-        $this->get(
-            Index::getUrl([
-                'server' => $this->server,
-                'site' => $this->site,
-            ])
-        )
+        $this->get(route('redirects', [
+            'server' => $this->server,
+            'site' => $this->site,
+        ]))
             ->assertSuccessful()
-            ->assertSee($redirect->from);
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('redirects/index'));
+
     }
 
     public function test_delete_redirect(): void
@@ -43,12 +40,12 @@ class RedirectsTest extends TestCase
             'site_id' => $this->site->id,
         ]);
 
-        Livewire::test(RedirectsList::class, [
+        $this->delete(route('redirects.destroy', [
             'server' => $this->server,
             'site' => $this->site,
-        ])
-            ->callTableAction('delete', $redirect->id)
-            ->assertSuccessful();
+            'redirect' => $redirect,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseMissing('redirects', [
             'id' => $redirect->id,
@@ -61,16 +58,15 @@ class RedirectsTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
+        $this->post(route('redirects.store', [
             'server' => $this->server,
             'site' => $this->site,
+        ]), [
+            'from' => 'some-path',
+            'to' => 'https://example.com/redirect',
+            'mode' => 301,
         ])
-            ->callAction('create', [
-                'from' => 'some-path',
-                'to' => 'https://example.com/redirect',
-                'mode' => 301,
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('redirects', [
             'from' => 'some-path',

@@ -11,11 +11,13 @@ import { DataTable } from '@/components/data-table';
 import { Worker } from '@/types/worker';
 import { columns } from '@/pages/workers/components/columns';
 import WorkerForm from '@/pages/workers/components/form';
+import { Site } from '@/types/site';
 
 export default function WorkerIndex() {
   const page = usePage<{
     server: Server;
     workers: PaginatedData<Worker>;
+    site?: Site;
   }>();
 
   return (
@@ -32,7 +34,7 @@ export default function WorkerIndex() {
                 <span className="hidden lg:block">Docs</span>
               </Button>
             </a>
-            <WorkerForm serverId={page.props.server.id}>
+            <WorkerForm serverId={page.props.server.id} site={page.props.site}>
               <Button>
                 <PlusIcon />
                 <span className="hidden lg:block">Create</span>

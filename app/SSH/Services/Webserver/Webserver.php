@@ -8,6 +8,8 @@ use App\SSH\Services\ServiceInterface;
 
 interface Webserver extends ServiceInterface
 {
+    public function name(): string;
+
     public function createVHost(Site $site): void;
 
     public function updateVHost(Site $site, ?string $vhost = null): void;

@@ -80,7 +80,7 @@ export default function ServerHeader({ server, site }: { server: Server; site?: 
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="flex items-center space-x-1">
-                    <LoaderCircleIcon className={cn('size-4', server.status === 'installing' ? 'animate-spin' : '')} />
+                    <LoaderCircleIcon className={cn('size-4', server.status === 'installing' ? 'text-brand animate-spin' : '')} />
                     <div>%{parseInt(server.progress || '0')}</div>
                     {server.status === 'installation_failed' && (
                       <Badge className="ml-1" variant={server.status_color}>
@@ -115,7 +115,7 @@ export default function ServerHeader({ server, site }: { server: Server; site?: 
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="flex items-center space-x-1">
-                    <LoaderCircleIcon className={cn('size-4', site.status === 'installing' ? 'animate-spin' : '')} />
+                    <LoaderCircleIcon className={cn('size-4', site.status === 'installing' ? 'text-brand animate-spin' : '')} />
                     <div>%{parseInt(site.progress.toString() || '0')}</div>
                     {site.status === 'installation_failed' && (
                       <Badge className="ml-1" variant={site.status_color}>

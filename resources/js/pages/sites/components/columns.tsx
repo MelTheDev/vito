@@ -56,7 +56,7 @@ export default function getColumns(server?: Server): ColumnDef<Site>[] {
       cell: ({ row }) => {
         return (
           <div className="flex items-center justify-end">
-            <Link href={route('sites.show', { server: row.original.server_id, site: row.original.id })} prefetch>
+            <Link href={route('application', { server: row.original.server_id, site: row.original.id })} prefetch>
               <Button variant="outline" size="sm">
                 <EyeIcon />
               </Button>

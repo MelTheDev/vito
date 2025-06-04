@@ -3,6 +3,7 @@
 namespace App\Actions\Site;
 
 use App\Models\Command;
+use Illuminate\Support\Facades\Validator;
 
 class EditCommand
 {
@@ -11,6 +12,8 @@ class EditCommand
      */
     public function edit(Command $command, array $input): Command
     {
+        Validator::make($input, self::rules())->validate();
+
         $command->name = $input['name'];
         $command->command = $input['command'];
         $command->save();

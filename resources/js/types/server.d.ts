@@ -1,6 +1,9 @@
 export interface Server {
   id: number;
   project_id: number;
+  services: {
+    [key: string]: string;
+  };
   user_id: number;
   name: string;
   ssh_user: string;

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CommandExecutionStatus;
 use Carbon\Carbon;
+use Database\Factories\CommandExecutionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,13 +19,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Command $command
- * @property ?ServerLog $serverLog
+ * @property ServerLog $serverLog
  * @property Server $server
  * @property ?User $user
  */
 class CommandExecution extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\CommandExecutionFactory> */
+    /** @use HasFactory<CommandExecutionFactory> */
     use HasFactory;
 
     protected $fillable = [

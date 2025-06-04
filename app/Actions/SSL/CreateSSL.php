@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\Site;
 use App\Models\Ssl;
 use App\SSH\Services\Webserver\Webserver;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -21,6 +22,8 @@ class CreateSSL
      */
     public function create(Site $site, array $input): void
     {
+        Validator::make($input, self::rules($input))->validate();
+
         $site->ssls()
             ->where('type', $input['type'])
             ->where('status', SslStatus::FAILED)

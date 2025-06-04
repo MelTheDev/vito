@@ -17,6 +17,7 @@ class ServerResource extends JsonResource
         return [
             'id' => $this->id,
             'project_id' => $this->project_id,
+            'services' => $this->services()->pluck('name', 'type'),
             'user_id' => $this->user_id,
             'provider_id' => $this->provider_id,
             'name' => $this->name,

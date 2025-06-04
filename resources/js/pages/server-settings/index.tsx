@@ -13,6 +13,7 @@ import DateTime from '@/components/date-time';
 import CopyableBadge from '@/components/copyable-badge';
 import { Input } from '@/components/ui/input';
 import React, { useState } from 'react';
+import DeleteServer from '@/pages/servers/components/delete-server';
 
 export default function Databases() {
   const page = usePage<{
@@ -205,6 +206,22 @@ export default function Databases() {
             <div className="flex items-center justify-between p-4">
               <span>Public key</span>
               <CopyableBadge text={page.props.server.public_key} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-destructive/50">
+          <CardHeader>
+            <CardTitle>Delete server</CardTitle>
+            <CardDescription>Here you can delete the server.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 p-4">
+              <p>please note that this action is irreversible and will delete all data associated with the server.</p>
+
+              <DeleteServer server={page.props.server}>
+                <Button variant="destructive">Delete server</Button>
+              </DeleteServer>
             </div>
           </CardContent>
         </Card>

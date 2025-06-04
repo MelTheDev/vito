@@ -26,10 +26,11 @@ export interface NavItem {
   title: string;
   href: string;
   onlyActivePath?: string;
-  icon?: LucideIcon | string | null;
+  icon?: LucideIcon | null;
   isActive?: boolean;
   isDisabled?: boolean;
   children?: NavItem[];
+  hidden?: boolean;
 }
 
 export interface Configs {

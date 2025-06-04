@@ -8,13 +8,9 @@ use App\Enums\SiteType;
 use App\Enums\SourceControl;
 use App\Facades\SSH;
 use App\Models\Site;
-use App\Web\Pages\Servers\Sites\Index;
-use App\Web\Pages\Servers\Sites\Settings;
-use App\Web\Pages\Servers\Sites\View;
-use App\Web\Pages\Servers\Sites\Widgets\SiteDetails;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class SitesTest extends TestCase
@@ -22,6 +18,8 @@ class SitesTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * @param  array<string, mixed>  $inputs
+     *
      * @dataProvider create_data
      */
     public function test_create_site(array $inputs): void
@@ -42,12 +40,8 @@ class SitesTest extends TestCase
 
         $inputs['source_control'] = $sourceControl->id;
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
-        ])
-            ->callAction('create', $inputs)
-            ->assertHasNoActionErrors()
-            ->assertSuccessful();
+        $this->post(route('sites.store', ['server' => $this->server]), $inputs)
+            ->assertSessionDoesntHaveErrors();
 
         $expectedUser = empty($inputs['user']) ? $this->server->getSshUser() : $inputs['user'];
         $this->assertDatabaseHas('sites', [
@@ -60,6 +54,8 @@ class SitesTest extends TestCase
     }
 
     /**
+     * @param  array<string, mixed>  $inputs
+     *
      * @dataProvider failure_create_data
      */
     public function test_isolated_user_failure(array $inputs): void
@@ -67,11 +63,8 @@ class SitesTest extends TestCase
         SSH::fake();
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
-        ])
-            ->callAction('create', $inputs)
-            ->assertHasActionErrors();
+        $this->post(route('sites.store', ['server' => $this->server]), $inputs)
+            ->assertSessionHasErrors();
     }
 
     /**
@@ -106,12 +99,8 @@ class SitesTest extends TestCase
 
         $inputs['source_control'] = $sourceControl->id;
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
-        ])
-            ->callAction('create', $inputs)
-            ->assertNotified()
-            ->assertSuccessful();
+        $this->post(route('sites.store', ['server' => $this->server]), $inputs)
+            ->assertSessionHasErrors();
 
         $this->assertDatabaseMissing('sites', [
             'domain' => 'example.com',
@@ -123,13 +112,15 @@ class SitesTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $site = Site::factory()->create([
+        Site::factory()->create([
             'server_id' => $this->server->id,
         ]);
 
-        $this->get(Index::getUrl(['server' => $this->server]))
+        $this->get(route('sites', [
+            'server' => $this->server,
+        ]))
             ->assertSuccessful()
-            ->assertSee($site->domain);
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('sites/index'));
     }
 
     public function test_delete_site(): void
@@ -142,13 +133,13 @@ class SitesTest extends TestCase
             'server_id' => $this->server->id,
         ]);
 
-        Livewire::test(Settings::class, [
-            'server' => $this->server,
-            'site' => $site,
+        $this->delete(route('site-settings.destroy', [
+            'server' => $this->server->id,
+            'site' => $site->id,
+        ]), [
+            'domain' => $site->domain,
         ])
-            ->callAction('delete')
-            ->assertHasNoActionErrors()
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseMissing('sites', [
             'id' => $site->id,
@@ -165,14 +156,13 @@ class SitesTest extends TestCase
             'server_id' => $this->server->id,
         ]);
 
-        Livewire::test(SiteDetails::class, [
-            'site' => $site,
+        $this->delete(route('site-settings.update-php-version', [
+            'server' => $this->server->id,
+            'site' => $site->id,
+        ]), [
+            'version' => '8.2',
         ])
-            ->callInfolistAction('php_version', 'edit_php_version', [
-                'version' => '8.2',
-            ])
-            ->assertHasNoActionErrors()
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $site->refresh();
 
@@ -195,14 +185,13 @@ class SitesTest extends TestCase
             'provider' => SourceControl::GITHUB,
         ]);
 
-        Livewire::test(SiteDetails::class, [
+        $this->patch(route('site-settings.update-source-control', [
+            'server' => $this->server->id,
             'site' => $this->site,
+        ]), [
+            'source_control' => $sourceControl->id,
         ])
-            ->callInfolistAction('source_control_id', 'edit_source_control', [
-                'source_control' => $sourceControl->id,
-            ])
-            ->assertHasNoActionErrors()
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->site->refresh();
 
@@ -225,13 +214,13 @@ class SitesTest extends TestCase
             'provider' => SourceControl::GITHUB,
         ]);
 
-        Livewire::test(SiteDetails::class, [
+        $this->patch(route('site-settings.update-source-control', [
+            'server' => $this->server->id,
             'site' => $this->site,
+        ]), [
+            'source_control' => $sourceControl->id,
         ])
-            ->callInfolistAction('source_control_id', 'edit_source_control', [
-                'source_control' => $sourceControl->id,
-            ])
-            ->assertNotified('Repository not found');
+            ->assertSessionHasErrors();
     }
 
     public function test_update_v_host(): void
@@ -240,32 +229,54 @@ class SitesTest extends TestCase
 
         $this->actingAs($this->user);
 
-        $site = Site::factory()->create([
+        Site::factory()->create([
             'server_id' => $this->server->id,
         ]);
 
-        Livewire::test(Settings::class, [
-            'server' => $this->server,
-            'site' => $site,
+        $this->patch(route('site-settings.update-vhost', [
+            'server' => $this->server->id,
+            'site' => $this->site,
+        ]), [
+            'vhost' => 'test',
         ])
-            ->callAction('vhost', [
-                'vhost' => 'test',
-            ])
-            ->assertNotified('VHost updated!');
+            ->assertSessionDoesntHaveErrors();
     }
 
     public function test_see_logs(): void
     {
         $this->actingAs($this->user);
 
-        $this->get(View::getUrl([
+        $this->get(route('sites.logs', [
             'server' => $this->server,
             'site' => $this->site,
         ]))
             ->assertSuccessful()
-            ->assertSee('Logs');
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('sites/logs'));
     }
 
+    public function test_change_branch(): void
+    {
+        SSH::fake();
+
+        $this->actingAs($this->user);
+
+        $this->patch(route('site-settings.update-branch', [
+            'server' => $this->server->id,
+            'site' => $this->site,
+        ]), [
+            'branch' => 'master',
+        ])
+            ->assertSessionDoesntHaveErrors();
+
+        $this->site->refresh();
+        $this->assertEquals('master', $this->site->branch);
+
+        SSH::assertExecutedContains('git checkout -f master');
+    }
+
+    /**
+     * @return array<array<string, mixed>>
+     */
     public static function failure_create_data(): array
     {
         return [
@@ -322,6 +333,9 @@ class SitesTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<array<array<string, mixed>>>
+     */
     public static function create_data(): array
     {
         return [
@@ -435,6 +449,9 @@ class SitesTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<array<int>>
+     */
     public static function create_failure_data(): array
     {
         return [

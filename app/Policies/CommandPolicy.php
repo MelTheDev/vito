@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\SiteFeature;
 use App\Models\Command;
 use App\Models\Server;
 use App\Models\Site;
@@ -17,7 +16,6 @@ class CommandPolicy
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            $site->hasFeature(SiteFeature::COMMANDS) &&
             $site->isReady();
     }
 
@@ -27,7 +25,6 @@ class CommandPolicy
             $site->server_id === $server->id &&
             $server->isReady() &&
             $site->isReady() &&
-            $site->hasFeature(SiteFeature::COMMANDS) &&
             $command->site_id === $site->id;
     }
 
@@ -35,7 +32,6 @@ class CommandPolicy
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            $site->hasFeature(SiteFeature::COMMANDS) &&
             $site->isReady();
     }
 
@@ -45,7 +41,6 @@ class CommandPolicy
            $site->server_id === $server->id &&
            $server->isReady() &&
            $site->isReady() &&
-           $site->hasFeature(SiteFeature::COMMANDS) &&
            $command->site_id === $site->id;
     }
 
@@ -55,7 +50,6 @@ class CommandPolicy
             $site->server_id === $server->id &&
             $server->isReady() &&
             $site->isReady() &&
-            $site->hasFeature(SiteFeature::COMMANDS) &&
             $command->site_id === $site->id;
     }
 }

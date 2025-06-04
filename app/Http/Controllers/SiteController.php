@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Site\CreateSite;
-use App\Actions\Site\DeleteSite;
-use App\Exceptions\SSHError;
 use App\Http\Resources\ServerLogResource;
 use App\Http\Resources\SiteResource;
 use App\Models\Server;
@@ -14,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\RouteAttributes\Attributes\Delete;
 use Spatie\RouteAttributes\Attributes\Get;
 use Spatie\RouteAttributes\Attributes\Middleware;
 use Spatie\RouteAttributes\Attributes\Post;
@@ -43,17 +40,6 @@ class SiteController extends Controller
         ]);
     }
 
-    #[Get('/servers/{server}/sites/{site}', name: 'sites.show')]
-    public function show(Server $server, Site $site): Response
-    {
-        $this->authorize('view', [$site, $server]);
-
-        return Inertia::render('sites/show', [
-            'site' => SiteResource::make($site),
-            'logs' => ServerLogResource::collection($site->logs()->latest()->simplePaginate(config('web.pagination_size'), pageName: 'logsPage')),
-        ]);
-    }
-
     /**
      * @throws Throwable
      */
@@ -64,7 +50,7 @@ class SiteController extends Controller
 
         $site = app(CreateSite::class)->create($server, $request->all());
 
-        return redirect()->route('sites.show', ['server' => $server, 'site' => $site])
+        return redirect()->route('application', ['server' => $server, 'site' => $site])
             ->with('info', 'Installing site, please wait...');
     }
 
@@ -79,26 +65,22 @@ class SiteController extends Controller
 
         if ($previousRoute->hasParameter('site')) {
             if (count($previousRoute->parameters()) > 2) {
-                return redirect()->route('sites.show', ['server' => $server->id, 'site' => $site->id]);
+                return redirect()->route('application', ['server' => $server->id, 'site' => $site->id]);
             }
 
             return redirect()->route($previousRoute->getName(), ['server' => $server, 'site' => $site->id]);
         }
 
-        return redirect()->route('sites.show', ['server' => $server->id, 'site' => $site->id]);
+        return redirect()->route('application', ['server' => $server->id, 'site' => $site->id]);
     }
 
-    /**
-     * @throws SSHError
-     */
-    #[Delete('/servers/{server}/sites/{site}', name: 'sites.destroy')]
-    public function destroy(Server $server, Site $site): RedirectResponse
+    #[Get('/servers/{server}/sites/{site}/logs', name: 'sites.logs')]
+    public function logs(Server $server, Site $site): Response
     {
-        $this->authorize('delete', [$site, $server]);
+        $this->authorize('view', [$site, $server]);
 
-        app(DeleteSite::class)->delete($site);
-
-        return redirect()->route('sites', ['server' => $server])
-            ->with('success', 'Site deleted successfully.');
+        return Inertia::render('sites/logs', [
+            'logs' => ServerLogResource::collection($site->logs()->latest()->simplePaginate(config('web.pagination_size'))),
+        ]);
     }
 }

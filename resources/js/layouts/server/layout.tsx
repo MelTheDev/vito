@@ -1,20 +1,23 @@
 import { type NavItem } from '@/types';
 import {
-  ArrowLeftIcon,
   ChartLineIcon,
   ClockIcon,
   CloudIcon,
   CloudUploadIcon,
   CogIcon,
+  CommandIcon,
   DatabaseIcon,
   FlameIcon,
   HomeIcon,
   KeyIcon,
   ListEndIcon,
+  ListIcon,
+  LockIcon,
   LogsIcon,
   MousePointerClickIcon,
   RocketIcon,
   Settings2Icon,
+  SignpostIcon,
   TerminalSquareIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -26,6 +29,7 @@ import { usePage, usePoll } from '@inertiajs/react';
 import { Site } from '@/types/site';
 import PHPIcon from '@/icons/php';
 import NodeIcon from '@/icons/node';
+import siteHelper from '@/lib/site-helper';
 
 export default function ServerLayout({ children }: { children: ReactNode }) {
   usePoll(7000);
@@ -41,6 +45,7 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
   }
 
   const isMenuDisabled = page.props.server.status !== 'ready';
+  const site = page.props.site || siteHelper.getStoredSite() || null;
 
   const sidebarNavItems: NavItem[] = [
     {
@@ -78,18 +83,52 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
       href: route('sites', { server: page.props.server.id }),
       icon: MousePointerClickIcon,
       isDisabled: isMenuDisabled,
-      children: page.props.site
+      hidden: !page.props.server.services['webserver'],
+      children: site
         ? [
             {
               title: 'All sites',
               href: route('sites', { server: page.props.server.id }),
               onlyActivePath: route('sites', { server: page.props.server.id }),
-              icon: ArrowLeftIcon,
+              icon: ListIcon,
             },
             {
               title: 'Application',
-              href: route('sites.show', { server: page.props.server.id, site: page.props.site.id }),
+              href: route('application', { server: page.props.server.id, site: site.id }),
+              onlyActivePath: route('application', { server: page.props.server.id, site: site.id }),
               icon: RocketIcon,
+            },
+            {
+              title: 'Commands',
+              href: route('commands', { server: page.props.server.id, site: site.id }),
+              icon: CommandIcon,
+            },
+            {
+              title: 'SSL',
+              href: route('ssls', { server: page.props.server.id, site: site.id }),
+              icon: LockIcon,
+            },
+            {
+              title: 'Workers',
+              href: route('workers.site', { server: page.props.server.id, site: site.id }),
+              icon: ListEndIcon,
+              isDisabled: isMenuDisabled,
+              hidden: !page.props.server.services['process_manager'],
+            },
+            {
+              title: 'Redirects',
+              href: route('redirects', { server: page.props.server.id, site: site.id }),
+              icon: SignpostIcon,
+            },
+            {
+              title: 'Logs',
+              href: route('sites.logs', { server: page.props.server.id, site: site.id }),
+              icon: LogsIcon,
+            },
+            {
+              title: 'Settings',
+              href: route('site-settings', { server: page.props.server.id, site: site.id }),
+              icon: Settings2Icon,
             },
           ]
         : [],
@@ -123,6 +162,7 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
       href: route('workers', { server: page.props.server.id }),
       icon: ListEndIcon,
       isDisabled: isMenuDisabled,
+      hidden: !page.props.server.services['process_manager'],
     },
     {
       title: 'SSH Keys',

@@ -10,6 +10,11 @@ use Throwable;
 
 class Caddy extends AbstractWebserver
 {
+    public function name(): string
+    {
+        return \App\Enums\Webserver::CADDY;
+    }
+
     /**
      * @throws SSHError
      */

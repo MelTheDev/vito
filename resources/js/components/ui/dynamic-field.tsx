@@ -43,7 +43,7 @@ export default function DynamicField({ value, onChange, config, error }: Dynamic
         <Label htmlFor={config.name} className="capitalize">
           {label}
         </Label>
-        <Select value={value as string} onValueChange={onChange}>
+        <Select defaultValue={value as string} onValueChange={onChange}>
           <SelectTrigger id={config.name}>
             <SelectValue placeholder={config.placeholder || `Select ${label}`} />
           </SelectTrigger>
@@ -74,7 +74,14 @@ export default function DynamicField({ value, onChange, config, error }: Dynamic
       <Label htmlFor={config.name} className="capitalize">
         {label}
       </Label>
-      <Input type="text" name={config.name} id={config.name} value={(value as string) || ''} onChange={(e) => onChange(e.target.value)} {...props} />
+      <Input
+        type="text"
+        name={config.name}
+        id={config.name}
+        defaultValue={(value as string) || ''}
+        onChange={(e) => onChange(e.target.value)}
+        {...props}
+      />
       {config.description && <p className="text-muted-foreground text-xs">{config.description}</p>}
       <InputError message={error} />
     </FormField>

@@ -10,8 +10,11 @@ import { Form } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { LoaderCircleIcon } from 'lucide-react';
+import { registerIniLanguage } from '@/lib/editor';
+import { useAppearance } from '@/hooks/use-appearance';
 
 export default function PHPIni({ service, type }: { service: Service; type: 'fpm' | 'cli' }) {
+  const { getActualAppearance } = useAppearance();
   const [open, setOpen] = useState(false);
   const form = useForm<{
     ini: string;
@@ -52,17 +55,7 @@ export default function PHPIni({ service, type }: { service: Service; type: 'fpm
     enabled: open,
   });
 
-  const monaco = useMonaco();
-  monaco?.languages.register({ id: 'ini' });
-  monaco?.languages.setMonarchTokensProvider('ini', {
-    tokenizer: {
-      root: [
-        [/^\[.*]$/, 'keyword'],
-        [/^[^=]+(?==)/, 'attribute.name'],
-        [/=.+$/, 'attribute.value'],
-      ],
-    },
-  });
+  registerIniLanguage(useMonaco());
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -79,7 +72,7 @@ export default function PHPIni({ service, type }: { service: Service; type: 'fpm
             <Editor
               defaultLanguage="ini"
               defaultValue={query.data.ini}
-              theme="vs-dark"
+              theme={getActualAppearance() === 'dark' ? 'vs-dark' : 'vs'}
               className="h-full"
               onChange={(value) => form.setData('ini', value ?? '')}
               options={{
@@ -87,7 +80,7 @@ export default function PHPIni({ service, type }: { service: Service; type: 'fpm
               }}
             />
           ) : (
-            <Skeleton className="h-full w-full" />
+            <Skeleton className="h-full w-full rounded-none" />
           )}
         </Form>
         <SheetFooter>

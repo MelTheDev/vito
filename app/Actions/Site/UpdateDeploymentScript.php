@@ -4,6 +4,7 @@ namespace App\Actions\Site;
 
 use App\Models\DeploymentScript;
 use App\Models\Site;
+use Illuminate\Support\Facades\Validator;
 
 class UpdateDeploymentScript
 {
@@ -12,6 +13,8 @@ class UpdateDeploymentScript
      */
     public function update(Site $site, array $input): void
     {
+        Validator::make($input, self::rules())->validate();
+
         /** @var DeploymentScript $script */
         $script = $site->deploymentScript;
         $script->content = $input['script'];

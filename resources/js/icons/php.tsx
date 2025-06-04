@@ -2,17 +2,18 @@ import React from 'react';
 import { LucideProps } from 'lucide-react';
 
 export const PHPIcon = React.forwardRef<SVGSVGElement, LucideProps>(
-  ({ color = 'currentColor', size = 24, strokeWidth = 2, className, ...rest }, ref) => {
+  ({ color = 'currentColor', size = 24, strokeWidth = 30, className, ...rest }, ref) => {
     return (
       <svg
         ref={ref}
         xmlns="http://www.w3.org/2000/svg"
         version="1.1"
         viewBox="0 0 512 512"
-        fill={color}
+        fill="none"
         width={size}
         height={size}
         strokeWidth={strokeWidth}
+        stroke={color}
         className={className}
         {...rest}
       >

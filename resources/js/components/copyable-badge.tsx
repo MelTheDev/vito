@@ -17,7 +17,7 @@ export default function CopyableBadge({ text }: { text: string }) {
     <Tooltip>
       <TooltipTrigger asChild>
         <div className="inline-flex cursor-pointer justify-start space-x-2 truncate" onClick={copyToClipboard}>
-          <Badge variant={copySuccess ? 'success' : 'outline'} className="block max-w-[150px] overflow-ellipsis">
+          <Badge variant={copySuccess ? 'success' : 'outline'} className="block max-w-[200px] overflow-ellipsis">
             {text}
           </Badge>
         </div>

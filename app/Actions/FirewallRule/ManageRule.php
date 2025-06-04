@@ -123,9 +123,19 @@ class ManageRule
                 'min:1',
                 'max:65535',
             ],
+            'source' => [
+                'nullable',
+                'ip',
+            ],
+            'mask' => [
+                'nullable',
+                'numeric',
+                'min:1',
+                'max:32',
+            ],
         ];
 
-        if (! ($input['source_any'] ?? false)) {
+        if (isset($input['source_any']) && $input['source_any'] === false) {
             $rules['source'] = ['required', 'ip'];
             $rules['mask'] = ['required', 'numeric', 'min:1', 'max:32'];
         }

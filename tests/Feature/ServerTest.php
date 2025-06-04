@@ -10,16 +10,9 @@ use App\Enums\ServiceStatus;
 use App\Enums\Webserver;
 use App\Facades\SSH;
 use App\NotificationChannels\Email\NotificationMail;
-use App\Web\Pages\Servers\Index;
-use App\Web\Pages\Servers\Settings;
-use App\Web\Pages\Servers\Widgets\ServerDetails;
-use App\Web\Pages\Servers\Widgets\ServerSummary;
-use App\Web\Pages\Servers\Widgets\UpdateServerInfo;
-use Filament\Notifications\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class ServerTest extends TestCase
@@ -32,18 +25,17 @@ class ServerTest extends TestCase
 
         SSH::fake('Active: active'); // fake output for service installations
 
-        Livewire::test(Index::class)
-            ->callAction('create', [
-                'provider' => ServerProvider::CUSTOM,
-                'name' => 'test',
-                'ip' => '1.1.1.1',
-                'port' => '22',
-                'os' => OperatingSystem::UBUNTU22,
-                'webserver' => Webserver::NGINX,
-                'database' => Database::MYSQL80,
-                'php' => '8.2',
-            ])
-            ->assertSuccessful();
+        $this->post(route('servers.store', [
+            'provider' => ServerProvider::CUSTOM,
+            'name' => 'test',
+            'ip' => '1.1.1.1',
+            'port' => '22',
+            'os' => OperatingSystem::UBUNTU22,
+            'webserver' => Webserver::NGINX,
+            'database' => Database::MYSQL80,
+            'php' => '8.2',
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('servers', [
             'name' => 'test',
@@ -89,18 +81,17 @@ class ServerTest extends TestCase
 
         SSH::fake('Active: active'); // fake output for service installations
 
-        Livewire::test(Index::class)
-            ->callAction('create', [
-                'provider' => ServerProvider::CUSTOM,
-                'name' => 'caddy-test',
-                'ip' => '2.2.2.2',
-                'port' => '22',
-                'os' => OperatingSystem::UBUNTU22,
-                'webserver' => Webserver::CADDY,
-                'database' => Database::MYSQL80,
-                'php' => '8.2',
-            ])
-            ->assertSuccessful();
+        $this->post(route('servers.store', [
+            'provider' => ServerProvider::CUSTOM,
+            'name' => 'caddy-test',
+            'ip' => '2.2.2.2',
+            'port' => '22',
+            'os' => OperatingSystem::UBUNTU22,
+            'webserver' => Webserver::CADDY,
+            'database' => Database::MYSQL80,
+            'php' => '8.2',
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('servers', [
             'name' => 'caddy-test',
@@ -146,11 +137,10 @@ class ServerTest extends TestCase
 
         SSH::fake();
 
-        Livewire::test(Settings::class, [
-            'server' => $this->server,
-        ])->callAction('delete')
-            ->assertSuccessful()
-            ->assertRedirect(Index::getUrl());
+        $this->delete(route('servers.destroy', $this->server), [
+            'name' => $this->server->name,
+        ])
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseMissing('servers', [
             'id' => $this->server->id,
@@ -183,11 +173,10 @@ class ServerTest extends TestCase
             ],
         ]);
 
-        Livewire::test(Settings::class, [
-            'server' => $this->server,
-        ])->callAction('delete')
-            ->assertSuccessful()
-            ->assertRedirect(Index::getUrl());
+        $this->delete(route('servers.destroy', $this->server), [
+            'name' => $this->server->name,
+        ])
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseMissing('servers', [
             'id' => $this->server->id,
@@ -204,12 +193,8 @@ class ServerTest extends TestCase
 
         $this->server->update(['status' => ServerStatus::DISCONNECTED]);
 
-        Livewire::test(ServerSummary::class, [
-            'server' => $this->server,
-        ])
-            ->callInfolistAction('status', 'check-status')
-            ->assertSuccessful()
-            ->assertNotified('Server is '.ServerStatus::READY);
+        $this->patch(route('servers.status', $this->server))
+            ->assertSessionHas('success', 'Server status is '.ServerStatus::READY);
 
         $this->assertDatabaseHas('servers', [
             'id' => $this->server->id,
@@ -225,12 +210,8 @@ class ServerTest extends TestCase
 
         $this->server->update(['status' => ServerStatus::READY]);
 
-        Livewire::test(ServerSummary::class, [
-            'server' => $this->server,
-        ])
-            ->callInfolistAction('status', 'check-status')
-            ->assertSuccessful()
-            ->assertNotified('Server is '.ServerStatus::DISCONNECTED);
+        $this->patch(route('servers.status', $this->server))
+            ->assertSessionHas('gray', 'Server status is '.ServerStatus::DISCONNECTED);
 
         $this->assertDatabaseHas('servers', [
             'id' => $this->server->id,
@@ -244,11 +225,8 @@ class ServerTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(Settings::class, [
-            'server' => $this->server,
-        ])
-            ->callAction('reboot')
-            ->assertSuccessful();
+        $this->post(route('servers.reboot', $this->server))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('servers', [
             'id' => $this->server->id,
@@ -262,16 +240,12 @@ class ServerTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(UpdateServerInfo::class, [
-            'server' => $this->server,
+        $this->patch(route('server-settings.update', $this->server), [
+            'name' => 'new-name',
+            'ip' => $this->server->ip,
+            'port' => $this->server->port,
         ])
-            ->fill([
-                'name' => 'new-name',
-                'ip' => $this->server->ip,
-                'port' => $this->server->port,
-            ])
-            ->call('submit')
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('servers', [
             'id' => $this->server->id,
@@ -285,16 +259,12 @@ class ServerTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(UpdateServerInfo::class, [
-            'server' => $this->server,
+        $this->patch(route('server-settings.update', $this->server), [
+            'name' => $this->server->name,
+            'ip' => '2.2.2.2',
+            'port' => $this->server->port,
         ])
-            ->fill([
-                'name' => $this->server->name,
-                'ip' => '2.2.2.2',
-                'port' => $this->server->port,
-            ])
-            ->call('submit')
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('servers', [
             'id' => $this->server->id,
@@ -309,16 +279,12 @@ class ServerTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(UpdateServerInfo::class, [
-            'server' => $this->server,
+        $this->patch(route('server-settings.update', $this->server), [
+            'name' => $this->server->name,
+            'ip' => '2.2.2.2',
+            'port' => 2222,
         ])
-            ->fill([
-                'name' => $this->server->name,
-                'ip' => '2.2.2.2',
-                'port' => 2222,
-            ])
-            ->call('submit')
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('servers', [
             'id' => $this->server->id,
@@ -334,17 +300,8 @@ class ServerTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(ServerDetails::class, [
-            'server' => $this->server,
-        ])
-            ->callInfolistAction('last_updated_check', 'check-update')
-            ->assertSuccessful()
-            ->assertNotified(
-                Notification::make()
-                    ->info()
-                    ->title('Available updates:')
-                    ->body(9)
-            );
+        $this->post(route('servers.check-for-updates', $this->server))
+            ->assertSessionDoesntHaveErrors();
 
         $this->server->refresh();
         $this->assertEquals(9, $this->server->updates);
@@ -356,11 +313,8 @@ class ServerTest extends TestCase
 
         $this->actingAs($this->user);
 
-        Livewire::test(ServerDetails::class, [
-            'server' => $this->server,
-        ])
-            ->callInfolistAction('updates', 'update-server')
-            ->assertSuccessful();
+        $this->post(route('servers.update', $this->server))
+            ->assertSessionDoesntHaveErrors();
 
         $this->server->refresh();
 

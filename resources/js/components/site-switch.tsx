@@ -15,15 +15,26 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { type Site } from '@/types/site';
 import type { SharedData } from '@/types';
 import CreateSite from '@/pages/sites/components/create-site';
+import siteHelper from '@/lib/site-helper';
 
 export function SiteSwitch() {
   const page = usePage<SharedData>();
-  const [selectedSite, setSelectedSite] = useState(page.props.site || null);
+  const storedSite = siteHelper.getStoredSite();
+  const [selectedSite, setSelectedSite] = useState(page.props.site || storedSite || null);
   const initials = useInitials();
   const form = useForm();
 
+  if (storedSite && page.props.site && storedSite.id !== page.props.site.id) {
+    siteHelper.storeSite(page.props.site);
+  }
+
+  if (storedSite && page.props.serverSites && !page.props.serverSites.find((site) => site.id === storedSite.id)) {
+    siteHelper.storeSite();
+  }
+
   const handleSiteChange = (site: Site) => {
     setSelectedSite(site);
+    siteHelper.storeSite(site);
     form.post(route('sites.switch', { server: site.server_id, site: site.id }));
   };
 

@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\SiteFeature;
 use App\Models\Server;
 use App\Models\Site;
 use App\Models\User;
@@ -17,70 +16,37 @@ class WorkerPolicy
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            (
-                ! $site instanceof Site ||
-                (
-                    $site->hasFeature(SiteFeature::WORKERS) &&
-                    $site->isReady()
-                )
-            );
+            $server->processManager();
     }
 
     public function view(User $user, Worker $worker, Server $server, ?Site $site = null): bool
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            (
-                ! $site instanceof Site ||
-                (
-                    $site->server_id === $server->id &&
-                    $site->hasFeature(SiteFeature::WORKERS) &&
-                    $site->isReady() &&
-                    $worker->site_id === $site->id
-                )
-            );
+            $worker->server_id === $server->id &&
+            $server->processManager();
     }
 
     public function create(User $user, Server $server, ?Site $site = null): bool
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            (
-                ! $site instanceof Site ||
-                (
-                    $site->hasFeature(SiteFeature::WORKERS) &&
-                    $site->isReady()
-                )
-            );
+            $server->processManager();
     }
 
     public function update(User $user, Worker $worker, Server $server, ?Site $site = null): bool
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            (
-                ! $site instanceof Site ||
-                (
-                    $site->server_id === $server->id &&
-                    $site->hasFeature(SiteFeature::WORKERS) &&
-                    $site->isReady() &&
-                    $worker->site_id === $site->id
-                )
-            );
+            $worker->server_id === $server->id &&
+            $server->processManager();
     }
 
     public function delete(User $user, Worker $worker, Server $server, ?Site $site = null): bool
     {
         return ($user->isAdmin() || $server->project->users->contains($user)) &&
             $server->isReady() &&
-            (
-                ! $site instanceof Site ||
-                (
-                    $site->server_id === $server->id &&
-                    $site->hasFeature(SiteFeature::WORKERS) &&
-                    $site->isReady() &&
-                    $worker->site_id === $site->id
-                )
-            );
+            $worker->server_id === $server->id &&
+            $server->processManager();
     }
 }

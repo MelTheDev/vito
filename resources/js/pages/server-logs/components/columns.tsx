@@ -21,7 +21,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useForm } from '@inertiajs/react';
 import FormSuccessful from '@/components/form-successful';
 
-function View({ serverLog }: { serverLog: ServerLog }) {
+export function View({ serverLog, children }: { serverLog: ServerLog; children?: ReactNode }) {
   const [open, setOpen] = useState(false);
 
   const query = useQuery({
@@ -47,9 +47,7 @@ function View({ serverLog }: { serverLog: ServerLog }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>View</DropdownMenuItem>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children ? children : <DropdownMenuItem onSelect={(e) => e.preventDefault()}>View</DropdownMenuItem>}</DialogTrigger>
       <DialogContent className="sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>View Log</DialogTitle>
@@ -72,7 +70,7 @@ function View({ serverLog }: { serverLog: ServerLog }) {
   );
 }
 
-function Download({ serverLog, children }: { serverLog: ServerLog; children: ReactNode }) {
+export function Download({ serverLog, children }: { serverLog: ServerLog; children: ReactNode }) {
   return (
     <a href={route('logs.download', { server: serverLog.server_id, log: serverLog.id })} target="_blank">
       {children}

@@ -5,6 +5,7 @@ namespace App\Actions\Site;
 use App\Exceptions\SSHError;
 use App\Models\Site;
 use App\SSH\Git\Git;
+use Illuminate\Support\Facades\Validator;
 
 class UpdateBranch
 {
@@ -15,6 +16,8 @@ class UpdateBranch
      */
     public function update(Site $site, array $input): void
     {
+        Validator::make($input, self::rules())->validate();
+
         $site->branch = $input['branch'];
         app(Git::class)->fetchOrigin($site);
         app(Git::class)->checkout($site);

@@ -5,6 +5,7 @@ namespace App\Actions\Site;
 use App\Enums\LoadBalancerMethod;
 use App\Models\LoadBalancerServer;
 use App\Models\Site;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class UpdateLoadBalancer
@@ -14,6 +15,8 @@ class UpdateLoadBalancer
      */
     public function update(Site $site, array $input): void
     {
+        Validator::make($input, self::rules($site))->validate();
+
         $site->loadBalancerServers()->delete();
 
         foreach ($input['servers'] as $server) {

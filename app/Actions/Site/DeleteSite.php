@@ -7,14 +7,20 @@ use App\Models\Service;
 use App\Models\Site;
 use App\SSH\Services\PHP\PHP;
 use App\SSH\Services\Webserver\Webserver;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class DeleteSite
 {
     /**
+     * @param  array<string, mixed>  $input
+     *
      * @throws SSHError
      */
-    public function delete(Site $site): void
+    public function delete(Site $site, array $input): void
     {
+        $this->validate($site, $input);
+
         /** @var Service $service */
         $service = $site->server->webserver();
 
@@ -34,5 +40,15 @@ class DeleteSite
         }
 
         $site->delete();
+    }
+
+    private function validate(Site $site, array $input): void
+    {
+        Validator::make($input, [
+            'domain' => [
+                'required',
+                Rule::in($site->domain),
+            ],
+        ])->validate();
     }
 }

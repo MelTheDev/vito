@@ -3,10 +3,9 @@
 namespace Tests\Feature;
 
 use App\Facades\SSH;
-use App\Web\Pages\Servers\Sites\View;
-use App\Web\Pages\Servers\Sites\Widgets\Commands;
+use App\Models\Command;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class CommandsTest extends TestCase
@@ -17,28 +16,26 @@ class CommandsTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $this->get(
-            View::getUrl([
-                'server' => $this->server,
-                'site' => $this->site,
-            ])
-        )
+        $this->get(route('commands', [
+            'server' => $this->server,
+            'site' => $this->site,
+        ]))
             ->assertSuccessful()
-            ->assertSee($this->site->domain)
-            ->assertSee('Commands');
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('commands/index'));
     }
 
     public function test_create_command(): void
     {
         $this->actingAs($this->user);
 
-        Livewire::test(Commands::class, ['site' => $this->site])
-            ->assertTableHeaderActionsExistInOrder(['new-command'])
-            ->callTableAction('new-command', null, [
-                'name' => 'Test Command',
-                'command' => 'echo "${MESSAGE}"',
-            ])
-            ->assertSuccessful();
+        $this->post(route('commands.store', [
+            'server' => $this->server,
+            'site' => $this->site,
+        ]), [
+            'name' => 'Test Command',
+            'command' => 'echo "${MESSAGE}"',
+        ])
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('commands', [
             'site_id' => $this->site->id,
@@ -56,12 +53,15 @@ class CommandsTest extends TestCase
             'command' => 'echo "${MESSAGE}"',
         ]);
 
-        Livewire::test(Commands::class, ['site' => $this->site])
-            ->callTableAction('edit', $command->id, [
-                'name' => 'Updated Command',
-                'command' => 'ls -la',
-            ])
-            ->assertSuccessful();
+        $this->put(route('commands.update', [
+            'server' => $this->server,
+            'site' => $this->site,
+            'command' => $command,
+        ]), [
+            'name' => 'Updated Command',
+            'command' => 'ls -la',
+        ])
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('commands', [
             'id' => $command->id,
@@ -80,9 +80,12 @@ class CommandsTest extends TestCase
             'command' => 'echo "${MESSAGE}"',
         ]);
 
-        Livewire::test(Commands::class, ['site' => $this->site])
-            ->callTableAction('delete', $command->id)
-            ->assertSuccessful();
+        $this->delete(route('commands.destroy', [
+            'server' => $this->server,
+            'site' => $this->site,
+            'command' => $command,
+        ]))
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseMissing('commands', [
             'id' => $command->id,
@@ -95,18 +98,20 @@ class CommandsTest extends TestCase
 
         $this->actingAs($this->user);
 
+        /** @var Command $command */
         $command = $this->site->commands()->create([
             'name' => 'Test Command',
             'command' => 'echo "${MESSAGE}"',
         ]);
 
-        Livewire::test(Commands::class, ['site' => $this->site])
-            ->callTableAction('execute', $command->id, [
-                'variables' => [
-                    'MESSAGE' => 'Hello, world!',
-                ],
-            ])
-            ->assertSuccessful();
+        $this->post(route('commands.execute', [
+            'server' => $this->server,
+            'site' => $this->site,
+            'command' => $command,
+        ]), [
+            'MESSAGE' => 'Hello, world!',
+        ])
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('command_executions', [
             'command_id' => $command->id,
@@ -123,8 +128,11 @@ class CommandsTest extends TestCase
             'command' => 'echo "${MESSAGE}"',
         ]);
 
-        Livewire::test(Commands::class, ['site' => $this->site])
-            ->callTableAction('execute', $command->id, [])
-            ->assertHasActionErrors();
+        $this->post(route('commands.execute', [
+            'server' => $this->server,
+            'site' => $this->site,
+            'command' => $command,
+        ]))
+            ->assertSessionHasErrors();
     }
 }

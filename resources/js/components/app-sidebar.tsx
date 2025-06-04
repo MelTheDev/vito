@@ -129,7 +129,7 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
                         <Collapsible key={`${item.title}-${item.href}`} defaultOpen={isActive} className="group/collapsible">
                           <SidebarMenuItem>
                             <CollapsibleTrigger asChild>
-                              <SidebarMenuButton disabled={item.isDisabled || false}>
+                              <SidebarMenuButton disabled={item.isDisabled || false} hidden={item.hidden}>
                                 {item.icon && <item.icon />}
                                 <span>{item.title}</span>
                                 <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
@@ -162,7 +162,7 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
                     }
 
                     return (
-                      <SidebarMenuItem key={`${item.title}-${item.href}`}>
+                      <SidebarMenuItem key={`${item.title}-${item.href}`} hidden={item.hidden}>
                         <SidebarMenuButton onClick={() => router.visit(item.href)} isActive={isActive} disabled={item.isDisabled || false}>
                           {item.icon && <item.icon />}
                           <span>{item.title}</span>

@@ -10,6 +10,11 @@ use Throwable;
 
 class Nginx extends AbstractWebserver
 {
+    public function name(): string
+    {
+        return \App\Enums\Webserver::NGINX;
+    }
+
     /**
      * @throws SSHError
      */

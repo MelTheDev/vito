@@ -7,6 +7,7 @@ use App\Models\Redirect;
 use App\Models\Service;
 use App\Models\Site;
 use App\SSH\Services\Webserver\Webserver;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class CreateRedirect
@@ -16,6 +17,8 @@ class CreateRedirect
      */
     public function create(Site $site, array $input): Redirect
     {
+        Validator::make($input, self::rules($site))->validate();
+
         $redirect = new Redirect;
 
         $redirect->site_id = $site->id;

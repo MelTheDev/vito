@@ -21,8 +21,9 @@ import { Worker } from '@/types/worker';
 import { SharedData } from '@/types';
 import { Server } from '@/types/server';
 import { Switch } from '@/components/ui/switch';
+import { Site } from '@/types/site';
 
-export default function WorkerForm({ serverId, worker, children }: { serverId: number; worker?: Worker; children: ReactNode }) {
+export default function WorkerForm({ serverId, site, worker, children }: { serverId: number; site?: Site; worker?: Worker; children: ReactNode }) {
   const page = usePage<SharedData & { server: Server }>();
   const [open, setOpen] = useState(false);
   const form = useForm<{
@@ -51,7 +52,7 @@ export default function WorkerForm({ serverId, worker, children }: { serverId: n
       return;
     }
 
-    form.post(route('workers.store', { server: serverId }), {
+    form.post(route('workers.store', { server: serverId, site: site?.id }), {
       onSuccess: () => {
         setOpen(false);
         form.reset();

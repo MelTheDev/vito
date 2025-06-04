@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\DeploymentScriptFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class DeploymentScript extends AbstractModel
 {
-    /** @use HasFactory<\Database\Factories\DeploymentScriptFactory> */
+    /** @use HasFactory<DeploymentScriptFactory> */
     use HasFactory;
 
     protected static function boot(): void

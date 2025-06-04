@@ -16,11 +16,13 @@ class RedirectResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'server_id' => $this->site->server_id,
             'site_id' => $this->site_id,
-            'mode' => $this->mode,
             'from' => $this->from,
             'to' => $this->to,
+            'mode' => $this->mode,
             'status' => $this->status,
+            'status_color' => Redirect::$statusColors[$this->status] ?? 'gray',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

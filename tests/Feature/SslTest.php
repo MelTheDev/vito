@@ -6,47 +6,45 @@ use App\Enums\SslStatus;
 use App\Enums\SslType;
 use App\Facades\SSH;
 use App\Models\Ssl;
-use App\Web\Pages\Servers\Sites\Pages\SSL\Index;
-use App\Web\Pages\Servers\Sites\Pages\SSL\Widgets\SslsList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class SslTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_see_ssls_list()
+    public function test_see_ssls_list(): void
     {
         $this->actingAs($this->user);
 
-        $ssl = Ssl::factory()->create([
+        Ssl::factory()->create([
             'site_id' => $this->site->id,
         ]);
 
-        $this->get(Index::getUrl([
+        $this->get(route('ssls', [
             'server' => $this->server,
             'site' => $this->site,
         ]))
             ->assertSuccessful()
-            ->assertSee($ssl->type);
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('ssls/index'));
+
     }
 
-    public function test_letsencrypt_ssl()
+    public function test_letsencrypt_ssl(): void
     {
         SSH::fake('Successfully received certificate');
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
-            'site' => $this->site,
+        $this->post(route('ssls.store', [
+            'server' => $this->server->id,
+            'site' => $this->site->id,
+        ]), [
+            'type' => SslType::LETSENCRYPT,
+            'email' => 'ssl@example.com',
         ])
-            ->callAction('create', [
-                'type' => SslType::LETSENCRYPT,
-                'email' => 'ssl@example.com',
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $ssl = Ssl::query()->where('site_id', $this->site->id)->first();
         $this->assertNotEmpty($ssl);
@@ -62,22 +60,21 @@ class SslTest extends TestCase
         ]);
     }
 
-    public function test_letsencrypt_ssl_with_aliases()
+    public function test_letsencrypt_ssl_with_aliases(): void
     {
         SSH::fake('Successfully received certificate');
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
-            'site' => $this->site,
+        $this->post(route('ssls.store', [
+            'server' => $this->server->id,
+            'site' => $this->site->id,
+        ]), [
+            'type' => SslType::LETSENCRYPT,
+            'email' => 'ssl@example.com',
+            'aliases' => true,
         ])
-            ->callAction('create', [
-                'type' => SslType::LETSENCRYPT,
-                'email' => 'ssl@example.com',
-                'aliases' => true,
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('ssls', [
             'site_id' => $this->site->id,
@@ -88,23 +85,22 @@ class SslTest extends TestCase
         ]);
     }
 
-    public function test_custom_ssl()
+    public function test_custom_ssl(): void
     {
         SSH::fake('Successfully received certificate');
 
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class, [
-            'server' => $this->server,
-            'site' => $this->site,
+        $this->post(route('ssls.store', [
+            'server' => $this->server->id,
+            'site' => $this->site->id,
+        ]), [
+            'type' => SslType::CUSTOM,
+            'certificate' => 'certificate',
+            'private' => 'private',
+            'expires_at' => now()->addYear()->format('Y-m-d'),
         ])
-            ->callAction('create', [
-                'type' => SslType::CUSTOM,
-                'certificate' => 'certificate',
-                'private' => 'private',
-                'expires_at' => now()->addYear()->format('Y-m-d'),
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $ssl = Ssl::query()->where('site_id', $this->site->id)->first();
         $this->assertNotEmpty($ssl);
@@ -119,7 +115,7 @@ class SslTest extends TestCase
         ]);
     }
 
-    public function test_delete_ssl()
+    public function test_delete_ssl(): void
     {
         SSH::fake();
 
@@ -129,11 +125,11 @@ class SslTest extends TestCase
             'site_id' => $this->site->id,
         ]);
 
-        Livewire::test(SslsList::class, [
-            'site' => $this->site,
-        ])
-            ->callTableAction('delete', $ssl->id)
-            ->assertSuccessful();
+        $this->delete(route('ssls.destroy', [
+            'server' => $this->server->id,
+            'site' => $this->site->id,
+            'ssl' => $ssl->id,
+        ]))->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseMissing('ssls', [
             'id' => $ssl->id,
