@@ -52,7 +52,7 @@ jobs:
           node-version: "20.x"
 
       - name: Install NPM Dependencies
-        run: npm install
+        run: npm install --force
 
       - name: Build assets
         run: npm run build
