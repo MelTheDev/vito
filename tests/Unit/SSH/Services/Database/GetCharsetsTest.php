@@ -4,10 +4,14 @@ namespace Tests\Unit\SSH\Services\Database;
 
 use App\Facades\SSH;
 use App\SSH\Services\Database\Database;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class GetCharsetsTest extends TestCase
 {
+    /**
+     * @var array<string, array<string, string|array<string>>>
+     */
     protected static array $mysqlCharsets = [
         'armscii8' => [
             'default' => 'armscii8_general_ci',
@@ -33,8 +37,9 @@ class GetCharsetsTest extends TestCase
     ];
 
     /**
-     * @dataProvider data
+     * @param  array<string, string|array<string>>  $expected
      */
+    #[DataProvider('data')]
     public function test_update_charsets(string $name, string $version, string $output, array $expected): void
     {
         $database = $this->server->database();
@@ -52,7 +57,7 @@ class GetCharsetsTest extends TestCase
     }
 
     /**
-     * @return array[]
+     * @return array<int, array<int, mixed>>
      */
     public static function data(): array
     {

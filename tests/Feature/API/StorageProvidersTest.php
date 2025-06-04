@@ -10,6 +10,7 @@ use App\Models\StorageProvider as StorageProviderModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class StorageProvidersTest extends TestCase
@@ -17,8 +18,9 @@ class StorageProvidersTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @dataProvider createData
+     * @param  array<string, mixed>  $input
      */
+    #[DataProvider('createData')]
     public function test_create(array $input): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -106,7 +108,7 @@ class StorageProvidersTest extends TestCase
     }
 
     /**
-     * @TODO: complete FTP tests
+     * @return array<int, array<int, array<string, mixed>>>
      */
     public static function createData(): array
     {

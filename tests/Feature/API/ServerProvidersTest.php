@@ -6,6 +6,7 @@ use App\Enums\ServerProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ServerProvidersTest extends TestCase
@@ -13,8 +14,9 @@ class ServerProvidersTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @dataProvider data
+     * @param  array<string, mixed>  $input
      */
+    #[DataProvider('data')]
     public function test_connect_provider(string $provider, array $input): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -40,8 +42,9 @@ class ServerProvidersTest extends TestCase
     }
 
     /**
-     * @dataProvider data
+     * @param  array<string, mixed>  $input
      */
+    #[DataProvider('data')]
     public function test_cannot_connect_to_provider(string $provider, array $input): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -82,9 +85,7 @@ class ServerProvidersTest extends TestCase
             ]);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_delete_provider(string $provider): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -102,9 +103,7 @@ class ServerProvidersTest extends TestCase
             ->assertNoContent();
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_cannot_delete_provider(string $provider): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -128,6 +127,9 @@ class ServerProvidersTest extends TestCase
             ]);
     }
 
+    /**
+     * @return array<array<int, mixed>>
+     */
     public static function data(): array
     {
         return [

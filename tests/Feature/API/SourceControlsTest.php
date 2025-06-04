@@ -6,6 +6,7 @@ use App\Models\SourceControl;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SourceControlsTest extends TestCase
@@ -13,8 +14,9 @@ class SourceControlsTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @dataProvider data
+     * @param  array<string, mixed>  $input
      */
+    #[DataProvider('data')]
     public function test_connect_provider(string $provider, array $input): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -39,6 +41,7 @@ class SourceControlsTest extends TestCase
     /**
      * @dataProvider data
      */
+    #[DataProvider('data')]
     public function test_delete_provider(string $provider): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -60,6 +63,7 @@ class SourceControlsTest extends TestCase
     /**
      * @dataProvider data
      */
+    #[DataProvider('data')]
     public function test_cannot_delete_provider(string $provider): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -90,7 +94,10 @@ class SourceControlsTest extends TestCase
 
     /**
      * @dataProvider data
+     *
+     * @param  array<string, mixed>  $input
      */
+    #[DataProvider('data')]
     public function test_edit_source_control(string $provider, array $input): void
     {
         Http::fake();
@@ -124,6 +131,9 @@ class SourceControlsTest extends TestCase
         }
     }
 
+    /**
+     * @return array<array<int, mixed>>
+     */
     public static function data(): array
     {
         return [

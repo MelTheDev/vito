@@ -13,7 +13,7 @@ class CronjobTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_see_cronjobs_list()
+    public function test_see_cronjobs_list(): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
 
@@ -33,7 +33,7 @@ class CronjobTest extends TestCase
             ]);
     }
 
-    public function test_create_cronjob()
+    public function test_create_cronjob(): void
     {
         SSH::fake();
 
@@ -56,7 +56,7 @@ class CronjobTest extends TestCase
             ]);
     }
 
-    public function test_delete_cronjob()
+    public function test_delete_cronjob(): void
     {
         SSH::fake();
 

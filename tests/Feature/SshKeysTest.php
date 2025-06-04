@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\SshKey;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SshKeysTest extends TestCase
@@ -56,9 +57,8 @@ class SshKeysTest extends TestCase
 
     /**
      * @param  array<string, string>  $postBody
-     *
-     * @dataProvider ssh_key_data_provider
      */
+    #[DataProvider('ssh_key_data_provider')]
     public function test_create_ssh_key_handles_invalid_or_partial_keys(array $postBody, bool $expectedToSucceed): void
     {
         $this->actingAs($this->user);

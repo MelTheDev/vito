@@ -34,7 +34,7 @@ class RedirectController extends Controller
     #[ResponseFromApiResource(RedirectResource::class, Redirect::class, collection: true, paginate: 25)]
     public function index(Project $project, Server $server, Site $site): ResourceCollection
     {
-        $this->authorize('view', [Redirect::class, $site, $server]);
+        $this->authorize('viewAny', [Redirect::class, $site, $server]);
 
         $this->validateRoute($project, $server, $site);
 
@@ -53,8 +53,6 @@ class RedirectController extends Controller
 
         $this->validateRoute($project, $server, $site);
 
-        $this->validate($request, CreateRedirect::rules($site));
-
         $redirect = app(CreateRedirect::class)->create($site, $request->all());
 
         return new RedirectResource($redirect);
@@ -65,7 +63,7 @@ class RedirectController extends Controller
     #[Response(status: 204)]
     public function delete(Project $project, Server $server, Site $site, Redirect $redirect): HttpResponse
     {
-        $this->authorize('delete', [Redirect::class, $site, $server]);
+        $this->authorize('delete', [$redirect, $site, $server]);
 
         $this->validateRoute($project, $server, $site);
 

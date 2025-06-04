@@ -4,13 +4,12 @@ namespace Tests\Unit\SSH\Services\Database;
 
 use App\Facades\SSH;
 use App\SSH\Services\Database\Database;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class GetUsersTest extends TestCase
 {
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_get_users(string $name, string $version, string $output): void
     {
         $database = $this->server->database();
@@ -24,12 +23,11 @@ class GetUsersTest extends TestCase
         $databaseHandler = $database->handler();
         $users = $databaseHandler->getUsers();
 
-        $this->assertIsArray($users);
         $this->assertEquals('vito', $users[0][0]);
     }
 
     /**
-     * @return array[]
+     * @return array<int, array<int, mixed>>
      */
     public static function data(): array
     {

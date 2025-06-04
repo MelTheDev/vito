@@ -6,6 +6,7 @@ use App\Enums\ServiceStatus;
 use App\Facades\SSH;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ServicesTest extends TestCase
@@ -57,9 +58,7 @@ class ServicesTest extends TestCase
             ]);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_manage_service(string $action): void
     {
         Sanctum::actingAs($this->user, ['read', 'write']);
@@ -94,6 +93,10 @@ class ServicesTest extends TestCase
         ]))
             ->assertSuccessful()
             ->assertNoContent();
+
+        $this->assertDatabaseMissing('services', [
+            'id' => $service->id,
+        ]);
     }
 
     public function test_cannot_uninstall_service_because_it_is_being_used(): void
@@ -112,6 +115,9 @@ class ServicesTest extends TestCase
             ->assertJsonValidationErrorFor('service');
     }
 
+    /**
+     * @return array<array<string>>
+     */
     public static function data(): array
     {
         return [

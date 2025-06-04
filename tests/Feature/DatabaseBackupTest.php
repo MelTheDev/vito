@@ -13,17 +13,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use JsonException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class DatabaseBackupTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @dataProvider data
-     *
-     * @throws JsonException
-     */
+    #[DataProvider('data')]
     public function test_create_backup(string $db): void
     {
         SSH::fake();
@@ -156,11 +153,7 @@ class DatabaseBackupTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider data
-     *
-     * @throws JsonException
-     */
+    #[DataProvider('data')]
     public function test_delete_backup(string $db): void
     {
         $this->setupDatabase($db);
@@ -190,11 +183,7 @@ class DatabaseBackupTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider data
-     *
-     * @throws JsonException
-     */
+    #[DataProvider('data')]
     public function test_restore_backup(string $db): void
     {
         Http::fake();
@@ -247,6 +236,9 @@ class DatabaseBackupTest extends TestCase
         ]);
     }
 
+    /**
+     * @return array<int, array<int, string>>
+     */
     public static function data(): array
     {
         return [

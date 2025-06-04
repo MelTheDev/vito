@@ -11,7 +11,7 @@ class ServerModelTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_should_have_default_service()
+    public function test_should_have_default_service(): void
     {
         $php = $this->server->defaultService('php');
         $php->update(['is_default' => false]);

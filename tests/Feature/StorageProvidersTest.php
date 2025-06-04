@@ -10,6 +10,7 @@ use App\Models\StorageProvider as StorageProviderModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class StorageProvidersTest extends TestCase
@@ -18,9 +19,8 @@ class StorageProvidersTest extends TestCase
 
     /**
      * @param  array<string, mixed>  $input
-     *
-     * @dataProvider createData
      */
+    #[DataProvider('createData')]
     public function test_create(array $input): void
     {
         $this->actingAs($this->user);
@@ -104,8 +104,6 @@ class StorageProvidersTest extends TestCase
     }
 
     /**
-     * @TODO: complete FTP tests
-     *
      * @return array<int, mixed>
      */
     public static function createData(): array

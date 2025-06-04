@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ApplicationTest extends TestCase
@@ -153,9 +154,8 @@ class ApplicationTest extends TestCase
     /**
      * @param  array<string, mixed>  $webhook
      * @param  array<string, mixed>  $payload
-     *
-     * @dataProvider hookData
      */
+    #[DataProvider('hookData')]
     public function test_git_hook_deployment(string $provider, array $webhook, string $url, array $payload, bool $skip): void
     {
         SSH::fake();

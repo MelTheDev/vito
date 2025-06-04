@@ -5,6 +5,7 @@ namespace Tests\Unit\SourceControlProviders;
 use App\Models\SourceControl;
 use App\SourceControlProviders\Gitlab;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class GitlabTest extends TestCase
@@ -36,9 +37,7 @@ class GitlabTest extends TestCase
         $this->assertSame('git@gitlab.com-TEST_KEY:test/repo.git', $gitlab->fullRepoUrl($repo, $key));
     }
 
-    /**
-     * @dataProvider customUrlData
-     */
+    #[DataProvider('customUrlData')]
     public function test_custom_url(string $url, string $expected): void
     {
         $sourceControlModel = SourceControl::factory()
@@ -50,9 +49,7 @@ class GitlabTest extends TestCase
         $this->assertSame($expected, $gitlab->getApiUrl());
     }
 
-    /**
-     * @dataProvider customRepoUrlData
-     */
+    #[DataProvider('customRepoUrlData')]
     public function test_custom_full_repository_url(string $url, string $expected): void
     {
         $repo = 'test/repo';
@@ -67,6 +64,9 @@ class GitlabTest extends TestCase
         $this->assertSame($expected, $gitlab->fullRepoUrl($repo, $key));
     }
 
+    /**
+     * @return array<int, array<int, string>>
+     */
     public static function customRepoUrlData(): array
     {
         return [
@@ -76,6 +76,9 @@ class GitlabTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<int, array<int, string>>
+     */
     public static function customUrlData(): array
     {
         return [

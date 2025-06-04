@@ -15,7 +15,7 @@ class S3Test extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_s3_connect_successful()
+    public function test_s3_connect_successful(): void
     {
         $storageProvider = StorageProviderModel::factory()->create([
             'provider' => StorageProvider::S3,
@@ -59,7 +59,7 @@ class S3Test extends TestCase
         $this->assertTrue($s3->connect());
     }
 
-    public function test_s3_connect_failure()
+    public function test_s3_connect_failure(): void
     {
         $storageProvider = StorageProviderModel::factory()->create([
             'provider' => StorageProvider::S3,

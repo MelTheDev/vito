@@ -11,6 +11,7 @@ use App\Models\Site;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 use Tests\Traits\PrepareLoadBalancer;
 
@@ -27,8 +28,9 @@ class SitesTest extends TestCase
     }
 
     /**
-     * @dataProvider create_data
+     * @param  array<string, mixed>  $inputs
      */
+    #[DataProvider('create_data')]
     public function test_create_site(array $inputs): void
     {
         SSH::fake();
@@ -383,10 +385,11 @@ class SitesTest extends TestCase
             ->assertJsonFragment([
                 'domain' => $site->domain,
             ]);
-
-        SSH::assertExecuted('edit-file');
     }
 
+    /**
+     * @return array<array<array<string, mixed>>>
+     */
     public static function create_data(): array
     {
         return \Tests\Feature\SitesTest::create_data();

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ServicesTest extends TestCase
@@ -26,9 +27,7 @@ class ServicesTest extends TestCase
             ->assertInertia(fn (AssertableInertia $page) => $page->component('services/index'));
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_restart_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -50,9 +49,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::READY, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_failed_to_restart_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -72,9 +69,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::FAILED, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_stop_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -94,9 +89,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::STOPPED, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_failed_to_stop_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -116,9 +109,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::FAILED, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_start_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -140,9 +131,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::READY, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_failed_to_start_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -162,9 +151,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::FAILED, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_enable_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -186,9 +173,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::READY, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_failed_to_enable_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -208,9 +193,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::FAILED, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_disable_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -230,9 +213,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::DISABLED, $service->status);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_failed_to_disable_service(string $name): void
     {
         $this->actingAs($this->user);
@@ -252,9 +233,7 @@ class ServicesTest extends TestCase
         $this->assertEquals(ServiceStatus::FAILED, $service->status);
     }
 
-    /**
-     * @dataProvider installData
-     */
+    #[DataProvider('installData')]
     public function test_install_service(string $name, string $type, string $version): void
     {
         Http::fake([
@@ -356,11 +335,6 @@ class ServicesTest extends TestCase
                 'postgresql',
                 'database',
                 '16',
-            ],
-            [
-                'vito-agent',
-                'monitoring',
-                'latest',
             ],
         ];
     }

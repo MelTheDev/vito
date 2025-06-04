@@ -143,7 +143,7 @@ class CronjobTest extends TestCase
         ]);
     }
 
-    public function test_create_custom_cronjob()
+    public function test_create_custom_cronjob(): void
     {
         SSH::fake();
 
@@ -169,7 +169,7 @@ class CronjobTest extends TestCase
         SSH::assertExecutedContains('sudo -u vito crontab -l');
     }
 
-    public function test_enable_cronjob()
+    public function test_enable_cronjob(): void
     {
         SSH::fake();
 

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\SourceControl;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SourceControlsTest extends TestCase
@@ -13,9 +14,8 @@ class SourceControlsTest extends TestCase
 
     /**
      * @param  array<string, mixed>  $input
-     *
-     * @dataProvider data
      */
+    #[DataProvider('data')]
     public function test_connect_provider(string $provider, ?string $customUrl, array $input): void
     {
         $this->actingAs($this->user);
@@ -53,9 +53,7 @@ class SourceControlsTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_delete_provider(string $provider): void
     {
         $this->actingAs($this->user);
@@ -75,9 +73,7 @@ class SourceControlsTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_cannot_delete_provider(string $provider): void
     {
         $this->actingAs($this->user);
@@ -104,9 +100,8 @@ class SourceControlsTest extends TestCase
 
     /**
      * @param  array<string, mixed>  $input
-     *
-     * @dataProvider data
      */
+    #[DataProvider('data')]
     public function test_edit_source_control(string $provider, ?string $url, array $input): void
     {
         Http::fake();

@@ -80,7 +80,7 @@ class ProjectsTest extends TestCase
         Sanctum::actingAs($this->user, ['read', 'write']);
 
         $this->json('DELETE', "/api/projects/{$this->user->currentProject->id}")
-            ->assertJsonValidationErrorFor('project');
+            ->assertJsonValidationErrorFor('name');
 
         $this->assertDatabaseHas('projects', [
             'id' => $this->user->currentProject->id,

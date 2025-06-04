@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia;
 use JsonException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ServerProvidersTest extends TestCase
@@ -16,10 +17,9 @@ class ServerProvidersTest extends TestCase
     /**
      * @param  array<string, mixed>  $input
      *
-     * @dataProvider data
-     *
      * @throws JsonException
      */
+    #[DataProvider('data')]
     public function test_connect_provider(string $provider, array $input): void
     {
         $this->actingAs($this->user);
@@ -45,9 +45,8 @@ class ServerProvidersTest extends TestCase
 
     /**
      * @param  array<string, mixed>  $input
-     *
-     * @dataProvider data
      */
+    #[DataProvider('data')]
     public function test_cannot_connect_to_provider(string $provider, array $input): void
     {
         $this->actingAs($this->user);
@@ -86,10 +85,9 @@ class ServerProvidersTest extends TestCase
     }
 
     /**
-     * @dataProvider data
-     *
      * @throws JsonException
      */
+    #[DataProvider('data')]
     public function test_delete_provider(string $provider): void
     {
         $this->actingAs($this->user);
@@ -108,9 +106,7 @@ class ServerProvidersTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider data
-     */
+    #[DataProvider('data')]
     public function test_cannot_delete_provider(string $provider): void
     {
         $this->actingAs($this->user);

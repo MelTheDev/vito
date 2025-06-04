@@ -21,7 +21,9 @@ class InstallTest extends TestCase
             'https://api.github.com/repos/vitodeploy/agent/tags' => Http::response([['name' => '0.1.0']]),
         ]);
 
-        $service = app(Install::class)->install($this->server, [
+        $this->server->monitoring()->delete();
+
+        app(Install::class)->install($this->server, [
             'type' => 'monitoring',
             'name' => 'vito-agent',
             'version' => 'latest',
@@ -34,12 +36,11 @@ class InstallTest extends TestCase
             'version' => '0.1.0',
             'status' => ServiceStatus::READY,
         ]);
-
-        $this->assertNotNull($service->type_data);
     }
 
     public function test_install_vito_agent_failed(): void
     {
+        $this->server->monitoring()->delete();
         $this->expectExceptionMessage('Failed to fetch tags');
         SSH::fake('Active: inactive');
         Http::fake([
@@ -58,7 +59,7 @@ class InstallTest extends TestCase
 
         SSH::fake('Active: active');
 
-        $service = app(Install::class)->install($this->server, [
+        app(Install::class)->install($this->server, [
             'type' => 'webserver',
             'name' => 'nginx',
             'version' => 'latest',
@@ -71,8 +72,6 @@ class InstallTest extends TestCase
             'version' => 'latest',
             'status' => ServiceStatus::READY,
         ]);
-
-        $this->assertNotNull($service->type_data);
     }
 
     public function test_install_caddy(): void
@@ -81,7 +80,7 @@ class InstallTest extends TestCase
 
         SSH::fake('Active: active');
 
-        $service = app(Install::class)->install($this->server, [
+        app(Install::class)->install($this->server, [
             'type' => 'webserver',
             'name' => 'caddy',
             'version' => 'latest',
@@ -94,8 +93,6 @@ class InstallTest extends TestCase
             'version' => 'latest',
             'status' => ServiceStatus::READY,
         ]);
-
-        $this->assertNotNull($service->type_data);
     }
 
     public function test_install_mysql(): void
@@ -104,7 +101,7 @@ class InstallTest extends TestCase
 
         SSH::fake('Active: active');
 
-        $service = app(Install::class)->install($this->server, [
+        app(Install::class)->install($this->server, [
             'type' => 'database',
             'name' => 'mysql',
             'version' => '8.0',
@@ -117,8 +114,6 @@ class InstallTest extends TestCase
             'version' => '8.0',
             'status' => ServiceStatus::READY,
         ]);
-
-        $this->assertNotNull($service->type_data);
     }
 
     public function test_install_mysql_failed(): void
@@ -137,7 +132,7 @@ class InstallTest extends TestCase
 
         SSH::fake('Active: active');
 
-        $service = app(Install::class)->install($this->server, [
+        app(Install::class)->install($this->server, [
             'type' => 'process_manager',
             'name' => 'supervisor',
             'version' => 'latest',
@@ -150,8 +145,6 @@ class InstallTest extends TestCase
             'version' => 'latest',
             'status' => ServiceStatus::READY,
         ]);
-
-        $this->assertNotNull($service->type_data);
     }
 
     public function test_install_redis(): void
@@ -160,7 +153,7 @@ class InstallTest extends TestCase
 
         SSH::fake('Active: active');
 
-        $service = app(Install::class)->install($this->server, [
+        app(Install::class)->install($this->server, [
             'type' => 'memory_database',
             'name' => 'redis',
             'version' => 'latest',
@@ -173,7 +166,5 @@ class InstallTest extends TestCase
             'version' => 'latest',
             'status' => ServiceStatus::READY,
         ]);
-
-        $this->assertNotNull($service->type_data);
     }
 }

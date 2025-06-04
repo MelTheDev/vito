@@ -11,6 +11,7 @@ use App\Models\Site;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SitesTest extends TestCase
@@ -19,9 +20,8 @@ class SitesTest extends TestCase
 
     /**
      * @param  array<string, mixed>  $inputs
-     *
-     * @dataProvider create_data
      */
+    #[DataProvider('create_data')]
     public function test_create_site(array $inputs): void
     {
         SSH::fake();
@@ -55,9 +55,8 @@ class SitesTest extends TestCase
 
     /**
      * @param  array<string, mixed>  $inputs
-     *
-     * @dataProvider failure_create_data
      */
+    #[DataProvider('failure_create_data')]
     public function test_isolated_user_failure(array $inputs): void
     {
         SSH::fake();
@@ -67,9 +66,7 @@ class SitesTest extends TestCase
             ->assertSessionHasErrors();
     }
 
-    /**
-     * @dataProvider create_failure_data
-     */
+    #[DataProvider('create_failure_data')]
     public function test_create_site_failed_due_to_source_control(int $status): void
     {
         $inputs = [
@@ -275,7 +272,7 @@ class SitesTest extends TestCase
     }
 
     /**
-     * @return array<array<string, mixed>>
+     * @return array<array<int, mixed>>
      */
     public static function failure_create_data(): array
     {

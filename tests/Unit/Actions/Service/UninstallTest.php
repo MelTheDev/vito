@@ -20,7 +20,9 @@ class UninstallTest extends TestCase
     {
         SSH::fake();
 
-        Service::factory()->create([
+        $this->server->monitoring()->delete();
+
+        $service = Service::factory()->create([
             'server_id' => $this->server->id,
             'name' => 'vito-agent',
             'type' => 'monitoring',
@@ -31,11 +33,7 @@ class UninstallTest extends TestCase
         app(Uninstall::class)->uninstall($this->server->monitoring());
 
         $this->assertDatabaseMissing('services', [
-            'server_id' => $this->server->id,
-            'name' => 'vito-agent',
-            'type' => 'monitoring',
-            'version' => 'latest',
-            'status' => ServiceStatus::READY,
+            'id' => $service->id,
         ]);
     }
 

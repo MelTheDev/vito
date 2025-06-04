@@ -6,6 +6,7 @@ on:
       - main
       - 1.x
       - 2.x
+      - 3.x
   pull_request:
 
 jobs:
@@ -16,6 +17,7 @@ jobs:
       fail-fast: true
       matrix:
         php: [ 8.4 ]
+        node-version: [ "20.x" ]
 
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +45,17 @@ jobs:
 
       - name: Set up the .env file
         run: touch .env
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Install NPM Dependencies
+        run: npm install
+
+      - name: Build assets
+        run: npm run build
 
       - name: Run test suite
         run: php artisan test

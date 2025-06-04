@@ -7,6 +7,7 @@ use App\Enums\ServiceStatus;
 use App\Facades\SSH;
 use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class PHPTest extends TestCase
@@ -64,9 +65,7 @@ class PHPTest extends TestCase
         $this->assertContains('gmp', $php->refresh()->type_data['extensions']);
     }
 
-    /**
-     * @dataProvider php_ini_data
-     */
+    #[DataProvider('php_ini_data')]
     public function test_get_php_ini(string $version, string $type): void
     {
         SSH::fake('[PHP ini]');
