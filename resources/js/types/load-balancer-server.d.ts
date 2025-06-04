@@ -1,9 +1,9 @@
 export interface LoadBalancerServer {
   load_balancer_id: number;
-  ip: number;
+  ip: string;
   port: number;
-  weight: boolean;
-  backup: string;
+  weight: string;
+  backup: boolean;
   created_at: string;
   updated_at: string;
 

@@ -8,7 +8,19 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 
-export default function ServerSelect({ value, onValueChange }: { value: string; onValueChange: (selectedServer: Server) => void }) {
+export default function ServerSelect({
+  value,
+  valueBy = 'id',
+  onValueChange,
+  id,
+  prefetch,
+}: {
+  value: string;
+  valueBy?: keyof Server;
+  onValueChange: (selectedServer?: Server) => void;
+  id?: string;
+  prefetch?: boolean;
+}) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string>(value);
@@ -27,7 +39,7 @@ export default function ServerSelect({ value, onValueChange }: { value: string; 
       const response = await axios.get(route('servers.json', { query: query }));
       return response.data;
     },
-    enabled: false,
+    enabled: prefetch,
   });
 
   const onOpenChange = (open: boolean) => {
@@ -47,12 +59,12 @@ export default function ServerSelect({ value, onValueChange }: { value: string; 
     }
   }, [query, open, refetch]);
 
-  const selectedServer = servers.find((server) => server.id === parseInt(selected));
+  const selectedServer = servers.find((server) => String(server[valueBy] as Server[keyof Server]) === selected);
 
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
+        <Button id={id} variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
           {selectedServer ? selectedServer.name : 'Select server...'}
           <ChevronsUpDownIcon className="opacity-50" />
         </Button>
@@ -63,25 +75,21 @@ export default function ServerSelect({ value, onValueChange }: { value: string; 
           <CommandList>
             <CommandEmpty>{isFetching ? 'Searching...' : query === '' ? 'Start typing to search servers' : 'No servers found.'}</CommandEmpty>
             <CommandGroup>
-              {servers.map((server) => (
+              {servers.map((server: Server) => (
                 <CommandItem
                   key={`server-select-${server.id}`}
-                  value={server.id.toString()}
+                  value={String(server[valueBy] as Server[keyof Server])}
                   onSelect={(currentValue) => {
                     const newSelected = currentValue === selected ? '' : currentValue;
                     setSelected(newSelected);
                     setOpen(false);
-                    if (newSelected) {
-                      const server = servers.find((s) => s.id.toString() === newSelected);
-                      if (server) {
-                        onValueChange(server);
-                      }
-                    }
+                    const server = servers.find((s) => String(s[valueBy] as Server[keyof Server]) === newSelected);
+                    onValueChange(server);
                   }}
                   className="truncate"
                 >
                   {server.name} ({server.ip})
-                  <CheckIcon className={cn('ml-auto', selected && parseInt(selected) === server.id ? 'opacity-100' : 'opacity-0')} />
+                  <CheckIcon className={cn('ml-auto', selected === String(server[valueBy] as Server[keyof Server]) ? 'opacity-100' : 'opacity-0')} />
                 </CommandItem>
               ))}
             </CommandGroup>

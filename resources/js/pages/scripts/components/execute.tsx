@@ -55,7 +55,7 @@ export default function Execute({ script, children }: { script: Script; children
                 <ServerSelect
                   value={form.data.server}
                   onValueChange={(value) => {
-                    form.setData('server', value.id.toString());
+                    form.setData('server', value ? value.id.toString() : '');
                     setServer(value);
                   }}
                 />

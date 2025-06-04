@@ -22,7 +22,7 @@ class UpdateLoadBalancer
         foreach ($input['servers'] as $server) {
             $loadBalancerServer = new LoadBalancerServer([
                 'load_balancer_id' => $site->id,
-                'ip' => $server['server'],
+                'ip' => $server['ip'],
                 'port' => $server['port'],
                 'weight' => $server['weight'],
                 'backup' => (bool) $server['backup'],
@@ -43,7 +43,7 @@ class UpdateLoadBalancer
                 'required',
                 'array',
             ],
-            'servers.*.server' => [
+            'servers.*.ip' => [
                 'required',
                 Rule::exists('servers', 'local_ip')
                     ->where('project_id', $site->project->id),

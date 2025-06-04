@@ -104,7 +104,7 @@ export default function CreateSite({ server, children }: { server?: Server; chil
             {server === undefined && (
               <FormField>
                 <Label htmlFor="server">Server</Label>
-                <ServerSelect value={form.data.server} onValueChange={(value) => form.setData('server', value.id.toString())} />
+                <ServerSelect value={form.data.server} onValueChange={(value) => form.setData('server', value ? value.id.toString() : '')} />
                 <InputError message={form.errors.server} />
               </FormField>
             )}
