@@ -162,13 +162,13 @@ class SitesTest extends TestCase
             'method' => LoadBalancerMethod::ROUND_ROBIN,
             'servers' => [
                 [
-                    'server' => $servers[0]->local_ip,
+                    'ip' => $servers[0]->local_ip,
                     'port' => 80,
                     'weight' => 1,
                     'backup' => false,
                 ],
                 [
-                    'server' => $servers[1]->local_ip,
+                    'ip' => $servers[1]->local_ip,
                     'port' => 80,
                     'weight' => 1,
                     'backup' => false,
