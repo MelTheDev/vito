@@ -4,6 +4,7 @@ namespace App\Actions\Script;
 
 use App\Models\Script;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class CreateScript
 {
@@ -12,6 +13,8 @@ class CreateScript
      */
     public function create(User $user, array $input): Script
     {
+        Validator::make($input, self::rules())->validate();
+
         $script = new Script([
             'user_id' => $user->id,
             'name' => $input['name'],

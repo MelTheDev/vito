@@ -151,8 +151,9 @@ class ApplicationTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $webhook
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $webhook
+     * @param  array<string, mixed>  $payload
+     *
      * @dataProvider hookData
      */
     public function test_git_hook_deployment(string $provider, array $webhook, string $url, array $payload, bool $skip): void

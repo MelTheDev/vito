@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, router } from '@inertiajs/react';
-import { BookOpen, ChevronRightIcon, CogIcon, Folder, MousePointerClickIcon, ServerIcon } from 'lucide-react';
+import { BookOpen, ChevronRightIcon, CogIcon, Folder, MousePointerClickIcon, ServerIcon, ZapIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import { Icon } from '@/components/icon';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -29,6 +29,11 @@ const mainNavItems: NavItem[] = [
     title: 'Sites',
     href: route('sites.all'),
     icon: MousePointerClickIcon,
+  },
+  {
+    title: 'Scripts',
+    href: route('scripts'),
+    icon: ZapIcon,
   },
   {
     title: 'Settings',

@@ -42,6 +42,9 @@ class DeleteSite
         $site->delete();
     }
 
+    /**
+     * @param  array<string, mixed>  $input
+     */
     private function validate(Site $site, array $input): void
     {
         Validator::make($input, [

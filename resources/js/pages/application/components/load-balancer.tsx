@@ -7,13 +7,12 @@ import HeaderContainer from '@/components/header-container';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { BookOpenIcon, LoaderCircleIcon } from 'lucide-react';
-import React, { FormEvent } from 'react';
+import { FormEvent } from 'react';
 import { LoadBalancerServer } from '@/types/load-balancer-server';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormField, FormFields } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Project } from '@/types/project';
 import InputError from '@/components/ui/input-error';
 import FormSuccessful from '@/components/form-successful';
 

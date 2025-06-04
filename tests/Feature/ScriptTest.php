@@ -8,12 +8,8 @@ use App\Models\Script;
 use App\Models\ScriptExecution;
 use App\Models\Server;
 use App\Models\Site;
-use App\Web\Pages\Scripts\Executions;
-use App\Web\Pages\Scripts\Index;
-use App\Web\Pages\Scripts\Widgets\ScriptExecutionsList;
-use App\Web\Pages\Scripts\Widgets\ScriptsList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class ScriptTest extends TestCase
@@ -24,25 +20,24 @@ class ScriptTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $script = Script::factory()->create([
+        Script::factory()->create([
             'user_id' => $this->user->id,
         ]);
 
-        $this->get(Index::getUrl())
+        $this->get(route('scripts'))
             ->assertSuccessful()
-            ->assertSee($script->name);
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('scripts/index'));
     }
 
     public function test_create_script(): void
     {
         $this->actingAs($this->user);
 
-        Livewire::test(Index::class)
-            ->callAction('create', [
-                'name' => 'Test Script',
-                'content' => 'echo "Hello, World!"',
-            ])
-            ->assertSuccessful();
+        $this->post(route('scripts.store'), [
+            'name' => 'Test Script',
+            'content' => 'echo "Hello, World!"',
+        ])
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('scripts', [
             'name' => 'Test Script',
@@ -58,12 +53,11 @@ class ScriptTest extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        Livewire::test(ScriptsList::class)
-            ->callTableAction('edit', $script->id, [
-                'name' => 'New Name',
-                'content' => 'echo "Hello, new World!"',
-            ])
-            ->assertSuccessful();
+        $this->put(route('scripts.update', $script), [
+            'name' => 'New Name',
+            'content' => 'echo "Hello, new World!"',
+        ])
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('scripts', [
             'id' => $script->id,
@@ -85,9 +79,7 @@ class ScriptTest extends TestCase
             'status' => ScriptExecutionStatus::EXECUTING,
         ]);
 
-        Livewire::test(ScriptsList::class)
-            ->callTableAction('delete', $script->id)
-            ->assertSuccessful();
+        $this->delete(route('scripts.destroy', $script->id));
 
         $this->assertDatabaseMissing('scripts', [
             'id' => $script->id,
@@ -108,14 +100,11 @@ class ScriptTest extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        Livewire::test(Executions::class, [
-            'script' => $script,
+        $this->post(route('scripts.execute', $script), [
+            'server' => $this->server->id,
+            'user' => 'root',
         ])
-            ->callAction('execute', [
-                'server' => $this->server->id,
-                'user' => 'root',
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('script_executions', [
             'script_id' => $script->id,
@@ -127,13 +116,9 @@ class ScriptTest extends TestCase
             'server_id' => $this->server->id,
         ]);
 
-        $execution = $script->lastExecution;
-
-        Livewire::test(ScriptExecutionsList::class, [
-            'script' => $script,
-        ])
-            ->callTableAction('logs', $execution->id)
-            ->assertSuccessful();
+        $this->get(route('scripts.show', $script))
+            ->assertSuccessful()
+            ->assertInertia(fn (AssertableInertia $page) => $page->component('scripts/show'));
     }
 
     public function test_execute_script_as_isolated_user(): void
@@ -151,14 +136,11 @@ class ScriptTest extends TestCase
             'user' => 'example',
         ]);
 
-        Livewire::test(Executions::class, [
-            'script' => $script,
+        $this->post(route('scripts.execute', $script), [
+            'server' => $this->server->id,
+            'user' => 'example',
         ])
-            ->callAction('execute', [
-                'server' => $this->server->id,
-                'user' => 'example',
-            ])
-            ->assertSuccessful();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('script_executions', [
             'script_id' => $script->id,
@@ -175,14 +157,11 @@ class ScriptTest extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        Livewire::test(Executions::class, [
-            'script' => $script,
+        $this->post(route('scripts.execute', $script), [
+            'server' => $this->server->id,
+            'user' => 'example',
         ])
-            ->callAction('execute', [
-                'server' => $this->server->id,
-                'user' => 'example',
-            ])
-            ->assertHasActionErrors();
+            ->assertSessionHasErrors();
 
         $this->assertDatabaseMissing('script_executions', [
             'script_id' => $script->id,
@@ -203,36 +182,15 @@ class ScriptTest extends TestCase
             'user' => 'example',
         ]);
 
-        Livewire::test(Executions::class, [
-            'script' => $script,
+        $this->post(route('scripts.execute', $script), [
+            'server' => $this->server->id,
+            'user' => 'example',
         ])
-            ->callAction('execute', [
-                'server' => $this->server->id,
-                'user' => 'example',
-            ])
-            ->assertHasActionErrors();
+            ->assertSessionHasErrors();
 
         $this->assertDatabaseMissing('script_executions', [
             'script_id' => $script->id,
             'user' => 'example',
         ]);
-    }
-
-    public function test_see_executions(): void
-    {
-        $this->actingAs($this->user);
-
-        $script = Script::factory()->create([
-            'user_id' => $this->user->id,
-        ]);
-
-        $scriptExecution = ScriptExecution::factory()->create([
-            'script_id' => $script->id,
-            'status' => ScriptExecutionStatus::EXECUTING,
-        ]);
-
-        $this->get(Executions::getUrl(['script' => $script]))
-            ->assertSuccessful()
-            ->assertSee($scriptExecution->status);
     }
 }

@@ -37,7 +37,7 @@ class ApplicationController extends Controller
         return Inertia::render('application/index', [
             'deployments' => DeploymentResource::collection($site->deployments()->latest()->simplePaginate(config('web.pagination_size'))),
             'deploymentScript' => $site->deploymentScript?->content,
-            'loadBalancerServers' => LoadBalancerServerResource::collection($site->loadBalancerServers)
+            'loadBalancerServers' => LoadBalancerServerResource::collection($site->loadBalancerServers),
         ]);
     }
 
