@@ -15,7 +15,7 @@ production servers without a hassle.
 ## Quick Start
 
 ```sh
-bash <(curl -Ls https://raw.githubusercontent.com/vitodeploy/vito/2.x/scripts/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/vitodeploy/vito/3.x/scripts/install.sh)
 ```
 
 ## Features
@@ -45,6 +45,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/vitodeploy/vito/2.x/scripts/in
 ## Credits
 
 - Laravel
+- InertiaJS
+- Shadcn UI
 - PHPSecLib
 - PHPUnit
 - Tailwindcss

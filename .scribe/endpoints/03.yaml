@@ -1,17 +1,17 @@
-name: firewall-rules
+name: database-users
 description: ''
 endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/projects/{project_id}/servers/{server_id}/firewall-rules'
+    uri: 'api/projects/{project_id}/servers/{server_id}/database-users'
     metadata:
-      groupName: firewall-rules
+      groupName: database-users
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
       title: list
-      description: 'Get all firewall rules.'
+      description: 'Get all database users.'
       authenticated: false
       custom: []
     headers:
@@ -32,7 +32,7 @@ endpoints:
         name: server_id
         description: 'The ID of the server.'
         required: true
-        example: 32
+        example: 6
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -40,7 +40,7 @@ endpoints:
         custom: []
     cleanUrlParameters:
       project_id: 1
-      server_id: 32
+      server_id: 6
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -49,7 +49,7 @@ endpoints:
     responses:
       -
         status: 200
-        content: '{"data":[{"id":97,"name":"dolores","server_id":1,"type":"allow","protocol":"tcp","port":40770,"source":"199.76.131.15","mask":"24","note":"test","status":"creating","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"},{"id":98,"name":"laborum","server_id":1,"type":"allow","protocol":"tcp","port":14235,"source":"100.14.146.200","mask":"24","note":"test","status":"creating","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"}],"links":{"first":"\/?page=1","last":"\/?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"\/?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"\/","per_page":25,"to":2,"total":2}}'
+        content: '{"data":[{"id":4,"server_id":1,"username":"cartwright.maxine","databases":[],"host":"%","status":"creating","status_color":"warning","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"},{"id":5,"server_id":1,"username":"gusikowski.eden","databases":[],"host":"%","status":"creating","status_color":"warning","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"}],"links":{"first":"\/?page=1","last":"\/?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"\/?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"\/","per_page":25,"to":2,"total":2}}'
         headers: []
         description: ''
         custom: []
@@ -62,14 +62,14 @@ endpoints:
   -
     httpMethods:
       - POST
-    uri: 'api/projects/{project_id}/servers/{server_id}/firewall-rules'
+    uri: 'api/projects/{project_id}/servers/{server_id}/database-users'
     metadata:
-      groupName: firewall-rules
+      groupName: database-users
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
       title: create
-      description: 'Create a new firewall rule.'
+      description: 'Create a new database user.'
       authenticated: false
       custom: []
     headers:
@@ -90,7 +90,7 @@ endpoints:
         name: server_id
         description: 'The ID of the server.'
         required: true
-        example: 32
+        example: 6
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -98,225 +98,49 @@ endpoints:
         custom: []
     cleanUrlParameters:
       project_id: 1
-      server_id: 32
+      server_id: 6
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      name:
-        name: name
+      username:
+        name: username
         description: ''
         required: true
-        example: consequatur
+        example: architecto
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      type:
-        name: type
+      password:
+        name: password
         description: ''
         required: true
-        example: allow
-        type: string
-        enumValues:
-          - allow
-          - deny
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      protocol:
-        name: protocol
-        description: ''
-        required: true
-        example: tcp
-        type: string
-        enumValues:
-          - tcp
-          - udp
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      port:
-        name: port
-        description: ''
-        required: true
-        example: consequatur
+        example: '|]|{+-'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      source:
-        name: source
-        description: ''
-        required: false
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      mask:
-        name: mask
-        description: 'Mask for source IP.'
+      host:
+        name: host
+        description: 'Host, if it is a remote user.'
         required: true
-        example: '0'
+        example: '%'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
     cleanBodyParameters:
-      name: consequatur
-      type: allow
-      protocol: tcp
-      port: consequatur
-      source: consequatur
-      mask: '0'
+      username: architecto
+      password: '|]|{+-'
+      host: '%'
     fileParameters: []
     responses:
       -
         status: 200
-        content: '{"id":97,"name":"dolores","server_id":1,"type":"allow","protocol":"tcp","port":40770,"source":"199.76.131.15","mask":"24","note":"test","status":"creating","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"}'
-        headers: []
-        description: ''
-        custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - PUT
-    uri: 'api/projects/{project_id}/servers/{server_id}/firewall-rules/{firewallRule_id}'
-    metadata:
-      groupName: firewall-rules
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: edit
-      description: 'Update an existing firewall rule.'
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      project_id:
-        name: project_id
-        description: 'The ID of the project.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      server_id:
-        name: server_id
-        description: 'The ID of the server.'
-        required: true
-        example: 32
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      firewallRule_id:
-        name: firewallRule_id
-        description: 'The ID of the firewallRule.'
-        required: true
-        example: 94
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-    cleanUrlParameters:
-      project_id: 1
-      server_id: 32
-      firewallRule_id: 94
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      name:
-        name: name
-        description: ''
-        required: true
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      type:
-        name: type
-        description: ''
-        required: true
-        example: allow
-        type: string
-        enumValues:
-          - allow
-          - deny
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      protocol:
-        name: protocol
-        description: ''
-        required: true
-        example: tcp
-        type: string
-        enumValues:
-          - tcp
-          - udp
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      port:
-        name: port
-        description: ''
-        required: true
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      source:
-        name: source
-        description: ''
-        required: false
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      mask:
-        name: mask
-        description: 'Mask for source IP.'
-        required: true
-        example: '0'
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-    cleanBodyParameters:
-      name: consequatur
-      type: allow
-      protocol: tcp
-      port: consequatur
-      source: consequatur
-      mask: '0'
-    fileParameters: []
-    responses:
-      -
-        status: 200
-        content: '{"id":97,"name":"dolores","server_id":1,"type":"allow","protocol":"tcp","port":40770,"source":"199.76.131.15","mask":"24","note":"test","status":"creating","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"}'
+        content: '{"id":4,"server_id":1,"username":"justina.gaylord","databases":[],"host":"%","status":"creating","status_color":"warning","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"}'
         headers: []
         description: ''
         custom: []
@@ -329,14 +153,14 @@ endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/projects/{project_id}/servers/{server_id}/firewall-rules/{firewallRule_id}'
+    uri: 'api/projects/{project_id}/servers/{server_id}/database-users/{databaseUser_id}'
     metadata:
-      groupName: firewall-rules
+      groupName: database-users
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
       title: show
-      description: 'Get a firewall rule by ID.'
+      description: 'Get a database user by ID.'
       authenticated: false
       custom: []
     headers:
@@ -357,17 +181,17 @@ endpoints:
         name: server_id
         description: 'The ID of the server.'
         required: true
-        example: 32
+        example: 6
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      firewallRule_id:
-        name: firewallRule_id
-        description: 'The ID of the firewallRule.'
+      databaseUser_id:
+        name: databaseUser_id
+        description: 'The ID of the databaseUser.'
         required: true
-        example: 94
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -375,8 +199,8 @@ endpoints:
         custom: []
     cleanUrlParameters:
       project_id: 1
-      server_id: 32
-      firewallRule_id: 94
+      server_id: 6
+      databaseUser_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -385,7 +209,87 @@ endpoints:
     responses:
       -
         status: 200
-        content: '{"id":97,"name":"laborum","server_id":1,"type":"allow","protocol":"tcp","port":14235,"source":"100.14.146.200","mask":"24","note":"test","status":"creating","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"}'
+        content: '{"id":4,"server_id":1,"username":"zbailey","databases":[],"host":"%","status":"creating","status_color":"warning","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"}'
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/projects/{project_id}/servers/{server_id}/database-users/{databaseUser_id}/link'
+    metadata:
+      groupName: database-users
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: link
+      description: 'Link to databases'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      project_id:
+        name: project_id
+        description: 'The ID of the project.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      server_id:
+        name: server_id
+        description: 'The ID of the server.'
+        required: true
+        example: 6
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      databaseUser_id:
+        name: databaseUser_id
+        description: 'The ID of the databaseUser.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      project_id: 1
+      server_id: 6
+      databaseUser_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      databases:
+        name: databases
+        description: 'Array of database names to link to the user.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      databases: architecto
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: '{"id":4,"server_id":1,"username":"zbailey","databases":[],"host":"%","status":"creating","status_color":"warning","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"}'
         headers: []
         description: ''
         custom: []
@@ -398,14 +302,14 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/projects/{project_id}/servers/{server_id}/firewall-rules/{firewallRule_id}'
+    uri: 'api/projects/{project_id}/servers/{server_id}/database-users/{databaseUser_id}'
     metadata:
-      groupName: firewall-rules
+      groupName: database-users
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
       title: delete
-      description: 'Delete firewall rule.'
+      description: 'Delete database user.'
       authenticated: false
       custom: []
     headers:
@@ -426,17 +330,17 @@ endpoints:
         name: server_id
         description: 'The ID of the server.'
         required: true
-        example: 32
+        example: 6
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      firewallRule_id:
-        name: firewallRule_id
-        description: 'The ID of the firewallRule.'
+      databaseUser_id:
+        name: databaseUser_id
+        description: 'The ID of the databaseUser.'
         required: true
-        example: 94
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -444,8 +348,8 @@ endpoints:
         custom: []
     cleanUrlParameters:
       project_id: 1
-      server_id: 32
-      firewallRule_id: 94
+      server_id: 6
+      databaseUser_id: 16
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []

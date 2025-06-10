@@ -1,17 +1,17 @@
-name: server-providers
+name: servers
 description: ''
 endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/projects/{project_id}/server-providers'
+    uri: 'api/projects/{project_id}/servers'
     metadata:
-      groupName: server-providers
+      groupName: servers
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
       title: list
-      description: ''
+      description: 'Get all servers in a project.'
       authenticated: false
       custom: []
     headers:
@@ -38,7 +38,7 @@ endpoints:
     responses:
       -
         status: 200
-        content: '{"data":[{"id":4,"project_id":null,"global":true,"name":"quo","provider":"custom","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"},{"id":5,"project_id":null,"global":true,"name":"sed","provider":"digitalocean","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"}],"links":{"first":"\/?page=1","last":"\/?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"\/?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"\/","per_page":25,"to":2,"total":2}}'
+        content: '{"data":[{"id":7,"project_id":1,"services":[],"user_id":1,"provider_id":null,"name":"Rhiannon Hackett","ssh_user":"vito","ssh_users":["root","vito"],"ip":"15.21.182.27","local_ip":"15.126.47.30","port":22,"os":"ubuntu_22","type":"regular","type_data":null,"provider":"custom","provider_data":null,"public_key":"test","status":"ready","auto_update":null,"available_updates":0,"security_updates":null,"progress":100,"progress_step":null,"updates":0,"last_update_check":null,"status_color":"success","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"},{"id":8,"project_id":1,"services":[],"user_id":1,"provider_id":null,"name":"Maya Bins","ssh_user":"vito","ssh_users":["root","vito"],"ip":"88.63.32.129","local_ip":"161.58.4.234","port":22,"os":"ubuntu_22","type":"regular","type_data":null,"provider":"custom","provider_data":null,"public_key":"test","status":"ready","auto_update":null,"available_updates":0,"security_updates":null,"progress":100,"progress_step":null,"updates":0,"last_update_check":null,"status_color":"success","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"}],"links":{"first":"\/?page=1","last":"\/?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"\/?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"path":"\/","per_page":25,"to":2,"total":2}}'
         headers: []
         description: ''
         custom: []
@@ -51,14 +51,14 @@ endpoints:
   -
     httpMethods:
       - POST
-    uri: 'api/projects/{project_id}/server-providers'
+    uri: 'api/projects/{project_id}/servers'
     metadata:
-      groupName: server-providers
+      groupName: servers
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
       title: create
-      description: ''
+      description: 'Create a new server.'
       authenticated: false
       custom: []
     headers:
@@ -82,9 +82,64 @@ endpoints:
     bodyParameters:
       provider:
         name: provider
-        description: 'The provider (aws, linode, hetzner, digitalocean, vultr, ...)'
+        description: 'The server provider type'
         required: true
-        example: consequatur
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      server_provider:
+        name: server_provider
+        description: 'If the provider is not custom, the ID of the server provider profile'
+        required: true
+        example: linode
+        type: string
+        enumValues:
+          - custom
+          - hetzner
+          - digitalocean
+          - linode
+          - vultr
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      region:
+        name: region
+        description: 'Provider region if the provider is not custom'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      plan:
+        name: plan
+        description: 'Provider plan if the provider is not custom'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      ip:
+        name: ip
+        description: 'SSH IP address if the provider is custom'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      port:
+        name: port
+        description: 'SSH Port if the provider is custom'
+        required: true
+        example: architecto
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -92,55 +147,94 @@ endpoints:
         custom: []
       name:
         name: name
-        description: 'The name of the server provider.'
+        description: 'The name of the server.'
         required: true
-        example: consequatur
+        example: architecto
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      token:
-        name: token
-        description: 'The token if provider requires api token'
+      os:
+        name: os
+        description: 'The os of the server'
         required: true
-        example: consequatur
+        example: architecto
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      key:
-        name: key
-        description: 'The key if provider requires key'
+      webserver:
+        name: webserver
+        description: 'Web server'
         required: true
-        example: consequatur
+        example: none
         type: string
-        enumValues: []
+        enumValues:
+          - none
+          - nginx
+          - caddy
         exampleWasSpecified: false
         nullable: false
         custom: []
-      secret:
-        name: secret
-        description: 'The secret if provider requires key'
+      database:
+        name: database
+        description: Database
         required: true
-        example: consequatur
+        example: mysql80
         type: string
-        enumValues: []
+        enumValues:
+          - none
+          - mysql57
+          - mysql80
+          - mariadb103
+          - mariadb104
+          - mariadb103
+          - postgresql12
+          - postgresql13
+          - postgresql14
+          - postgresql15
+          - postgresql16
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      php:
+        name: php
+        description: 'PHP version'
+        required: true
+        example: '8.2'
+        type: string
+        enumValues:
+          - '7.0'
+          - '7.1'
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+          - '8.3'
         exampleWasSpecified: false
         nullable: false
         custom: []
     cleanBodyParameters:
-      provider: consequatur
-      name: consequatur
-      token: consequatur
-      key: consequatur
-      secret: consequatur
+      provider: architecto
+      server_provider: linode
+      region: architecto
+      plan: architecto
+      ip: architecto
+      port: architecto
+      name: architecto
+      os: architecto
+      webserver: none
+      database: mysql80
+      php: '8.2'
     fileParameters: []
     responses:
       -
         status: 200
-        content: '{"id":4,"project_id":null,"global":true,"name":"dolores","provider":"digitalocean","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"}'
+        content: '{"id":7,"project_id":1,"services":[],"user_id":1,"provider_id":null,"name":"Ms. Elisabeth Okuneva","ssh_user":"vito","ssh_users":["root","vito"],"ip":"75.13.66.152","local_ip":"199.172.126.144","port":22,"os":"ubuntu_22","type":"regular","type_data":null,"provider":"custom","provider_data":null,"public_key":"test","status":"ready","auto_update":null,"available_updates":0,"security_updates":null,"progress":100,"progress_step":null,"updates":0,"last_update_check":null,"status_color":"success","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"}'
         headers: []
         description: ''
         custom: []
@@ -153,14 +247,14 @@ endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/projects/{project_id}/server-providers/{serverProvider_id}'
+    uri: 'api/projects/{project_id}/servers/{id}'
     metadata:
-      groupName: server-providers
+      groupName: servers
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
       title: show
-      description: ''
+      description: 'Get a server by ID.'
       authenticated: false
       custom: []
     headers:
@@ -177,11 +271,11 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         custom: []
-      serverProvider_id:
-        name: serverProvider_id
-        description: 'The ID of the serverProvider.'
+      id:
+        name: id
+        description: 'The ID of the server.'
         required: true
-        example: 1
+        example: 6
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -189,7 +283,7 @@ endpoints:
         custom: []
     cleanUrlParameters:
       project_id: 1
-      serverProvider_id: 1
+      id: 6
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -198,7 +292,7 @@ endpoints:
     responses:
       -
         status: 200
-        content: '{"id":4,"project_id":null,"global":true,"name":"voluptatem","provider":"vultr","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"}'
+        content: '{"id":7,"project_id":1,"services":[],"user_id":1,"provider_id":null,"name":"Belle Dickens","ssh_user":"vito","ssh_users":["root","vito"],"ip":"51.210.32.30","local_ip":"82.174.132.158","port":22,"os":"ubuntu_22","type":"regular","type_data":null,"provider":"custom","provider_data":null,"public_key":"test","status":"ready","auto_update":null,"available_updates":0,"security_updates":null,"progress":100,"progress_step":null,"updates":0,"last_update_check":null,"status_color":"success","created_at":"2025-06-10T10:21:56.000000Z","updated_at":"2025-06-10T10:21:56.000000Z"}'
         headers: []
         description: ''
         custom: []
@@ -210,15 +304,15 @@ endpoints:
     custom: []
   -
     httpMethods:
-      - PUT
-    uri: 'api/projects/{project_id}/server-providers/{serverProvider_id}'
+      - POST
+    uri: 'api/projects/{project_id}/servers/{server_id}/reboot'
     metadata:
-      groupName: server-providers
+      groupName: servers
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: update
-      description: ''
+      title: reboot
+      description: 'Reboot a server.'
       authenticated: false
       custom: []
     headers:
@@ -235,11 +329,11 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         custom: []
-      serverProvider_id:
-        name: serverProvider_id
-        description: 'The ID of the serverProvider.'
+      server_id:
+        name: server_id
+        description: 'The ID of the server.'
         required: true
-        example: 1
+        example: 6
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -247,40 +341,74 @@ endpoints:
         custom: []
     cleanUrlParameters:
       project_id: 1
-      serverProvider_id: 1
+      server_id: 6
     queryParameters: []
     cleanQueryParameters: []
-    bodyParameters:
-      name:
-        name: name
-        description: 'The name of the server provider.'
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 204
+        content: null
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/projects/{project_id}/servers/{server_id}/upgrade'
+    metadata:
+      groupName: servers
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: upgrade
+      description: 'Upgrade server.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      project_id:
+        name: project_id
+        description: 'The ID of the project.'
         required: true
-        example: consequatur
-        type: string
+        example: 1
+        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      global:
-        name: global
-        description: 'Accessible in all projects'
+      server_id:
+        name: server_id
+        description: 'The ID of the server.'
         required: true
-        example: false
-        type: string
-        enumValues:
-          - true
-          - false
+        example: 6
+        type: integer
+        enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-    cleanBodyParameters:
-      name: consequatur
-      global: false
+    cleanUrlParameters:
+      project_id: 1
+      server_id: 6
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses:
       -
-        status: 200
-        content: '{"id":4,"project_id":null,"global":true,"name":"dolores","provider":"digitalocean","created_at":"2025-04-21T18:40:19.000000Z","updated_at":"2025-04-21T18:40:19.000000Z"}'
+        status: 204
+        content: null
         headers: []
         description: ''
         custom: []
@@ -293,14 +421,14 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/projects/{project_id}/server-providers/{serverProvider_id}'
+    uri: 'api/projects/{project_id}/servers/{server_id}'
     metadata:
-      groupName: server-providers
+      groupName: servers
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
       title: delete
-      description: ''
+      description: 'Delete server.'
       authenticated: false
       custom: []
     headers:
@@ -317,11 +445,11 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         custom: []
-      serverProvider_id:
-        name: serverProvider_id
-        description: 'The ID of the serverProvider.'
+      server_id:
+        name: server_id
+        description: 'The ID of the server.'
         required: true
-        example: 1
+        example: 6
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -329,7 +457,7 @@ endpoints:
         custom: []
     cleanUrlParameters:
       project_id: 1
-      serverProvider_id: 1
+      server_id: 6
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []

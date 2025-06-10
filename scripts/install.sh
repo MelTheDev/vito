@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export VITO_VERSION="2.x"
+export VITO_VERSION="3.x"
 export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 
@@ -82,6 +82,11 @@ if ! echo "${V_NGINX_CONFIG}" | tee /etc/nginx/nginx.conf; then
     echo "Can't configure nginx!" && exit 1
 fi
 service nginx start
+
+# nodejs
+export V_NODE_VERSION="20.x"
+curl -fsSL https://deb.nodesource.com/setup_${V_NODE_VERSION} | sudo -E bash -
+apt install -y nodejs
 
 # php
 export V_PHP_VERSION="8.4"
