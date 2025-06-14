@@ -42,7 +42,7 @@ class SourceControlController extends Controller
 
     #[Post('/', name: 'api.projects.source-controls.create', middleware: 'ability:write')]
     #[Endpoint(title: 'create')]
-    #[BodyParam(name: 'provider', description: 'The provider', required: true, enum: [\App\Enums\SourceControl::GITLAB, \App\Enums\SourceControl::GITHUB, \App\Enums\SourceControl::BITBUCKET])]
+    #[BodyParam(name: 'provider', description: 'The provider', required: true)]
     #[BodyParam(name: 'name', description: 'The name of the storage provider.', required: true)]
     #[BodyParam(name: 'token', description: 'The token if provider requires api token')]
     #[BodyParam(name: 'url', description: 'The URL if the provider is Gitlab and it is self-hosted')]
@@ -61,7 +61,7 @@ class SourceControlController extends Controller
     #[Get('{sourceControl}', name: 'api.projects.source-controls.show', middleware: 'ability:read')]
     #[Endpoint(title: 'show')]
     #[ResponseFromApiResource(SourceControlResource::class, SourceControl::class)]
-    public function show(Project $project, SourceControl $sourceControl): \App\Http\Resources\SourceControlResource
+    public function show(Project $project, SourceControl $sourceControl): SourceControlResource
     {
         $this->authorize('view', $sourceControl);
 
@@ -79,7 +79,7 @@ class SourceControlController extends Controller
     #[BodyParam(name: 'password', description: 'The password if the provider is Bitbucket')]
     #[BodyParam(name: 'global', description: 'Accessible in all projects', enum: [true, false])]
     #[ResponseFromApiResource(SourceControlResource::class, SourceControl::class)]
-    public function update(Request $request, Project $project, SourceControl $sourceControl): \App\Http\Resources\SourceControlResource
+    public function update(Request $request, Project $project, SourceControl $sourceControl): SourceControlResource
     {
         $this->authorize('update', $sourceControl);
 

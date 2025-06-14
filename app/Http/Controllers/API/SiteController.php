@@ -9,13 +9,13 @@ use App\Actions\Site\UpdateDeploymentScript;
 use App\Actions\Site\UpdateEnv;
 use App\Actions\Site\UpdateLoadBalancer;
 use App\Enums\LoadBalancerMethod;
-use App\Enums\SiteType;
 use App\Exceptions\DeploymentScriptIsEmptyException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SiteResource;
 use App\Models\Project;
 use App\Models\Server;
 use App\Models\Site;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Knuckles\Scribe\Attributes\BodyParam;
@@ -49,7 +49,7 @@ class SiteController extends Controller
 
     #[Post('/', name: 'api.projects.servers.sites.create', middleware: 'ability:write')]
     #[Endpoint(title: 'create', description: 'Create a new site.')]
-    #[BodyParam(name: 'type', required: true, enum: [SiteType::PHP, SiteType::PHP_BLANK, SiteType::PHPMYADMIN, SiteType::LARAVEL, SiteType::WORDPRESS, SiteType::LOAD_BALANCER])]
+    #[BodyParam(name: 'type', required: true)]
     #[BodyParam(name: 'domain', required: true)]
     #[BodyParam(name: 'aliases', type: 'array')]
     #[BodyParam(name: 'php_version', description: 'One of the installed PHP Versions', required: true, example: '7.4')]
@@ -172,7 +172,7 @@ class SiteController extends Controller
     #[Get('{site}/deployment-script', name: 'api.projects.servers.sites.deployment-script.show', middleware: 'ability:read')]
     #[Endpoint(title: 'deployment-script', description: 'Get site deployment script content')]
     #[Response(status: 200)]
-    public function showDeploymentScript(Project $project, Server $server, Site $site): \Illuminate\Http\JsonResponse
+    public function showDeploymentScript(Project $project, Server $server, Site $site): JsonResponse
     {
         $this->authorize('view', [$site, $server]);
 
@@ -190,7 +190,7 @@ class SiteController extends Controller
             'env' => 'APP_NAME=Laravel\nAPP_ENV=production',
         ],
     ], status: 200)]
-    public function showEnv(Project $project, Server $server, Site $site): \Illuminate\Http\JsonResponse
+    public function showEnv(Project $project, Server $server, Site $site): JsonResponse
     {
         $this->authorize('view', [$site, $server]);
 

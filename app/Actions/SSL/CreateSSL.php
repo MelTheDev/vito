@@ -8,7 +8,7 @@ use App\Models\ServerLog;
 use App\Models\Service;
 use App\Models\Site;
 use App\Models\Ssl;
-use App\SSH\Services\Webserver\Webserver;
+use App\Services\Webserver\Webserver;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -54,7 +54,9 @@ class CreateSSL
             $webserver->setupSSL($ssl);
             $ssl->status = SslStatus::CREATED;
             $ssl->save();
-            $webserver->updateVHost($site);
+            $webserver->updateVHost($site, regenerate: [
+                'port',
+            ]);
         })->catch(function () use ($ssl): void {
             $ssl->status = SslStatus::FAILED;
             $ssl->save();

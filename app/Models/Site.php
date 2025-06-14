@@ -8,9 +8,10 @@ use App\Enums\SslStatus;
 use App\Exceptions\FailedToDestroyGitHook;
 use App\Exceptions\SourceControlIsNotConnected;
 use App\Exceptions\SSHError;
+use App\Services\PHP\PHP;
+use App\Services\Webserver\Webserver;
+use App\SiteFeatures\ActionInterface;
 use App\SiteTypes\SiteType;
-use App\SSH\Services\PHP\PHP;
-use App\SSH\Services\Webserver\Webserver;
 use App\Traits\HasProjectThroughServer;
 use Database\Factories\SiteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * @property int $server_id
@@ -237,12 +239,15 @@ class Site extends AbstractModel
 
     public function type(): SiteType
     {
-        $typeClass = config('core.site_types_class.'.$this->type);
+        $handlerClass = config('site.types.'.$this->type.'.handler');
+        if (! class_exists($handlerClass)) {
+            throw new RuntimeException("Site type handler class {$handlerClass} does not exist.");
+        }
 
-        /** @var SiteType $type */
-        $type = new $typeClass($this);
+        /** @var SiteType $handler */
+        $handler = new $handlerClass($this);
 
-        return $type;
+        return $handler;
     }
 
     public function php(): ?Service
@@ -352,11 +357,6 @@ class Site extends AbstractModel
         return str('site_'.$this->id)->toString();
     }
 
-    public function hasFeature(string $feature): bool
-    {
-        return in_array($feature, $this->type()->supportedFeatures());
-    }
-
     public function getEnv(): string
     {
         try {
@@ -437,5 +437,26 @@ class Site extends AbstractModel
     public function activeRedirects(): HasMany
     {
         return $this->redirects()->whereIn('status', [RedirectStatus::CREATING, RedirectStatus::READY]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function features(): array
+    {
+        $features = config('site.types.'.$this->type.'.features', []);
+        foreach ($features as $featureKey => $feature) {
+            foreach ($feature['actions'] ?? [] as $actionKey => $action) {
+                $handlerClass = $action['handler'] ?? null;
+                if ($handlerClass && class_exists($handlerClass)) {
+                    /** @var ActionInterface $handler */
+                    $handler = new $handlerClass($this);
+                    $action['active'] = $handler->active();
+                }
+                $features[$featureKey]['actions'][$actionKey] = $action;
+            }
+        }
+
+        return $features;
     }
 }

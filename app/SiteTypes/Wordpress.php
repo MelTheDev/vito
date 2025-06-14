@@ -5,9 +5,6 @@ namespace App\SiteTypes;
 use App\Actions\Database\CreateDatabase;
 use App\Actions\Database\CreateDatabaseUser;
 use App\Actions\Database\LinkUser;
-use App\DTOs\DynamicFieldDTO;
-use App\DTOs\DynamicFieldsCollectionDTO;
-use App\Enums\SiteFeature;
 use App\Exceptions\SSHError;
 use App\Models\Database;
 use App\Models\DatabaseUser;
@@ -15,58 +12,21 @@ use App\Models\Site;
 use Closure;
 use Illuminate\Validation\Rule;
 
-class Wordpress extends AbstractSiteType
+class Wordpress extends PHPSite
 {
+    public static function id(): string
+    {
+        return 'wordpress';
+    }
+
     public static function make(): self
     {
-        return new self(new Site(['type' => \App\Enums\SiteType::WORDPRESS]));
+        return new self(new Site(['type' => self::id()]));
     }
 
     public function language(): string
     {
         return 'php';
-    }
-
-    public function supportedFeatures(): array
-    {
-        return [
-            SiteFeature::SSL,
-            SiteFeature::COMMANDS,
-        ];
-    }
-
-    public function fields(): DynamicFieldsCollectionDTO
-    {
-        return new DynamicFieldsCollectionDTO([
-            DynamicFieldDTO::make('php_version')
-                ->component()
-                ->label('PHP Version'),
-            DynamicFieldDTO::make('title')
-                ->text()
-                ->label('Site Title')
-                ->placeholder('My WordPress Site'),
-            DynamicFieldDTO::make('username')
-                ->text()
-                ->label('Admin Username')
-                ->placeholder('admin'),
-            DynamicFieldDTO::make('password')
-                ->text()
-                ->label('Admin Password'),
-            DynamicFieldDTO::make('email')
-                ->text()
-                ->label('Admin Email'),
-            DynamicFieldDTO::make('database')
-                ->text()
-                ->label('Database Name')
-                ->placeholder('wordpress'),
-            DynamicFieldDTO::make('database_user')
-                ->text()
-                ->label('Database User')
-                ->placeholder('wp_user'),
-            DynamicFieldDTO::make('database_password')
-                ->text()
-                ->label('Database Password'),
-        ]);
     }
 
     public function createRules(array $input): array
@@ -157,6 +117,25 @@ class Wordpress extends AbstractSiteType
 
         $this->site->php()?->restart();
         $this->progress(60);
-        app(\App\SSH\Wordpress\Wordpress::class)->install($this->site);
+
+        $this->site->server->ssh($this->site->user)->exec(
+            view('ssh.wordpress.install', [
+                'path' => $this->site->path,
+                'domain' => $this->site->domain,
+                'isIsolated' => $this->site->isIsolated() ? 'true' : 'false',
+                'isolatedUsername' => $this->site->user,
+                'dbName' => $this->site->type_data['database'],
+                'dbUser' => $this->site->type_data['database_user'],
+                'dbPass' => $this->site->type_data['database_password'],
+                'dbHost' => 'localhost',
+                'dbPrefix' => 'wp_',
+                'username' => $this->site->type_data['username'],
+                'password' => $this->site->type_data['password'],
+                'email' => $this->site->type_data['email'],
+                'title' => $this->site->type_data['title'],
+            ]),
+            'install-wordpress',
+            $this->site->id
+        );
     }
 }

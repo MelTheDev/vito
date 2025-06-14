@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class CreateStorageProvider
 {
@@ -35,7 +36,7 @@ class CreateStorageProvider
                     'provider' => __("Couldn't connect to the provider"),
                 ]);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw ValidationException::withMessages([
                 'provider' => $e->getMessage(),
             ]);
@@ -55,7 +56,7 @@ class CreateStorageProvider
         $rules = [
             'provider' => [
                 'required',
-                Rule::in(config('core.storage_providers')),
+                Rule::in(array_keys(config('storage-provider.providers'))),
             ],
             'name' => [
                 'required',

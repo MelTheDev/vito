@@ -1,4 +1,5 @@
 import { Server } from '@/types/server';
+import { DynamicFieldConfig } from '@/types/dynamic-field-config';
 
 export interface Site {
   id: number;
@@ -10,7 +11,6 @@ export interface Site {
     method?: 'round-robin' | 'least-connections' | 'ip-hash';
     [key: string]: unknown;
   };
-  features: string[];
   domain: string;
   aliases?: string[];
   web_directory: string;
@@ -31,4 +31,26 @@ export interface Site {
   updated_at: string;
 
   [key: string]: unknown;
+}
+
+export interface SiteType {
+  label: string;
+  handler: string;
+  form?: DynamicFieldConfig[];
+  features?: SiteFeature[];
+}
+
+export interface SiteFeature {
+  label: string;
+  description?: string;
+  actions?: {
+    [key: string]: SiteFeatureAction;
+  };
+}
+
+export interface SiteFeatureAction {
+  label: string;
+  handler: string;
+  form?: DynamicFieldConfig[];
+  active?: boolean;
 }

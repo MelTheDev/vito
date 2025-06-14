@@ -3,14 +3,13 @@
 namespace Database\Factories;
 
 use App\Enums\OperatingSystem;
-use App\Enums\ServerProvider;
 use App\Enums\ServerStatus;
-use App\Enums\ServerType;
 use App\Models\Server;
+use App\ServerProviders\Custom;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\Server>
+ * @extends Factory<Server>
  */
 class ServerFactory extends Factory
 {
@@ -27,8 +26,7 @@ class ServerFactory extends Factory
             'local_ip' => $this->faker->ipv4(),
             'port' => 22,
             'os' => OperatingSystem::UBUNTU22,
-            'type' => ServerType::REGULAR,
-            'provider' => ServerProvider::CUSTOM,
+            'provider' => Custom::id(),
             'authentication' => [
                 'user' => 'vito',
                 'pass' => 'password',

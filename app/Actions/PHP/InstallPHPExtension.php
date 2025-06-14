@@ -4,7 +4,7 @@ namespace App\Actions\PHP;
 
 use App\Models\Server;
 use App\Models\Service;
-use App\SSH\Services\PHP\PHP;
+use App\Services\PHP\PHP;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -57,7 +57,7 @@ class InstallPHPExtension
         return [
             'extension' => [
                 'required',
-                Rule::in(config('core.php_extensions')),
+                Rule::in(config('service.services.php.data.extensions', []) ?? []),
             ],
             'version' => [
                 'required',

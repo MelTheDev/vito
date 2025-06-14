@@ -193,6 +193,12 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\DemoServiceProvider::class,
+        App\Providers\SiteTypeServiceProvider::class,
+        App\Providers\ServerProviderServiceProvider::class,
+        App\Providers\StorageProviderServiceProvider::class,
+        App\Providers\SourceControlServiceProvider::class,
+        App\Providers\NotificationChannelServiceProvider::class,
+        App\Providers\ServiceTypeServiceProvider::class,
     ],
 
     /*

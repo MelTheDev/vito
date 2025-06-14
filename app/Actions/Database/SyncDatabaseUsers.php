@@ -5,14 +5,15 @@ namespace App\Actions\Database;
 use App\Enums\DatabaseUserStatus;
 use App\Models\DatabaseUser;
 use App\Models\Server;
-use App\SSH\Services\Database\Database;
+use App\Models\Service;
+use App\Services\Database\Database;
 
 class SyncDatabaseUsers
 {
     public function sync(Server $server): void
     {
         $service = $server->database();
-        if (! $service instanceof \App\Models\Service) {
+        if (! $service instanceof Service) {
             return;
         }
         /** @var Database $handler */

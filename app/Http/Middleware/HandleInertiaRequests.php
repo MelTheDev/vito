@@ -65,7 +65,7 @@ class HandleInertiaRequests extends Middleware
                 $sites = SiteResource::collection($server->sites);
             }
 
-            $data['serverSites'] = $sites;
+            $data['server_sites'] = $sites;
 
             if ($request->route('site')) {
                 $data['site'] = SiteResource::make($request->route('site'));
@@ -82,15 +82,37 @@ class HandleInertiaRequests extends Middleware
                 'projects' => $user?->allProjects()->get(),
                 'currentProject' => $user?->currentProject,
             ],
-            'publicKeyText' => __('servers.create.public_key_text', ['public_key' => get_public_key_content()]),
-            'projectServers' => $servers,
-            'configs' => config('core'),
+            'public_key_text' => __('servers.create.public_key_text', ['public_key' => get_public_key_content()]),
+            'project_servers' => $servers,
+            'configs' => [
+                'operating_systems' => config('core.operating_systems'),
+                'colors' => config('core.colors'),
+                'cronjob_intervals' => config('core.cronjob_intervals'),
+                'metrics_periods' => config('core.metrics_periods'),
+                'site' => [
+                    'types' => config('site.types'),
+                ],
+                'source_control' => [
+                    'providers' => config('source-control.providers'),
+                ],
+                'server_provider' => [
+                    'providers' => config('server-provider.providers'),
+                ],
+                'storage_provider' => [
+                    'providers' => config('storage-provider.providers'),
+                ],
+                'notification_channel' => [
+                    'providers' => config('notification-channel.providers'),
+                ],
+                'service' => [
+                    'services' => config('service.services'),
+                ],
+            ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'csrf_token' => csrf_token(),
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

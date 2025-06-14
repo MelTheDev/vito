@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\ServerProvider>
+ * @extends Factory<ServerProvider>
  */
 class ServerProviderFactory extends Factory
 {
@@ -17,7 +17,7 @@ class ServerProviderFactory extends Factory
     {
         return [
             'profile' => $this->faker->word(),
-            'provider' => $this->faker->randomElement(config('core.server_providers')),
+            'provider' => $this->faker->randomElement(array_keys(config('server-provider.providers'))),
             'credentials' => [],
             'connected' => 1,
             'user_id' => User::factory(),

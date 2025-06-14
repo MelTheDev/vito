@@ -2,18 +2,11 @@
 
 namespace App\SiteTypes;
 
-use App\DTOs\DynamicFieldsCollectionDTO;
-
 interface SiteType
 {
+    public static function id(): string;
+
     public function language(): string;
-
-    /**
-     * @return array<string>
-     */
-    public function supportedFeatures(): array;
-
-    public function fields(): DynamicFieldsCollectionDTO;
 
     /**
      * @param  array<string, mixed>  $input
@@ -22,12 +15,16 @@ interface SiteType
     public function createRules(array $input): array;
 
     /**
+     * The fields here will be replaced in the Site model
+     *
      * @param  array<string, mixed>  $input
      * @return array<string, mixed>
      */
     public function createFields(array $input): array;
 
     /**
+     * The fields here will be replaced in the type_data column as json
+     *
      * @param  array<string, mixed>  $input
      * @return array<string, mixed>
      */
@@ -39,4 +36,6 @@ interface SiteType
      * @return array<array<string, string>>
      */
     public function baseCommands(): array;
+
+    public function vhost(string $webserver): string;
 }

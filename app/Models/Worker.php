@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\WorkerStatus;
-use App\SSH\Services\ProcessManager\ProcessManager;
+use App\Services\ProcessManager\ProcessManager;
 use Database\Factories\WorkerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +21,7 @@ use Throwable;
  * @property int $redirect_stderr
  * @property string $stdout_logfile
  * @property string $status
+ * @property string $name
  * @property Server $server
  * @property Site $site
  */
@@ -40,6 +41,7 @@ class Worker extends AbstractModel
         'redirect_stderr',
         'stdout_logfile',
         'status',
+        'name',
     ];
 
     protected $casts = [

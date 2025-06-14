@@ -2,34 +2,20 @@
 
 namespace App\SiteTypes;
 
-use App\DTOs\DynamicFieldDTO;
-use App\DTOs\DynamicFieldsCollectionDTO;
-use App\Enums\SiteFeature;
 use App\Exceptions\SSHError;
 use App\Models\Site;
 use Illuminate\Validation\Rule;
 
 class PHPMyAdmin extends PHPSite
 {
+    public static function id(): string
+    {
+        return 'phpmyadmin';
+    }
+
     public static function make(): self
     {
-        return new self(new Site(['type' => \App\Enums\SiteType::PHPMYADMIN]));
-    }
-
-    public function supportedFeatures(): array
-    {
-        return [
-            SiteFeature::SSL,
-        ];
-    }
-
-    public function fields(): DynamicFieldsCollectionDTO
-    {
-        return new DynamicFieldsCollectionDTO([
-            DynamicFieldDTO::make('php_version')
-                ->component()
-                ->label('PHP Version'),
-        ]);
+        return new self(new Site(['type' => self::id()]));
     }
 
     public function createRules(array $input): array
@@ -65,7 +51,14 @@ class PHPMyAdmin extends PHPSite
         $this->isolate();
         $this->site->webserver()->createVHost($this->site);
         $this->progress(30);
-        app(\App\SSH\PHPMyAdmin\PHPMyAdmin::class)->install($this->site);
+        $this->site->server->ssh($this->site->user)->exec(
+            view('ssh.phpmyadmin.install', [
+                'version' => $this->site->type_data['version'],
+                'path' => $this->site->path,
+            ]),
+            'install-phpmyadmin',
+            $this->site->id
+        );
         $this->progress(65);
         $this->site->php()?->restart();
     }

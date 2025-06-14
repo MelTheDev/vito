@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ServerProvider;
+use App\Models\ServerProvider;
+use App\ServerProviders\DigitalOcean;
+use App\ServerProviders\Hetzner;
+use App\ServerProviders\Linode;
+use App\ServerProviders\Vultr;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia;
-use JsonException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -16,8 +19,6 @@ class ServerProvidersTest extends TestCase
 
     /**
      * @param  array<string, mixed>  $input
-     *
-     * @throws JsonException
      */
     #[DataProvider('data')]
     public function test_connect_provider(string $provider, array $input): void
@@ -34,7 +35,7 @@ class ServerProvidersTest extends TestCase
             $input
         );
         $this->post(route('server-providers.store'), $data)
-            ->assertSessionHasNoErrors();
+            ->assertSessionDoesntHaveErrors();
 
         $this->assertDatabaseHas('server_providers', [
             'provider' => $provider,
@@ -75,7 +76,7 @@ class ServerProvidersTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        \App\Models\ServerProvider::factory()->create([
+        ServerProvider::factory()->create([
             'user_id' => $this->user->id,
         ]);
 
@@ -84,21 +85,18 @@ class ServerProvidersTest extends TestCase
             ->assertInertia(fn (AssertableInertia $page) => $page->component('server-providers/index'));
     }
 
-    /**
-     * @throws JsonException
-     */
     #[DataProvider('data')]
     public function test_delete_provider(string $provider): void
     {
         $this->actingAs($this->user);
 
-        $provider = \App\Models\ServerProvider::factory()->create([
+        $provider = ServerProvider::factory()->create([
             'user_id' => $this->user->id,
             'provider' => $provider,
         ]);
 
         $this->delete(route('server-providers.destroy', $provider))
-            ->assertSessionHasNoErrors()
+            ->assertSessionDoesntHaveErrors()
             ->assertRedirect(route('server-providers'));
 
         $this->assertDatabaseMissing('server_providers', [
@@ -111,7 +109,7 @@ class ServerProvidersTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $provider = \App\Models\ServerProvider::factory()->create([
+        $provider = ServerProvider::factory()->create([
             'user_id' => $this->user->id,
             'provider' => $provider,
         ]);
@@ -144,32 +142,32 @@ class ServerProvidersTest extends TestCase
             //     ],
             // ],
             [
-                ServerProvider::LINODE,
+                Linode::id(),
                 [
                     'token' => 'token',
                 ],
             ],
             [
-                ServerProvider::LINODE,
+                Linode::id(),
                 [
                     'token' => 'token',
                     'global' => 1,
                 ],
             ],
             [
-                ServerProvider::DIGITALOCEAN,
+                DigitalOcean::id(),
                 [
                     'token' => 'token',
                 ],
             ],
             [
-                ServerProvider::VULTR,
+                Vultr::id(),
                 [
                     'token' => 'token',
                 ],
             ],
             [
-                ServerProvider::HETZNER,
+                Hetzner::id(),
                 [
                     'token' => 'token',
                 ],

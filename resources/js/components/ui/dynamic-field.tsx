@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, useEffect, useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { DynamicFieldConfig } from '@/types/dynamic-field-config';
 import InputError from '@/components/ui/input-error';
 import { FormField } from '@/components/ui/form';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface DynamicFieldProps {
   value: string | number | boolean | string[] | undefined;
@@ -17,9 +18,33 @@ interface DynamicFieldProps {
 export default function DynamicField({ value, onChange, config, error }: DynamicFieldProps) {
   const defaultLabel = config.name.replaceAll('_', ' ');
   const label = config?.label || defaultLabel;
+  const [initialValue, setInitialValue] = useState(false);
 
   if (!value) {
     value = config?.default || '';
+  }
+
+  useEffect(() => {
+    if (!initialValue) {
+      if (config.type === 'checkbox') {
+        onChange((value as boolean) || false);
+      } else {
+        onChange(value);
+      }
+      setInitialValue(true);
+    }
+  }, [initialValue, setInitialValue, onChange, value, config]);
+
+  // Handle alert
+  if (config?.type === 'alert') {
+    return (
+      <FormField>
+        <Alert>
+          <AlertTitle>{config.label}</AlertTitle>
+          <AlertDescription>{config.description}</AlertDescription>
+        </Alert>
+      </FormField>
+    );
   }
 
   // Handle checkbox
@@ -27,7 +52,7 @@ export default function DynamicField({ value, onChange, config, error }: Dynamic
     return (
       <FormField>
         <div className="flex items-center space-x-2">
-          <Switch id={`switch-${config.name}`} checked={value as boolean} onCheckedChange={onChange} />
+          <Switch id={`switch-${config.name}`} defaultChecked={value as boolean} onCheckedChange={onChange} />
           <Label htmlFor={`switch-${config.name}`}>{label}</Label>
           {config.description && <p className="text-muted-foreground text-xs">{config.description}</p>}
           <InputError message={error} />
@@ -40,11 +65,11 @@ export default function DynamicField({ value, onChange, config, error }: Dynamic
   if (config?.type === 'select' && config.options) {
     return (
       <FormField>
-        <Label htmlFor={config.name} className="capitalize">
+        <Label htmlFor={`field-${config.name}`} className="capitalize">
           {label}
         </Label>
         <Select defaultValue={value as string} onValueChange={onChange}>
-          <SelectTrigger id={config.name}>
+          <SelectTrigger id={`field-${config.name}`}>
             <SelectValue placeholder={config.placeholder || `Select ${label}`} />
           </SelectTrigger>
           <SelectContent>
@@ -71,7 +96,7 @@ export default function DynamicField({ value, onChange, config, error }: Dynamic
 
   return (
     <FormField>
-      <Label htmlFor={config.name} className="capitalize">
+      <Label htmlFor={`field-${config.name}`} className="capitalize">
         {label}
       </Label>
       <Input

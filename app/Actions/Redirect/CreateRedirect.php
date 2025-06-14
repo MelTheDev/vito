@@ -6,7 +6,7 @@ use App\Enums\RedirectStatus;
 use App\Models\Redirect;
 use App\Models\Service;
 use App\Models\Site;
-use App\SSH\Services\Webserver\Webserver;
+use App\Services\Webserver\Webserver;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -33,7 +33,9 @@ class CreateRedirect
             $service = $site->server->webserver();
             /** @var Webserver $webserver */
             $webserver = $service->handler();
-            $webserver->updateVHost($site);
+            $webserver->updateVHost($site, regenerate: [
+                'redirects',
+            ]);
             $redirect->status = RedirectStatus::READY;
             $redirect->save();
         })

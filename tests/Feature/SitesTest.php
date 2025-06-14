@@ -4,10 +4,15 @@ namespace Tests\Feature;
 
 use App\Enums\LoadBalancerMethod;
 use App\Enums\SiteStatus;
-use App\Enums\SiteType;
-use App\Enums\SourceControl;
 use App\Facades\SSH;
 use App\Models\Site;
+use App\Models\SourceControl;
+use App\SiteTypes\Laravel;
+use App\SiteTypes\LoadBalancer;
+use App\SiteTypes\PHPBlank;
+use App\SiteTypes\PHPMyAdmin;
+use App\SiteTypes\Wordpress;
+use App\SourceControlProviders\Github;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Inertia\Testing\AssertableInertia;
@@ -33,9 +38,9 @@ class SitesTest extends TestCase
 
         $this->actingAs($this->user);
 
-        /** @var \App\Models\SourceControl $sourceControl */
-        $sourceControl = \App\Models\SourceControl::factory()->create([
-            'provider' => SourceControl::GITHUB,
+        /** @var SourceControl $sourceControl */
+        $sourceControl = SourceControl::factory()->create([
+            'provider' => Github::id(),
         ]);
 
         $inputs['source_control'] = $sourceControl->id;
@@ -70,7 +75,7 @@ class SitesTest extends TestCase
     public function test_create_site_failed_due_to_source_control(int $status): void
     {
         $inputs = [
-            'type' => SiteType::LARAVEL,
+            'type' => Laravel::id(),
             'domain' => 'example.com',
             'aliases' => ['www.example.com'],
             'php_version' => '8.2',
@@ -89,9 +94,9 @@ class SitesTest extends TestCase
 
         $this->actingAs($this->user);
 
-        /** @var \App\Models\SourceControl $sourceControl */
-        $sourceControl = \App\Models\SourceControl::factory()->create([
-            'provider' => SourceControl::GITHUB,
+        /** @var SourceControl $sourceControl */
+        $sourceControl = SourceControl::factory()->create([
+            'provider' => Github::id(),
         ]);
 
         $inputs['source_control'] = $sourceControl->id;
@@ -177,9 +182,9 @@ class SitesTest extends TestCase
             ], 201),
         ]);
 
-        /** @var \App\Models\SourceControl $sourceControl */
-        $sourceControl = \App\Models\SourceControl::factory()->create([
-            'provider' => SourceControl::GITHUB,
+        /** @var SourceControl $sourceControl */
+        $sourceControl = SourceControl::factory()->create([
+            'provider' => Github::id(),
         ]);
 
         $this->patch(route('site-settings.update-source-control', [
@@ -206,9 +211,9 @@ class SitesTest extends TestCase
             ], 404),
         ]);
 
-        /** @var \App\Models\SourceControl $sourceControl */
-        $sourceControl = \App\Models\SourceControl::factory()->create([
-            'provider' => SourceControl::GITHUB,
+        /** @var SourceControl $sourceControl */
+        $sourceControl = SourceControl::factory()->create([
+            'provider' => Github::id(),
         ]);
 
         $this->patch(route('site-settings.update-source-control', [
@@ -279,7 +284,7 @@ class SitesTest extends TestCase
         return [
             [
                 [
-                    'type' => SiteType::PHP_BLANK,
+                    'type' => PHPBlank::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -289,7 +294,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::PHP_BLANK,
+                    'type' => PHPBlank::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -299,7 +304,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::PHP_BLANK,
+                    'type' => PHPBlank::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -309,7 +314,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::PHP_BLANK,
+                    'type' => PHPBlank::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -319,7 +324,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::PHP_BLANK,
+                    'type' => PHPBlank::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -338,7 +343,7 @@ class SitesTest extends TestCase
         return [
             [
                 [
-                    'type' => SiteType::LARAVEL,
+                    'type' => Laravel::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com', 'www2.example.com'],
                     'php_version' => '8.2',
@@ -350,7 +355,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::LARAVEL,
+                    'type' => Laravel::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com', 'www2.example.com'],
                     'php_version' => '8.2',
@@ -363,7 +368,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::WORDPRESS,
+                    'type' => Wordpress::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -380,7 +385,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::WORDPRESS,
+                    'type' => Wordpress::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -398,7 +403,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::PHP_BLANK,
+                    'type' => PHPBlank::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -407,7 +412,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::PHP_BLANK,
+                    'type' => PHPBlank::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -417,7 +422,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::PHPMYADMIN,
+                    'type' => PHPMyAdmin::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -426,7 +431,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::PHPMYADMIN,
+                    'type' => PHPMyAdmin::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'php_version' => '8.2',
@@ -436,7 +441,7 @@ class SitesTest extends TestCase
             ],
             [
                 [
-                    'type' => SiteType::LOAD_BALANCER,
+                    'type' => LoadBalancer::id(),
                     'domain' => 'example.com',
                     'aliases' => ['www.example.com'],
                     'user' => 'example',

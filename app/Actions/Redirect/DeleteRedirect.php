@@ -6,7 +6,7 @@ use App\Enums\RedirectStatus;
 use App\Models\Redirect;
 use App\Models\Service;
 use App\Models\Site;
-use App\SSH\Services\Webserver\Webserver;
+use App\Services\Webserver\Webserver;
 
 class DeleteRedirect
 {
@@ -20,7 +20,9 @@ class DeleteRedirect
             $service = $site->server->webserver();
             /** @var Webserver $webserver */
             $webserver = $service->handler();
-            $webserver->updateVHost($site);
+            $webserver->updateVHost($site, regenerate: [
+                'redirects',
+            ]);
             $redirect->delete();
         })->catch(function () use ($redirect): void {
             $redirect->status = RedirectStatus::FAILED;

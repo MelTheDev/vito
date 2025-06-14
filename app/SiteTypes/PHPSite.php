@@ -2,21 +2,18 @@
 
 namespace App\SiteTypes;
 
-use App\DTOs\DynamicFieldDTO;
-use App\DTOs\DynamicFieldsCollectionDTO;
-use App\Enums\SiteFeature;
 use App\Exceptions\FailedToDeployGitKey;
 use App\Exceptions\SSHError;
 use App\Models\Site;
-use App\SSH\Composer\Composer;
-use App\SSH\Git\Git;
+use App\SSH\OS\Composer;
+use App\SSH\OS\Git;
 use Illuminate\Validation\Rule;
 
 class PHPSite extends AbstractSiteType
 {
-    public static function make(): self
+    public static function id(): string
     {
-        return new self(new Site(['type' => \App\Enums\SiteType::PHP]));
+        return 'php';
     }
 
     public function language(): string
@@ -24,44 +21,9 @@ class PHPSite extends AbstractSiteType
         return 'php';
     }
 
-    public function supportedFeatures(): array
+    public static function make(): self
     {
-        return [
-            SiteFeature::DEPLOYMENT,
-            SiteFeature::COMMANDS,
-            SiteFeature::ENV,
-            SiteFeature::SSL,
-            SiteFeature::WORKERS,
-        ];
-    }
-
-    public function fields(): DynamicFieldsCollectionDTO
-    {
-        return new DynamicFieldsCollectionDTO([
-            DynamicFieldDTO::make('php_version')
-                ->component()
-                ->label('PHP Version'),
-            DynamicFieldDTO::make('source_control')
-                ->component()
-                ->label('Source Control'),
-            DynamicFieldDTO::make('web_directory')
-                ->text()
-                ->label('Web Directory')
-                ->placeholder('For / leave empty')
-                ->description('The relative path of your website from /home/vito/your-domain/'),
-            DynamicFieldDTO::make('repository')
-                ->text()
-                ->label('Repository')
-                ->placeholder('organization/repository'),
-            DynamicFieldDTO::make('branch')
-                ->text()
-                ->label('Branch')
-                ->default('main'),
-            DynamicFieldDTO::make('composer')
-                ->checkbox()
-                ->label('Run `composer install --no-dev`')
-                ->default(false),
-        ]);
+        return new self(new Site(['type' => self::id()]));
     }
 
     public function createRules(array $input): array
@@ -132,9 +94,40 @@ class PHPSite extends AbstractSiteType
     {
         return [
             [
-                'name' => 'Install Composer Dependencies',
+                'name' => 'composer:install',
                 'command' => 'composer install --no-dev --no-interaction --no-progress',
             ],
         ];
+    }
+
+    public function vhost(string $webserver): string
+    {
+        if ($webserver === 'nginx') {
+            return view('ssh.services.webserver.nginx.vhost', [
+                'header' => [
+                    view('ssh.services.webserver.nginx.vhost-blocks.force-ssl', ['site' => $this->site]),
+                ],
+                'main' => [
+                    view('ssh.services.webserver.nginx.vhost-blocks.port', ['site' => $this->site]),
+                    view('ssh.services.webserver.nginx.vhost-blocks.core', ['site' => $this->site]),
+                    view('ssh.services.webserver.nginx.vhost-blocks.php', ['site' => $this->site]),
+                    view('ssh.services.webserver.nginx.vhost-blocks.redirects', ['site' => $this->site]),
+                ],
+            ]);
+        }
+
+        if ($webserver === 'caddy') {
+            return view('ssh.services.webserver.caddy.vhost', [
+                'main' => [
+                    view('ssh.services.webserver.caddy.vhost-blocks.force-ssl', ['site' => $this->site]),
+                    view('ssh.services.webserver.caddy.vhost-blocks.port', ['site' => $this->site]),
+                    view('ssh.services.webserver.caddy.vhost-blocks.core', ['site' => $this->site]),
+                    view('ssh.services.webserver.caddy.vhost-blocks.php', ['site' => $this->site]),
+                    view('ssh.services.webserver.caddy.vhost-blocks.redirects', ['site' => $this->site]),
+                ],
+            ]);
+        }
+
+        return '';
     }
 }
