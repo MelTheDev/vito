@@ -50,6 +50,9 @@ if [ ! -f "$INIT_FLAG" ]; then
     # create sqlite database
     touch /var/www/html/storage/database.sqlite
 
+    # install default plugins
+    php /var/www/html/artisan plugins:install https://github.com/vitodeploy/laravel-octane-plugin
+
     # create the flag file to indicate completion of initialization tasks
     touch "$INIT_FLAG"
 fi
