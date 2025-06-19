@@ -35,7 +35,7 @@ RUN npm install --force
 RUN npm run build
 RUN composer install --no-dev
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # webserver
 RUN rm /etc/nginx/sites-available/default
