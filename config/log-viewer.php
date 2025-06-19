@@ -106,8 +106,6 @@ return [
         \App\Http\Middleware\MustBeAdminMiddleware::class,
     ],
 
-    'api_stateful_domains' => env('LOG_VIEWER_API_STATEFUL_DOMAINS') ? explode(',', env('LOG_VIEWER_API_STATEFUL_DOMAINS')) : null,
-
     /*
     |--------------------------------------------------------------------------
     | Log Viewer Remote hosts.
@@ -120,7 +118,7 @@ return [
 
     'hosts' => [
         'local' => [
-            'name' => ucfirst(env('APP_ENV', 'local')),
+            'name' => 'local',
         ],
 
         // 'staging' => [

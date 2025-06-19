@@ -20,8 +20,7 @@ class CheckConnection
                 $server->status = ServerStatus::READY;
                 $server->save();
             }
-        } catch (Throwable $e) {
-            throw $e;
+        } catch (Throwable) {
             $server->status = ServerStatus::DISCONNECTED;
             $server->save();
             Notifier::send($server, new ServerDisconnected($server));
