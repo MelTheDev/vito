@@ -38,7 +38,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache \
 
 # install plugins
-RUN php /var/www/html/artisan plugin:install https://github.com/vitodeploy/laravel-octane-plugin
+RUN php /var/www/html/artisan plugins:install https://github.com/vitodeploy/laravel-octane-plugin
 
 # webserver
 RUN rm /etc/nginx/sites-available/default

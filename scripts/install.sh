@@ -202,7 +202,7 @@ echo "* * * * * cd /home/vito/vito && php artisan schedule:run >> /dev/null 2>&1
 chown -R vito:vito /home/vito
 
 # install plugins
-php artisan plugin:install https://github.com/vitodeploy/laravel-octane-plugin
+php artisan plugins:install https://github.com/vitodeploy/laravel-octane-plugin
 
 # optimize
 php artisan optimize
