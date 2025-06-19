@@ -2,7 +2,7 @@ FROM ubuntu:24.04
 
 WORKDIR /var/www/html
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # upgrade
 RUN apt-get update && apt-get upgrade -y && apt-get autoremove -y
@@ -33,6 +33,7 @@ COPY . /var/www/html
 RUN rm -rf /var/www/html/.git /var/www/html/vendor /var/www/html/node_modules
 RUN npm install --force
 RUN npm run build
+RUN rm -rf /var/www/html/node_modules
 RUN composer install --no-dev
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
