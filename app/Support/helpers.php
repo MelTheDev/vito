@@ -227,3 +227,41 @@ function user(): User
 
     return $user;
 }
+
+function plugins_path(?string $path = null): string
+{
+    if ($path === null) {
+        $path = storage_path('plugins');
+        if (! file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+
+        return $path;
+    }
+
+    return storage_path('plugins'.'/'.$path);
+}
+
+function composer_path(): ?string
+{
+    $paths = [
+        '/usr/local/bin/composer',
+        '/usr/bin/composer',
+        '/opt/homebrew/bin/composer',
+        trim((string) shell_exec('which composer')),
+    ];
+
+    return array_find($paths, fn ($path) => is_executable($path));
+}
+
+function php_path(): ?string
+{
+    $paths = [
+        '/usr/local/bin/php',
+        '/usr/bin/php',
+        '/opt/homebrew/bin/php',
+        trim((string) shell_exec('which php')),
+    ];
+
+    return array_find($paths, fn ($path) => is_executable($path));
+}
