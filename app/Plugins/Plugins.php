@@ -54,7 +54,7 @@ class Plugins
             $command .= " --tag $tag";
         }
         $command .= ' --single-branch';
-        $result = Process::timeout(0)->run($command);
+        $result = Process::env(['PATH' => dirname(git_path())])->timeout(0)->run($command);
         $output = $result->output();
 
         if ($result->failed()) {

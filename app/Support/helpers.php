@@ -265,3 +265,15 @@ function php_path(): ?string
 
     return array_find($paths, fn ($path) => is_executable($path));
 }
+
+function git_path(): ?string
+{
+    $paths = [
+        '/usr/local/bin/git',
+        '/usr/bin/git',
+        '/opt/homebrew/bin/git',
+        trim((string) shell_exec('which git')),
+    ];
+
+    return array_find($paths, fn ($path) => is_executable($path));
+}

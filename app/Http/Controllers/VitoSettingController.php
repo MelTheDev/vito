@@ -109,7 +109,9 @@ class VitoSettingController extends Controller
 
         // Replace files
         File::move($extractPath.'/database.sqlite', storage_path('database.sqlite'));
-        File::copy($extractPath.'/.env', base_path('.env'));
+        if (File::exists($extractPath.'/.env')) {
+            File::move($extractPath.'/.env', base_path('.env'));
+        }
         File::move($extractPath.'/ssh-public.key', storage_path('ssh-public.key'));
         File::move($extractPath.'/ssh-private.pem', storage_path('ssh-private.pem'));
         File::moveDirectory($extractPath.'/key-pairs', storage_path('app/key-pairs'));
