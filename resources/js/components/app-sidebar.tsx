@@ -13,7 +13,7 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Link, router } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { BookOpen, ChevronRightIcon, CogIcon, Folder, MousePointerClickIcon, ServerIcon, ZapIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import { Icon } from '@/components/icon';
@@ -84,10 +84,17 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
                       isActive={item.onlyActivePath ? window.location.href === item.href : window.location.href.startsWith(item.href)}
                       tooltip={{ children: item.title, hidden: false }}
                     >
-                      <Link href={item.href} prefetch>
-                        {item.icon && <item.icon />}
-                        <span>{item.title}</span>
-                      </Link>
+                      {item.external ? (
+                        <a href={item.href} target="_blank">
+                          {item.icon && <item.icon />}
+                          <span>{item.title}</span>
+                        </a>
+                      ) : (
+                        <Link href={item.href} prefetch>
+                          {item.icon && <item.icon />}
+                          <span>{item.title}</span>
+                        </Link>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -152,10 +159,17 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
                                           : window.location.href.startsWith(childItem.href)
                                       }
                                     >
-                                      <Link href={childItem.href} prefetch>
-                                        {childItem.icon && <childItem.icon />}
-                                        <span>{childItem.title}</span>
-                                      </Link>
+                                      {childItem.external ? (
+                                        <a href={childItem.href} target="_blank">
+                                          {childItem.icon && <childItem.icon />}
+                                          <span>{childItem.title}</span>
+                                        </a>
+                                      ) : (
+                                        <Link href={childItem.href} prefetch>
+                                          {childItem.icon && <childItem.icon />}
+                                          <span>{childItem.title}</span>
+                                        </Link>
+                                      )}
                                     </SidebarMenuButton>
                                   </SidebarMenuSubItem>
                                 ))}
@@ -168,9 +182,18 @@ export function AppSidebar({ secondNavItems, secondNavTitle }: { secondNavItems?
 
                     return (
                       <SidebarMenuItem key={`${item.title}-${item.href}`} hidden={item.hidden}>
-                        <SidebarMenuButton onClick={() => router.visit(item.href)} isActive={isActive} disabled={item.isDisabled || false}>
-                          {item.icon && <item.icon />}
-                          <span>{item.title}</span>
+                        <SidebarMenuButton isActive={isActive} disabled={item.isDisabled || false} asChild>
+                          {item.external ? (
+                            <a href={item.href} target="_blank">
+                              {item.icon && <item.icon />}
+                              <span>{item.title}</span>
+                            </a>
+                          ) : (
+                            <Link href={item.href} disabled={item.isDisabled || false}>
+                              {item.icon && <item.icon />}
+                              <span>{item.title}</span>
+                            </Link>
+                          )}
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );

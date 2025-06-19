@@ -31,6 +31,7 @@ export interface NavItem {
   isDisabled?: boolean;
   children?: NavItem[];
   hidden?: boolean;
+  external?: boolean;
 }
 
 export interface Configs {
