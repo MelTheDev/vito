@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -120,6 +121,8 @@ class VitoSettingController extends Controller
         if (File::exists($extractPath.'/server-logs')) {
             move_directory($extractPath.'/server-logs', storage_path('app/server-logs'));
         }
+
+        Artisan::call('optimize');
 
         return redirect()->route('vito-settings')
             ->with('success', 'Settings imported successfully.');

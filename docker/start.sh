@@ -63,7 +63,6 @@ service nginx start
 php /var/www/html/artisan migrate --force
 php /var/www/html/artisan optimize:clear
 php /var/www/html/artisan optimize
-php /var/www/html/artisan icons:cache
 
 php /var/www/html/artisan user:create "$NAME" "$EMAIL" "$PASSWORD"
 

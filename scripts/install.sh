@@ -206,7 +206,6 @@ php artisan plugins:install https://github.com/vitodeploy/laravel-octane-plugin
 
 # optimize
 php artisan optimize
-php artisan icons:cache
 
 # start worker
 supervisorctl start worker:*

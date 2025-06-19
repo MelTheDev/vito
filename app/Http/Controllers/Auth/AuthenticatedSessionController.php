@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    #[Post('login', name: 'login', middleware: 'guest')]
+    #[Post('login', name: 'login.store', middleware: 'guest')]
     public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
