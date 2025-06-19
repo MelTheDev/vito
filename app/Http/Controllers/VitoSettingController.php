@@ -114,8 +114,12 @@ class VitoSettingController extends Controller
         }
         File::move($extractPath.'/ssh-public.key', storage_path('ssh-public.key'));
         File::move($extractPath.'/ssh-private.pem', storage_path('ssh-private.pem'));
-        File::moveDirectory($extractPath.'/key-pairs', storage_path('app/key-pairs'), true);
-        File::moveDirectory($extractPath.'/server-logs', storage_path('app/server-logs'), true);
+        if (File::exists($extractPath.'/key-pairs')) {
+            move_directory($extractPath.'/key-pairs', storage_path('app/key-pairs'));
+        }
+        if (File::exists($extractPath.'/server-logs')) {
+            move_directory($extractPath.'/server-logs', storage_path('app/server-logs'));
+        }
 
         return redirect()->route('vito-settings')
             ->with('success', 'Settings imported successfully.');

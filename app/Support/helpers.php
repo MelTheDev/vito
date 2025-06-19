@@ -277,3 +277,21 @@ function git_path(): ?string
 
     return array_find($paths, fn ($path) => is_executable($path));
 }
+
+function move_directory(string $from, string $to): void
+{
+    // Remove any stale destination
+    if (File::exists($to)) {
+        File::deleteDirectory($to);
+    }
+
+    // Ensure parent of $to exists
+    File::ensureDirectoryExists(dirname($to));
+
+    // Copy + delete (works across mounts / volumes)
+    if (! File::copyDirectory($from, $to)) {
+        throw new RuntimeException("Could not copy [$from] to [$to]");
+    }
+
+    File::deleteDirectory($from);
+}
