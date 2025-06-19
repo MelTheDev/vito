@@ -118,6 +118,11 @@ class Site extends AbstractModel
             $site->ssls()->delete();
             $site->deployments()->delete();
             $site->deploymentScript()->delete();
+            try {
+                $site->gitHook?->destroyHook();
+            } catch (FailedToDestroyGitHook) {
+                $site->refresh()->gitHook?->delete();
+            }
         });
 
         static::created(function (Site $site): void {

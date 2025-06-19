@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<string, mixed> $actions
  * @property string $hook_id
  * @property array<string, mixed> $hook_response
- * @property Site $site
+ * @property ?Site $site
  * @property SourceControl $sourceControl
  */
 class GitHook extends AbstractModel
