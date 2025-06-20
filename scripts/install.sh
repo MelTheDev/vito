@@ -100,6 +100,9 @@ service php${V_PHP_VERSION}-fpm enable
 service php${V_PHP_VERSION}-fpm start
 apt install -y php${V_PHP_VERSION}-ssh2
 service php${V_PHP_VERSION}-fpm restart
+sed -i "s/memory_limit = .*/memory_limit = 1G/" /etc/php/${V_PHP_VERSION}/fpm/php.ini
+sed -i "s/upload_max_filesize = .*/upload_max_filesize = 1G/" /etc/php/${V_PHP_VERSION}/fpm/php.ini
+sed -i "s/post_max_size = .*/post_max_size = 1G/" /etc/php/${V_PHP_VERSION}/fpm/php.ini
 
 # composer
 curl -sS https://getcomposer.org/installer -o composer-setup.php
@@ -117,6 +120,8 @@ server {
 
     add_header X-Frame-Options \"SAMEORIGIN\";
     add_header X-Content-Type-Options \"nosniff\";
+
+    client_max_body_size 100M;
 
     index index.php;
 
