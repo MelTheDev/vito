@@ -105,6 +105,7 @@ export interface Configs {
 export interface SharedData {
   name: string;
   version: string;
+  demo: boolean;
   quote: { message: string; author: string };
   auth: Auth;
   ziggy: Config & { location: string };

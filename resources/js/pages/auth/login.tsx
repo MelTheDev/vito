@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth/layout';
+import { SharedData } from '@/types';
 
 type LoginForm = {
   email: string;
@@ -22,9 +23,11 @@ interface LoginProps {
 }
 
 export default function Login({ status, canResetPassword }: LoginProps) {
+  const page = usePage<SharedData>();
+
   const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
-    email: '',
-    password: '',
+    email: page.props.demo ? 'demo@vitodeploy.com' : '',
+    password: page.props.demo ? 'password' : '',
     remember: false,
   });
 
