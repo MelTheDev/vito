@@ -8,6 +8,13 @@ if [[ -z "${V_PASSWORD}" ]]; then
     export V_PASSWORD=$(openssl rand -base64 12)
 fi
 
+if [[ -z "${VITO_APP_URL}" ]]; then
+    export DEFAULT_VITO_APP_URL=http://$(curl https://free.freeipapi.com -4)
+    read -p "Enter the APP_URL [$DEFAULT_VITO_APP_URL]: " VITO_APP_URL
+    export VITO_APP_URL=${VITO_APP_URL:-$DEFAULT_VITO_APP_URL}
+    echo "APP_URL is set to: $VITO_APP_URL\n"
+fi
+
 if [[ -z "${V_ADMIN_EMAIL}" ]]; then
     echo "Enter your email address:"
     read V_ADMIN_EMAIL
@@ -147,6 +154,8 @@ server {
         fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
         include fastcgi_params;
         fastcgi_hide_header X-Powered-By;
+        fastcgi_buffers 16 16k;
+        fastcgi_buffer_size 32k;
     }
 
     location ~ /\.(?!well-known).* {
@@ -184,6 +193,19 @@ ssh-keygen -y -f /home/vito/vito/storage/ssh-private.pem > /home/vito/vito/stora
 chown -R vito:vito /home/vito/vito/storage/ssh-private.pem
 chown -R vito:vito /home/vito/vito/storage/ssh-public.key
 
+# install npm packages
+npm install
+npm run build
+
+# install plugins
+php artisan plugins:install https://github.com/vitodeploy/laravel-octane-plugin
+
+# optimize
+php artisan optimize
+
+# cleanup
+chown -R vito:vito /home/vito
+
 # setup supervisor
 export V_WORKER_CONFIG="
 [program:worker]
@@ -206,20 +228,11 @@ echo "${V_WORKER_CONFIG}" | tee /etc/supervisor/conf.d/worker.conf
 supervisorctl reread
 supervisorctl update
 
-# setup cronjobs
-echo "* * * * * cd /home/vito/vito && php artisan schedule:run >> /dev/null 2>&1" | sudo -u vito crontab -
-
-# cleanup
-chown -R vito:vito /home/vito
-
-# install plugins
-php artisan plugins:install https://github.com/vitodeploy/laravel-octane-plugin
-
-# optimize
-php artisan optimize
-
 # start worker
 supervisorctl start worker:*
+
+# setup cronjobs
+echo "* * * * * cd /home/vito/vito && php artisan schedule:run >> /dev/null 2>&1" | sudo -u vito crontab -
 
 # print info
 echo "🎉 Congratulations!"
