@@ -36,6 +36,10 @@ class PluginController extends Controller
     #[Post('/install', name: 'plugins.install')]
     public function install(Request $request): RedirectResponse
     {
+        if (config('app.demo')) {
+            return back()->with('error', 'Plugins are disabled in demo mode.');
+        }
+
         $this->validate($request, [
             'url' => 'required|url',
         ]);
@@ -63,6 +67,10 @@ class PluginController extends Controller
     #[Delete('/uninstall', name: 'plugins.uninstall')]
     public function uninstall(Request $request): RedirectResponse
     {
+        if (config('app.demo')) {
+            return back()->with('error', 'Plugins are disabled in demo mode.');
+        }
+
         $this->validate($request, [
             'name' => 'required|string',
         ]);

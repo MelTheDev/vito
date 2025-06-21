@@ -85,6 +85,10 @@ class VitoSettingController extends Controller
     #[Post('/import', name: 'vito-settings.import')]
     public function import(Request $request): RedirectResponse
     {
+        if (config('app.demo')) {
+            return back()->with('error', 'Import is disabled in demo mode.');
+        }
+
         // set session driver to file
         config(['session.driver' => 'file']);
 
