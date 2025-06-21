@@ -9,15 +9,14 @@ if [[ -z "${V_PASSWORD}" ]]; then
 fi
 
 if [[ -z "${VITO_APP_URL}" ]]; then
-    export DEFAULT_VITO_APP_URL=http://$(curl https://free.freeipapi.com -4)
+    export DEFAULT_VITO_APP_URL=http://$(curl -s https://free.freeipapi.com -4)
     read -p "Enter the APP_URL [$DEFAULT_VITO_APP_URL]: " VITO_APP_URL
     export VITO_APP_URL=${VITO_APP_URL:-$DEFAULT_VITO_APP_URL}
     echo "APP_URL is set to: $VITO_APP_URL\n"
 fi
 
 if [[ -z "${V_ADMIN_EMAIL}" ]]; then
-    echo "Enter your email address:"
-    read V_ADMIN_EMAIL
+    read -p "Enter admin's email address: " V_ADMIN_EMAIL
 fi
 
 if [[ -z "${V_ADMIN_EMAIL}" ]]; then
@@ -26,8 +25,7 @@ if [[ -z "${V_ADMIN_EMAIL}" ]]; then
 fi
 
 if [[ -z "${V_ADMIN_PASSWORD}" ]]; then
-    echo "Enter a password for Vito's dashboard:"
-    read V_ADMIN_PASSWORD
+    read -p "Enter a password for the admin user: " V_ADMIN_PASSWORD
 fi
 
 if [[ -z "${V_ADMIN_PASSWORD}" ]]; then
@@ -182,6 +180,7 @@ cd /home/vito/vito
 git checkout $(git tag -l --merged ${VITO_VERSION} --sort=-v:refname | head -n 1)
 composer install --no-dev
 cp .env.prod .env
+sed -i "s|^APP_URL=.*|APP_URL=${VITO_APP_URL}|" .env
 touch /home/vito/vito/storage/database.sqlite
 php artisan key:generate
 php artisan storage:link
@@ -236,6 +235,7 @@ echo "* * * * * cd /home/vito/vito && php artisan schedule:run >> /dev/null 2>&1
 
 # print info
 echo "🎉 Congratulations!"
+echo "✅ You can access Vito at: ${VITO_APP_URL}"
 echo "✅ SSH User: vito"
 echo "✅ SSH Password: ${V_PASSWORD}"
 echo "✅ Admin Email: ${V_ADMIN_EMAIL}"
