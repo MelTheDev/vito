@@ -19,6 +19,7 @@ sudo service php8.4-fpm restart
 sudo sed -i "s/memory_limit = .*/memory_limit = 1G/" /etc/php/8.4/fpm/php.ini
 sudo sed -i "s/upload_max_filesize = .*/upload_max_filesize = 1G/" /etc/php/8.4/fpm/php.ini
 sudo sed -i "s/post_max_size = .*/post_max_size = 1G/" /etc/php/8.4/fpm/php.ini
+sudo sed -i '/location ~ \\\.php\$ {/a \    fastcgi_buffers 16 16k;\n    fastcgi_buffer_size 32k;' /etc/nginx/sites-available/vito
 
 echo "Installing Redis"
 sudo apt install redis-server -y
