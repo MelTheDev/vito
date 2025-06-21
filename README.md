@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/57f77bd5-bd3f-4367-84c0-aff6ecd392b4" alt="VitoDeploy>
+    <img src="https://github.com/user-attachments/assets/b06531f3-2066-436e-a0e3-0a5f1b7d5118" alt="VitoDeploy>
     <p align="center">
         <a href="https://github.com/vitodeploy/vito/actions"><img alt="GitHub Workflow Status" src="https://github.com/vitodeploy/vito/workflows/tests/badge.svg"></a>
     </p>
@@ -14,8 +14,16 @@ production servers without a hassle.
 
 ## Quick Start
 
+Version 3 (Alpha):
+
 ```sh
 bash <(curl -Ls https://raw.githubusercontent.com/vitodeploy/vito/3.x/scripts/install.sh)
+```
+
+Version 2:
+
+```sh
+bash <(curl -Ls https://raw.githubusercontent.com/vitodeploy/vito/2.x/scripts/install.sh)
 ```
 
 ## Features
@@ -30,6 +38,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/vitodeploy/vito/3.x/scripts/in
 - Deploy your SSH Keys to the server
 - Create and Manage cron jobs on the server
 - API
+- Plugins
+- Export and Import
 
 ## Useful Links
 
@@ -46,6 +56,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/vitodeploy/vito/3.x/scripts/in
 
 - Laravel
 - InertiaJS
+- ReactJS
 - Shadcn UI
 - PHPSecLib
 - PHPUnit
@@ -53,3 +64,5 @@ bash <(curl -Ls https://raw.githubusercontent.com/vitodeploy/vito/3.x/scripts/in
 - Vite
 - Prettier
 - Spatie
+- Opcodesio log viewer
+- Tightenco
