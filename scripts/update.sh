@@ -7,22 +7,19 @@ cd /home/vito/vito
 echo "Pulling changes..."
 git fetch --all
 
-# Parse release type argument
-INCLUDE_PRE_RELEASES=""
+INCLUDE_PATTERN='^3\.[0-9]+\.[0-9]+$'  # stable only
 
 if [[ "$1" == "--alpha" ]]; then
-    INCLUDE_PRE_RELEASES="alpha|beta|rc"
+    INCLUDE_PATTERN='^3\.[0-9]+\.[0-9]+(-alpha-[0-9]+|-beta-[0-9]+|-rc-[0-9]+)?$'
 elif [[ "$1" == "--beta" ]]; then
-    INCLUDE_PRE_RELEASES="beta|rc"
+    INCLUDE_PATTERN='^3\.[0-9]+\.[0-9]+(-beta-[0-9]+|-rc-[0-9]+)?$'
 fi
 
-echo "Checking out the latest tag..."
+# Filter and sort matching tags
+MATCHING_TAGS=$(git tag | grep -E "$INCLUDE_PATTERN" | sort -V)
 
-if [[ -n "$INCLUDE_PRE_RELEASES" ]]; then
-    NEW_RELEASE=$(git tag -l "3.*" | grep -E "$INCLUDE_PRE_RELEASES|^[0-9]+\.[0-9]+\.[0-9]+$" | sort -Vr | head -n 1)
-else
-    NEW_RELEASE=$(git tag -l "3.*" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -Vr | head -n 1)
-fi
+# Get the latest tag from the list
+NEW_RELEASE=$(echo "$MATCHING_TAGS" | tail -n 1)
 
 if [[ -z "$NEW_RELEASE" ]]; then
     echo "❌ No matching tag found."
