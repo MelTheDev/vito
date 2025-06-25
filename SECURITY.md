@@ -2,11 +2,12 @@
 
 ## Supported Versions
 
-| Version | New Features | Bug Fixes | Security Fixes       |
-|---------|--------------|-----------|----------------------|
-| 0.x     | ❌            | ❌         | ❌                    |
-| 1.x     | ❌            | ❌         | ✅ (Until March 2025) |
-| 2.x     | ✅            | ✅         | ✅                    |
+| Version | New Features | Bug Fixes | Security Fixes |
+|---------|--------------|-----------|----------------|
+| 0.x     | ❌            | ❌         | ❌              |
+| 1.x     | ❌            | ❌         | ❌              |
+| 2.x     | ❌            | ✅         | ✅              |
+| 3.x     | ✅            | ✅         | ✅              |
 
 ## Reporting a Vulnerability
 
