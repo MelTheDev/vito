@@ -221,4 +221,6 @@ return [
     'version' => '3.0.0-alpha-1',
 
     'demo' => env('APP_DEMO', false),
+
+    'force_https' => env('FORCE_HTTPS', false),
 ];
