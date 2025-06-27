@@ -72,10 +72,6 @@ class ProfileController extends Controller
     #[Post('/enable-two-factor', name: 'profile.enable-two-factor')]
     public function enableTwoFactor(): RedirectResponse
     {
-        if (config('app.demo')) {
-            return back()->with('error', 'Two factor authentication cannot be enabled in demo mode.');
-        }
-
         $user = user();
 
         app(EnableTwoFactorAuthentication::class)($user);
